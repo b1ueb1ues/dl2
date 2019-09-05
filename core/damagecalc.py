@@ -1,4 +1,4 @@
-from ctx import *
+from core.ctx import *
 
 
 class Dmg(object):

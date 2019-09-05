@@ -1,4 +1,5 @@
-from ctx import *
+import __init__
+from core.ctx import *
 
 
 class Action(object):   
@@ -104,8 +105,7 @@ class Action(object):
 
     def _cb_act_end(this, e):
         if this._static['doing'] == this:
-            if loglevel >= 2:
-                log('ac', 'end', this.name)
+            log('act', 'end', this.name)
             this.status = -2
             this._static['doing'] = this # turn this from doing to prev
             this.e_idle()
@@ -113,8 +113,7 @@ class Action(object):
 
     def _act(this, partidx):
         this.idx = partidx
-        if loglevel >= 2:
-            log('ac','active',this.name)
+        log('act','active',this.name)
         this.act(this)
 
 
@@ -126,11 +125,9 @@ class Action(object):
         doing = this._static['doing']
 
         if doing.idle :
-            if loglevel >= 2:
-                log('ac','start',this.name, 'idle:%d'%doing.status)
+            log('act','start',this.name, 'idle:%d'%doing.status)
         else:
-            if loglevel >= 2:
-                log('ac','start',this.name, 'doing '+doing.name+':%d'%doing.status)
+            log('act','start',this.name, 'doing '+doing.name+':%d'%doing.status)
 
         if doing == this : # self is doing
             return 0
@@ -141,16 +138,16 @@ class Action(object):
             if doing.status == -1: # try to interrupt an action
                 if this.atype in doing.interrupt_by : # can interrupt action
                     doing.t_startup.off()
-                    log('ac', 'interrupt', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.startup_start) )
+                    log('act', 'interrupt', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.startup_start) )
                 else:
-                    log('ac','failed')
+                    log('act','failed')
                     return 0
             elif doing.status == 1: # try to cancel an action
                 if this.atype in doing.cancel_by : # can interrupt action
                     doing.t_recovery.off()
-                    log('ac', 'cancel', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.recover_start) )
+                    log('act', 'cancel', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.recover_start) )
                 else:
-                    log('ac','failed')
+                    log('act','failed')
                     return 0
             elif doing.status == 0:
                 print('err in action start()')
@@ -264,8 +261,7 @@ class S(Action):
 
     def _act(this, partidx):
         this.idx = partidx
-        if loglevel >= 2:
-            log('act',this.name)
+        log('act',this.name)
 
         this.act(this)
 
@@ -276,10 +272,12 @@ class S(Action):
 
 
 if __name__ == '__main__' :
-    loglevel = 2
-    def log(*argc, **argv):
-        print(now(), argc)
-    #    print(argv)
+    ctx = Ctx()
+    logset('act')
+    logset('debug')
+    log('debug', 'test',100)
+    log('debug', 'test',10000.01*1.15)
+    log('debug', 'test')
 
     Action.init()
     a = Action('foo')
@@ -297,5 +295,30 @@ if __name__ == '__main__' :
     c()
 
     Timer.run()
-    #print(a.conf)
+    #logcat()
 
+# --------
+    ctx2 = Ctx()
+    logset('act')
+    logset('debug')
+    log('debug', 'test',100)
+    log('debug', 'test')
+
+    Action.init()
+    a = Action('foo')
+    a.interrupt_by = ['bar']
+    a()
+
+    b = Action('bar')
+    b.conf.startup = 1.2
+    b()
+
+    Action.init()
+
+    c = Action('baz')
+    c.conf.recovery = 1.9+1.2
+    c()
+
+    Timer.run()
+    ctx()
+    logcat()
