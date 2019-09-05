@@ -272,7 +272,7 @@ class Conf(lobject):
         super(Conf, this).__setitem__(i,v)
         if i[:7] != '_Conf__':
             if this.__sync:
-                print('do')
+                #print('do')
                 this.__dosync(i, v)
             else:
                 if type(v).__name__ == 'instancemethod':
@@ -301,6 +301,7 @@ class Conf(lobject):
                 elif type(v).__name__ == 'method':
                     object.__setattr__(this, '_Conf__sync', 1)
                     this.__one_sync(v, 0, v)
+
 
     def __call__(this, a=None):
         if type(a) == this.__class__:

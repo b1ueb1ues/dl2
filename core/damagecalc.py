@@ -2,6 +2,13 @@ from ctx import *
 import core.condition as m_condition
 
 
+class Dmg(object):
+    def __init__(this, dmg=0):
+        this.dmg = dmg
+        this.to_od = 1 # rate
+        this.to_bk = 1 # rate
+
+
 class Modifier(object):
     _static = {}
     mod_name = '<nop>'

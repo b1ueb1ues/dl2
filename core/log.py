@@ -1,6 +1,8 @@
 from timer import *
 
+
 _g_log = []
+_g_verbose = []
 
 
 class Log(object):
@@ -15,7 +17,9 @@ class Log(object):
 
 
 def log(t, name, amount=None, misc=""):
-    _g_log.append([now(), t, name, amount, misc])
+    global _g_verbose
+    if t in _g_verbose:
+        _g_log.append([now(), t, name, amount, misc])
 
 
 def logcat(filter=None):
@@ -44,4 +48,5 @@ def logcat(filter=None):
 
 
 def logget():
+    global _g_log
     return _g_log
