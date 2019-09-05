@@ -14,12 +14,11 @@ class Modifier(object):
         cls._static['all_modifiers'] = []
 
 
-    def __init__(this, name, mtype, morder, value, condition=None):
+    def __init__(this, name, mtype, morder, value):
         this.mod_name = name
         this.mod_type = mtype
         this.mod_order = morder
         this.mod_value = value
-        this.mod_condition = condition
         this.__active = 0
         this.on()
 
@@ -50,9 +49,6 @@ class Modifier(object):
             return this
         if modifier == None:
             modifier = this
-        if modifier.mod_condition :
-            if not m_condition.on(modifier.mod_condition):
-                return this
 
         this._static['all_modifiers'].append(modifier)
         this.__active = 1
@@ -217,4 +213,9 @@ class Buff(object):
         return this
 
 if __name__ == '__main__':
+    class _Buff(Buff):
+        pass
+    Buff = _Buff
     Buff.init()
+    Buff()
+    
