@@ -19,4 +19,4 @@ class Ctx(object):
         Timer.init(this.tl)
         Log.init(this.log)
 
-Ctx()
+ctx = Ctx()

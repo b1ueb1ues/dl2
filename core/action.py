@@ -13,27 +13,35 @@ class Action(object):
     status = -2 # -2nop -1startup 0doing 1recovery
     idle = 0
 
+    def nospeed():
+        return 1
+
+
     class Nop(object):
         name = '__idle__'
         index = 0
         status = -2
         idle = 1
-
     nop = Nop()
 
-    @classmethod
-    def init(cls):
-        cls.__static = {}
-        cls.__static['prev'] = cls.nop
-        cls.__static['doing'] = cls.nop
-        def nospeed():
-            return 1
-        cls.__static['spd'] = nospeed
+    _static = {}
+    _static['prev'] = nop
+    _static['doing'] = nop
+    _static['spd'] = nospeed
+
+
+  #  @classmethod
+  #  def init(cls):
+  #      cls._static = {}
+  #      cls._static['prev'] = cls.nop
+  #      cls._static['doing'] = cls.nop
+  #      def nospeed():
+  #          return 1
+  #      cls._static['spd'] = nospeed
 
 
     def __init__(this, name=None, conf=None):  ## can't change name after this
         # conf : startup, recovery, active, action
-        this._static = this.__static
         if name != None:
             if type(name) == tuple:
                 this.name = name[0]
@@ -160,7 +168,11 @@ class Action(object):
         #if now() <= 3:
         #    log('debug','tap,startup', this.get_startup())
         return 1
-    
+
+
+    def __str__(this):
+        return this.name
+
 
 class X(Action):
     def __init__(this, name, conf, act=None):
@@ -272,7 +284,36 @@ class S(Action):
 
 
 if __name__ == '__main__' :
-    ctx = Ctx()
+    log = Logger('src','dst')
+    class A1(Action):
+        pass
+    logset('act')
+    logset('debug')
+    log('debug', 'test',100)
+    log('debug', 'test',10000.01*1.15)
+    log('debug', 'test')
+
+    a = A1('foo')
+    a.interrupt_by = ['bar']
+
+    b = Action('bar')
+    b.conf.startup = 1.2
+
+    log = Logger('src','   ')
+    class A2(Action):
+        pass
+
+    c = Action('baz')
+    c.conf.recovery = 1.9+1.2
+
+    a()
+    b()
+    c()
+
+    Timer.run()
+    logcat()
+
+    exit()
     logset('act')
     logset('debug')
     log('debug', 'test',100)
@@ -295,7 +336,8 @@ if __name__ == '__main__' :
     c()
 
     Timer.run()
-    #logcat()
+    logcat()
+    print('---------')
 
 # --------
     ctx2 = Ctx()
@@ -307,18 +349,22 @@ if __name__ == '__main__' :
     Action.init()
     a = Action('foo')
     a.interrupt_by = ['bar']
-    a()
 
     b = Action('bar')
-    b.conf.startup = 1.2
+
+    class A2(Action):
+        pass
+    A2.init()
+    
+    c = A2('baz')
+
+    print(a._static)
+    print(b._static)
+    print(c._static)
+
+    a()
     b()
-
-    Action.init()
-
-    c = Action('baz')
-    c.conf.recovery = 1.9+1.2
     c()
 
     Timer.run()
-    ctx()
     logcat()
