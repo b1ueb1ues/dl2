@@ -2,87 +2,122 @@ from ctx import *
 
 
 class Modifier(object):
-    _static = {}
-    mod_name = '<nop>'
-    mod_type = '_nop' or 'atk' or 'def' or 'dmg' or 'x' or 'fs' or 's' #....
-    mod_order = '_nop' or 'p' or 'ex' or 'b' # chance dmg for crit 
-    mod_value = 0
-
-    @classmethod
-    def init(cls):
-        cls._static = {}
-        cls._static['all_modifiers'] = []
+    def __init__(this, host):
+        this.host = host
+        this.type_mods = {}
+        this.cache = {}
 
 
-    def __init__(this, name, mtype, morder, value):
-        this.mod_name = name
-        this.mod_type = mtype
-        this.mod_order = morder
-        this.mod_value = value
-        this.__active = 0
-        this.on()
+    def __call__(this, *args, **kwargs):
+        class __Modifier(_Modifier):
+            _static = this
+        return __Modifier(*args, **kwargs)
 
 
-    @classmethod
-    def mod(cls, mtype, all_modifiers=None):
-        if not all_modifiers:
-            all_modifiers = cls._static['all_modifiers']
+    def mod(this, mtype):
+        if mtype in this.cache:
+            if this.cache[mtype] != -1:
+                return this.cache[mtype]
+        if mtype not in this.type_mods:
+            return 1.0
+        mods = this.type_mods[mtype]
         m = {}
-        for i in all_modifiers:
-            if mtype == i.mod_type:
-                if i.mod_order in m:
-                    m[i.mod_order] += i.get()
-                else:
-                    m[i.mod_order] = 1 + i.get()
+        for i in mods:
+            if i.mod_order in m:
+                m[i.mod_order] += i.get()
+            else:
+                m[i.mod_order] = 1 + i.get()
         ret = 1.0
         for i in m:
             ret *= m[i]
         return ret
 
 
+class _Modifier(object):
+
+    def __init__(this, name, mtype, morder, value):
+        # mod_name = '<nop>'
+        # mod_type = '_nop' or 'atk' or 'def' or 'dmg' or 'x' or 'fs' or 's' #....
+        # mod_order = '_nop' or 'p' or 'ex' or 'b' # 
+        this.mod_name = name
+        this.mod_type = mtype
+        this.mod_order = morder
+        this.mod_value = value
+        this.__active = 0
+        if this.mod_type not in this._static.type_mods:
+            this._static.type_mods[this.mod_type] = []
+        this.on()
+
+
     def get(this):
         return this.mod_value
 
 
-    def on(this, modifier=None):
+    def set(this, value):
+        this._static.cache[this.mod_type] = -1
+        this.mod_value = value
+
+
+    def on(this, value=None):
+        if value!=None:
+            this.set(value)
         if this.__active == 1:
             return this
-        if modifier == None:
-            modifier = this
-
-        this._static['all_modifiers'].append(modifier)
         this.__active = 1
+        this._static.type_mods[this.mod_type].append(this)
         return this
 
+    __call__ = on
 
-    def off(this, modifier=None):
+
+    def off(this):
         if this.__active == 0:
             return this
         this.__active = 0
-        if modifier==None:
-            modifier = this
-        idx = len(this._static['all_modifiers'])
+        mods = this._static.type_mods[this.mod_type]
+        idx = len(mods)
         while 1:
             idx -= 1
             if idx < 0:
                 break
-            if this._static['all_modifiers'][idx] == modifier:
-                this._static['all_modifiers'].pop(idx)
+            if mods[idx] == this:
+                mods.pop(idx)
                 break
         return this
-
+    
 
     def __repr__(this):
         return '<%s %s %s %s>'%(this.mod_name, this.mod_type, this.mod_order, this.mod_value)
 
+#} class _Modifier
+
+
+class C():
+    name = 'test'
+c = C()
+c.Modifier = Modifier(c)
+c.mod1 = c.Modifier('a','atk','p',0.35)
+c.mod2 = c.Modifier('a2','atk','p',0.15)
+c.mod2 = c.Modifier('a2','atk','b',1.0)
+c.mod3 = c.Modifier('a3','cc','p',0.15)
+print(c.Modifier.mod('atk'))
+c.mod2.off()
+print(c.Modifier.mod('atk'))
+exit()
 
 class Buff(object):
-    @classmethod
-    def init(cls):
-        cls._static = {}
-        cls._static['all_buffs'] = []
-        cls._static['time_func'] = 0
+    def __init__(this, host):
+        this.host = host
+        this.all_buffs = []
+        this.time_mod = 0
 
+    def __call__(this, *args, **kwargs):
+        class __Buff(_Buff):
+            _static = this
+        return __Buff(*args, **kwargs)
+
+
+class _Buff(object):
 
     def __init__(this, name='<buff_noname>', value=0, duration=0, mtype=None, morder=None):  
         this.name = name   
@@ -100,8 +135,8 @@ class Buff(object):
 
         if this.mod_order != 'buff':
             this.bufftime = this.nobufftime
-        if not this._static.time_func:
-            this._static.time_func = this.nobufftime
+        if not this._static.time_mod:
+            this._static.time_mod = this.nobufftime
 
         this.buff_end_timer = Timer(this.buff_end_proc)
         this.modifier = Modifier('mod_'+this.name, this.mod_type, this.mod_order, 0)
@@ -118,7 +153,7 @@ class Buff(object):
         return 1
     
     def bufftime(this):
-        return this._static.time_func()
+        return this._static.time_mod()
 
 
     def value(this, newvalue=None):
