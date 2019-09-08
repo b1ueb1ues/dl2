@@ -33,34 +33,34 @@ def logset(v):
 
 def __catline(i):
     if i[3] == None:
-        print("%-7.3f: %-8s, %-16s,             , %s"%(i[0],i[1],i[2],i[4]))
+        print("%-7.3f: %-8s, %-16s,                 , %s"%(i[0],i[1],i[2],i[4]))
     elif type(i[3]) == float:
         n = "%s"%(int(i[3]))
         f = i[3] - int(i[3])
         if f >= 1:
             f = 0
         n += "%-.3f"%(f)
-        print("%-7.3f: %-8s, %-16s, %-12s, %s"%(i[0],i[1],i[2],n,i[4]))
+        print("%-7.3f: %-8s, %-16s, %-16s, %s"%(i[0],i[1],i[2],n,i[4]))
     elif type(i[3]) == int:
-        print("%-7.3f: %-8s, %-16s, %-12d, %s"%(i[0],i[1],i[2],i[3],i[4]))
+        print("%-7.3f: %-8s, %-16s, %-16d, %s"%(i[0],i[1],i[2],i[3],i[4]))
     else:
-        print("%-7.3f: %-8s, %-16s, %-12s, %s"%(i[0],i[1],i[2],i[3],i[4]))
+        print("%-7.3f: %-8s, %-16s, %-16s, %s"%(i[0],i[1],i[2],i[3],i[4]))
 
 
 def __saveline(fw, i):
     if i[3] == None:
-        fw.write("%-7.3f, %-8s, %-16s,             , %s\n"%(i[0],i[1],i[2],i[4]))
+        fw.write("%-7.3f, %-8s, %-16s,                 , %s\n"%(i[0],i[1],i[2],i[4]))
     elif type(i[3]) == float:
         n = "%s"%(int(i[3]))
         f = i[3] - int(i[3])
         if f >= 1:
             f = 0
         n += "%-.3f"%(f)
-        fw.write("%-7.3f, %-8s, %-16s, %-12s, %s\n"%(i[0],i[1],i[2],n,i[4]))
+        fw.write("%-7.3f, %-8s, %-16s, %-16d, %s\n"%(i[0],i[1],i[2],n,i[4]))
     elif type(i[3]) == int:
-        fw.write("%-7.3f, %-8s, %-16s, %-12d, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
+        fw.write("%-7.3f, %-8s, %-16s, %-16d, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
     else:
-        fw.write("%-7.3f, %-8s, %-16s, %-12s, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
+        fw.write("%-7.3f, %-8s, %-16s, %-16s, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
 
 
 def logsave(logname):

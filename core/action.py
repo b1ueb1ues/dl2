@@ -290,17 +290,17 @@ if __name__ == '__main__' :
     class C1(object):
         name = 'c1'
         def __init__(this):
-            this.Action = Action(this)
-            this.a = this.Action('foo')
+            this.action = Action(this)
+            this.a = this.action('foo')
             this.a.interrupt_by = ['bar']
-            this.b = this.Action('bar')
-            this.c = this.Action('baz')
+            this.b = this.action('bar')
+            this.c = this.action('baz')
 
     class C2(object):
         name = 'c2'
         def __init__(this):
-            this.Action = Action(this)
-            this.a = this.Action('test')
+            this.action = Action(this)
+            this.a = this.action('test')
 
 
     c = C1()

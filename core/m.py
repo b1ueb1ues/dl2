@@ -1,10 +1,6 @@
 from ctx import *
+from buff import *
+import buff
+print(Modifier)
+print(buff._Modifier)
 
-c = Condition()
-
-if c('test') :
-    print('1')
-else:
-    print('0')
-
-print(c.conditions)
