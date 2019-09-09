@@ -35,11 +35,12 @@ def __catline(i):
     if i[3] == None:
         print("%-7.3f: %-8s, %-16s,                 , %s"%(i[0],i[1],i[2],i[4]))
     elif type(i[3]) == float:
+        print('-',i[3])
         n = "%s"%(int(i[3]))
         f = i[3] - int(i[3])
         if f >= 1:
             f = 0
-        n += "%-.3f"%(f)
+        n += ("%-.3f"%(f))[1:]
         print("%-7.3f: %-8s, %-16s, %-16s, %s"%(i[0],i[1],i[2],n,i[4]))
     elif type(i[3]) == int:
         print("%-7.3f: %-8s, %-16s, %-16d, %s"%(i[0],i[1],i[2],i[3],i[4]))
@@ -55,8 +56,8 @@ def __saveline(fw, i):
         f = i[3] - int(i[3])
         if f >= 1:
             f = 0
-        n += "%-.3f"%(f)
-        fw.write("%-7.3f, %-8s, %-16s, %-16d, %s\n"%(i[0],i[1],i[2],n,i[4]))
+        n += ("%-.3f"%(f))[1:]
+        fw.write("%-7.3f, %-8s, %-16s, %-16s, %s\n"%(i[0],i[1],i[2],n,i[4]))
     elif type(i[3]) == int:
         fw.write("%-7.3f, %-8s, %-16s, %-16d, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
     else:
@@ -89,11 +90,7 @@ def logget():
     return _g_log
 
 if __name__ == '__main__':
-    logset('act')
     logset('debug')
-    l = Logger('src','dst')
-    l('act','test')
-    l('debug','int', 2)
-    l('debug','float', 2.1)
+    log('debug','name',1.0009)
     logcat()
     logsave('log.txt')

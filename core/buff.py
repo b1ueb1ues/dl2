@@ -5,10 +5,11 @@ from core.dc import *
 
 class Buff(object):
     def __init__(this, Dc):
-        this.hostname = dc.c_src.name
+        this.Dc = Dc
+        Dc.conf_src.sync_buff = this.sync
+
         this.buff_group = {}
         this.time_mod = None
-        this.Dc = Dc
         Event('buff')(this.l_buff)
 
 
@@ -22,14 +23,20 @@ class Buff(object):
         this(e.name, e.value, e.duration, e.mtype, e.morder, e.group)()
 
 
+    def sync(this, c, cc):
+        this.hostname = c.name
+
 
 class _Buff(object):
     def __init__(this, name, value, duration=-1,
-            mtype='atk', morder='b', group=None):
-        if mtype in ['cc','cd']:
-            morder = 'p'
+            mtype='atk', morder=None, group=None):
+        if morder == None:
+            if mtype in ['cc','cd']:
+                morder = 'p'
+            else:
+                morder = 'b'
         this.name = name
-        this.hostname = this._static.host.name
+        this.hostname = this._static.hostname
         this.__value = value
         this.duration = duration
         this.mod_type = mtype # atk def_ cc cd buff sp x fs s dmg
@@ -38,14 +45,18 @@ class _Buff(object):
             this.group_name = mtype
         else:
             this.group_name = group
+        group_id = (this.group_name, this.mod_order)
 
-        if this.group_name not in this._static.buff_group:
-            this._static.buff_group[this.group_name] = []
+        if group_id not in this._static.buff_group:
+            this.group = []
+            this._static.buff_group[group_id] = this.group
+        else:
+            this.group = this._static.buff_group[group_id]
 
-        this.t_buffend = Timer(this.__buff_end)
         this.dc = this._static.Dc(this.name,
                 this.mod_type, this.mod_order, value)
 
+        this.t_buffend = Timer(this.__buff_end)
         this.__active = 0
 
 
@@ -66,15 +77,14 @@ class _Buff(object):
 
     def get_group(this):
         value = 0
-        stack = len(this._static.buff_group[this.group_name])
-        for i in this._static.buff_group[this.group_name]:
+        stack = len(this.group)
+        for i in this.group :
             if i.__active != 0:
                 value += i.__value
         return value, stack
 
 
     def __buff_stack(this):
-        group = this._static.buff_group[this.group_name]
         v_total, stacks = this.get_group()
         log('buff', '%s: %s'%(this.hostname, this.name),
                 '%s stack: %d'%(this.group_name, stacks),
@@ -86,19 +96,20 @@ class _Buff(object):
         this.dc.on()
         if duration > 0:
             this.t_buffend.on(duration)
-        group = this._static.buff_group[this.group_name]
-        stacks = len(group)
+        stacks = len(this.group)
         if stacks >= 10:
             log('buff', '%s: %s'%(this.hostname, this.name),
                     'failed', 'stack cap')
             return
         stacks += 1
-        group.append(this)
+        this.group.append(this)
         log('buff', '%s: %s'%(this.hostname, this.name),
                 '%s: %.2f'%(this.mod_type, this.get()),
                 '%s buff start <%ds>'%(this.group_name, duration))
         if stacks > 1:
             this.__buff_stack()
+        log('debug', '%s: dc %s'%(this.hostname, this.mod_type),
+                this._static.Dc.get(this.mod_type))
 
 
     def __buff_refresh(this, duration):
@@ -107,31 +118,29 @@ class _Buff(object):
         log('buff', '%s: %s'%(this.hostname, this.name),
                 '%s: %.2f'%(this.mod_type, this.get()),
                 '%s buff refresh <%ds>'%(this.group_name, duration))
-        group = this._static.buff_group[this.group_name]
-        stacks = len(group)
+        stacks = len(this.group)
         if stacks > 1:
             this.__buff_stack()
 
 
     def __buff_end(this, e):
-        group_value, stack = this.get_group()
         log('buff', '%s: %s'%(this.hostname, this.name),
                 '%s: %.2f'%(this.mod_type, this.get()),
-                '%s buff end <timeout>'%this.name)
+                'buff end <timeout>')
         this.__active = 0
 
-        group = this._static.buff_group[this.group_name]
-
-        idx = len(group)
+        idx = len(this.group)
+        stack = idx
         while 1:
             idx -= 1
             if idx < 0:
                 break
-            if this == group[idx]:
-                group.pop(idx)
+            if this == this.group[idx]:
+                this.group.pop(idx)
                 break
+        if stack > 1:
+            this.__buff_stack()
         this.dc.off()
-        this.__buff_stack()
         this.end()
 
 
@@ -162,15 +171,13 @@ class _Buff(object):
                 '%s buff end <turn off>'%(this.name))
         this.__active = 0
 
-        group = this._static.buff_group[this.group_name]
-
-        idx = len(group)
+        idx = len(this.group)
         while 1:
             idx -= 1
             if idx < 0:
                 break
-            if this == group[idx]:
-                group.pop(idx)
+            if this == this.group[idx]:
+                this.group.pop(idx)
                 break
         this.dc.off()
         this.__buff_stack()
@@ -252,36 +259,27 @@ class _Buff(object):
 if __name__ == '__main__':
     logset(['debug','buff'])
 
+    
+    class C():
+        def __init__(this):
+            src = Conf()
+            dst = Conf()
+            src.name = '1p'
+            dst.name = 'dummy'
+            this.Dc = Dmg_calc(src, dst)
+            this.Buff = Buff(this.Dc)
+            this.Buff('buff1',0.15,10)()
+            this.Buff('buff2',0.20,5)()
+            this.Buff('buff3',0.20,-1,'atk','p')()
 
-    class A():
-        name = 'a'
-    a = A()
-    Dc = Dc(a)
-    b = Buff(m)
-    b1 = b('b1',0.15,-1,'atk','p')
-    b1()
-    b1()
-    b2 = b('b2',0.25,10,'atk','p')
-    b2()
-#    b3 = b('b3',0.20,10,'atk','p','ruin')
-#    def foo(e):
-#        b3()
-#    Timer(foo)(1)
+    c = C()
     e = Event('buff')
-    e.name = 'be'
-    e.value = 0.15
-    e.duration = 15
+    e.name = 'buff_event'
+    e.value = 0.3
+    e.duration = 10
     e.mtype = 'atk'
-    e.morder = 'b'
+    e.morder = 'p'
     e.group = 'atk'
-    e()
-
-    class A(object):
-        name = 'test'
-    a = A()
-    m = Modifier(a)
-    s = Selfbuff(m)
-    s('test',0.1,10)()
 
     Timer.run()
     logcat()

@@ -2,12 +2,12 @@ from ctx import *
 
 
 class Dmg_calc(object):
-    def __init__(this, src, dst):
-        this.c_src = src
-        this.c_dst = dst
-        src.dc = this
-        src.sync_dc = this.sync_src
-        dst.sync_dc = this.sync_dst
+    def __init__(this, conf_src, conf_dst):
+        this.conf_src = conf_src
+        this.conf_dst = conf_dst
+        conf_src.dc = this
+        conf_src.sync_dc = this.sync_src
+        conf_dst.sync_dc = this.sync_dst
         this.type_mods = {}
         this.cache = {}  # type: cache_value(-1:dirty)
 
