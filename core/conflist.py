@@ -4,14 +4,16 @@ root = Conf()
 
 # root
 root._1p = character # conf character
+    character.name     # string
     character.star     # int 
     character.ele      # string element
     character.wt       # string weapon type
-    character.atk      # int atk
+    character.atk      # int base_attack
     character.a1       # tuple ability (prefix, affix, value)
     character.a2       # tuple ability (prefix, affix, value)
     character.a3       # tuple ability (prefix, affix, value)
-    character.a        # conf abilities (conbined weapon, wp, character, auto generate)
+    character.a        # conf abilities (conbined weapon, wp, character, \
+                       #     auto generate)
     character.ex       # string co-ability
     character.slot = slot  # conf slot
         slot.w   # string weapon
@@ -29,6 +31,7 @@ root._1p = character # conf character
         #s1.hit       # function s1 damage
     character.s2 = skill  # skill
     character.s3 = skill  # skill
+    character.dc     # damage calculator (gen by Dmg_calc)
 
 root._2p = character   # conf character
 root._3p = character   # conf character
@@ -39,6 +42,7 @@ root.target = dummy    # conf dummy
     target.od   # int
     target.bk   # int 
     target.def_ # int
+    target.ele  # string element
 
 root.ex # list ex
 
