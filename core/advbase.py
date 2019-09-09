@@ -285,22 +285,27 @@ class Spdbuff(Buff):
         this.bufftime = this._bufftime
         Event('speed')()
 
+
     def _bufftime(this):
         return this._static.time_func()
+
 
     def on(this, duration=None):
         Buff.on(this, duration)
         this.count_team_buff()
         return this
 
+
     def off(this):
         Buff.off(this)
         this.count_team_buff()
         return this
 
+
     def buff_end_proc(this,e):
         Buff.buff_end_proc(this,e)
         this.count_team_buff()
+
 
     def count_team_buff(this):
         this.dmg_test_event.modifiers = []

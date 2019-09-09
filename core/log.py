@@ -17,8 +17,13 @@ class Log(object):
         return l
     
 
-def log(t, name, amount=None, misc=''):
+def log(t, name=None, amount=None, misc=''):
     global _g_verbose
+    if name==None:
+        if t in _g_verbose:
+            return True
+        else:
+            return False
     if t in _g_verbose:
         _g_log.append([now(), t, name, amount, misc])
 
@@ -35,7 +40,6 @@ def __catline(i):
     if i[3] == None:
         print("%-7.3f: %-8s, %-16s,                 , %s"%(i[0],i[1],i[2],i[4]))
     elif type(i[3]) == float:
-        print('-',i[3])
         n = "%s"%(int(i[3]))
         f = i[3] - int(i[3])
         if f >= 1:
