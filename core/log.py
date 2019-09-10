@@ -17,15 +17,23 @@ class Log(object):
         return l
     
 
-def log(t, name=None, amount=None, misc=''):
+def verbose(t):
     global _g_verbose
-    if name==None:
-        if t in _g_verbose:
-            return True
-        else:
-            return False
+    if t in _g_verbose:
+        return True
+    else:
+        return False
+
+
+def log(t, name, amount=None, misc=''):
+    global _g_verbose
     if t in _g_verbose:
         _g_log.append([now(), t, name, amount, misc])
+
+
+def log_(t, name, amount=None, misc=''):
+    global _g_verbose
+    _g_log.append([now(), t, name, amount, misc])
 
 
 def logset(v):

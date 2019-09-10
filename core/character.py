@@ -2,8 +2,18 @@ from ctx import *
 
 
 class characterbase(object):
-    class Mod(Modifier):
-        pass
+    def classinit(this):
+        conf = Conf()
+        conf.src.name = '2p'
+        conf.dst.name = 'dummy'
+        this.Dc = Dmg_calc(conf)
+        this.Buff = Buff(this.Dc)
+        this.Passive = Passive(this.Dc)
+        this.Selfbuff = Selfbuff(this.Buff)
+        this.Teambuff = Teambuff(this.Buff)
+        this.Zonebuff = Zonebuff(this.Buff)
+        this.Debuff = Debuff(this.Buff)
+
 
     def __init__(this):
         this.base_atk = 0

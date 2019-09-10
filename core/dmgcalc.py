@@ -1,13 +1,16 @@
-from ctx import *
+import __init__
+from core.ctx import *
 
 
 class Dmg_calc(object):
-    def __init__(this, conf_src, conf_dst):
-        this.conf_src = conf_src
-        this.conf_dst = conf_dst
-        conf_src.dc = this
-        conf_src.sync_dc = this.sync_src
-        conf_dst.sync_dc = this.sync_dst
+    def __init__(this, conf=None):
+        if conf == None:
+            conf = Conf()
+        this.conf = conf
+        this.conf.src.dc = this
+        this.conf.src.sync_dc = this.sync_src
+        this.conf.dst.sync_dc = this.sync_dst
+
         this.type_mods = {}
         this.cache = {}  # type: cache_value(-1:dirty)
 
@@ -59,8 +62,13 @@ class _Dmg_calc(object):
         this.mod_order = morder
         this.mod_value = value
         this.__active = 0
+        static = this._static
         if this.mod_type not in this._static.type_mods:
-            this._static.type_mods[this.mod_type] = []
+            this.mods = []
+            static.type_mods[this.mod_type] = this.mods
+        else:
+            this.mods = static.type_mods[this.mod_type]
+        this.cache = static.cache
         #this.on()
 
 
@@ -69,7 +77,7 @@ class _Dmg_calc(object):
 
 
     def set(this, value):
-        this._static.cache[this.mod_type] = -1
+        this.cache[this.mod_type] = -1
         this.mod_value = value
 
 
@@ -79,8 +87,8 @@ class _Dmg_calc(object):
         if this.__active == 1:
             return this
         this.__active = 1
-        this._static.type_mods[this.mod_type].append(this)
-        this._static.cache[this.mod_type] = -1
+        this.mods.append(this)
+        this.cache[this.mod_type] = -1
         return this
 
     __call__ = on
@@ -90,7 +98,7 @@ class _Dmg_calc(object):
         if this.__active == 0:
             return this
         this.__active = 0
-        mods = this._static.type_mods[this.mod_type]
+        mods = this.mods
         idx = len(mods)
         while 1:
             idx -= 1
@@ -99,25 +107,33 @@ class _Dmg_calc(object):
             if mods[idx] == this:
                 mods.pop(idx)
                 break
-        this._static.cache[this.mod_type] = -1
+        this.cache[this.mod_type] = -1
         return this
 
 
     def __repr__(this):
-        return '<%s %s %s %s>'%(this.mod_name, this.mod_type,
-                this.mod_order, this.mod_value)
+        return '%s:<%s %s %s %s>'%(this._static.conf.src.name,
+                this.mod_name, this.mod_type, this.mod_order, this.mod_value)
 
 #} class _Dmg_calc
 
 
 if __name__ == '__main__':
-    src = Conf()
-    dst = Conf()
-    dc = Dmg_calc(src, dst)
+    class C():
+        pass
+    conf = Conf()
+    conf.src.name = '1p'
+    conf.dst.name = 'dummy'
+    dc = Dmg_calc(conf)
     dc1 = dc('str10', 'atk', 'p', 0.1)()
     dc2 = dc('str15', 'atk', 'b', 0.15)()
+    dc3 = dc('str15', 'atk', 'b', 0.15)()
+    dc4 = dc('def-10', 'def', 'b', -0.10)()
     print(dc1)
     print(dc2)
+    print(dc3)
+    print(dc4)
     print(dc.get('atk'))
+    print(dc.get('def'))
 
 
