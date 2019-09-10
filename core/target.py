@@ -13,15 +13,15 @@ class Target(object):
         this.conf.sync_target = this.sync_conf
 
         this.skada = {}
-        Event('dmg')(this.l_dmg)
+        #Event('dmg')(this.l_dmg)
 
 
     def classinit(this):
         conf = Conf()
         conf.src = this.conf
-        this.Dc = Dmg_calc(conf)
-        this.Buff = Buff(this.Dc)
-        this.Passive = Passive(this.Dc)
+        this.Dp = Dmg_param(this.conf)
+        this.Buff = Buff(this.Dp)
+        this.Passive = Passive(this.Dp)
         this.Selfbuff = Selfbuff(this.Buff)
         this.Teambuff = Teambuff(this.Buff)
         this.Zonebuff = Zonebuff(this.Buff)
@@ -63,32 +63,20 @@ class Target(object):
         pass
 
 
-    def defence(this, dmg):
-        def_ = this.def_ * this.Dc.get('def')
-        true_dmg = dmg.dmg / def_
-        for i in dmg.killer :
-            if i in this.ks :
-                true_dmg += true_dmg * dmg.killer[i]
-        if this.odbk == -1 and dmg.bk :
-            true_dmg += true_dmg * dmg.bk
-        return true_dmg
-
-
     def dt(this, dmg):
         pass
 
 
     def dt_no_od(this, dmg):
-        true_dmg = this.defence(dmg)
-        this.recount(true_dmg)
-        this.hp -= true_dmg
+        this.recount(dmg)
+        this.hp -= dmg.dmg
         if this.hp < 0 :
             this.die()
 
 
     def dt_odbk(this, dmg): 
-        true_dmg = this.defence(dmg)
-        this.recount(true_dmg)
+        this.recount(dmg)
+        true_dmg = dmg.dmg
         if this.odbk == 0 :
             this.hp -= true_dmg
             this.od += true_dmg * dmg.to_od
@@ -119,9 +107,11 @@ class Target(object):
         this.od = -1
         this.bk = this.base_bk
         this.def_ = this.base_def * this.od_def
+        this.od_ks = this.Dp('od', 'od', 'k', 1)()
         log('od','start')
-        # clean afflic
-
+        ##
+        # TODO: clean afflic
+        #
 
     def break_(this):
         this.odbk = -1
@@ -130,6 +120,8 @@ class Target(object):
         def foo(t):
             this.normal()
         Timer(foo)(this.bk_time)
+        this.od_ks.off()
+        this.bk_ks = this.Dp('bk', 'bk', 'k', 1)()
         log('od','end')
         log('bk','start')
 
@@ -138,6 +130,7 @@ class Target(object):
         this.odbk = 0
         this.od = 0
         this.def_ = this.base_def
+        this.bk_ks.off()
         log('bk','end')
 
 
@@ -161,10 +154,9 @@ if __name__ == '__main__':
     tar = Target(c.target)
     tar.init()
     dmg = lobject()
-    dmg.dmg = 1000
+    dmg.dmg = 100
     dmg.to_od = 1
     dmg.to_bk = 1
-    dmg.bk = 0
 
     def foo(t):
         tar.dt(dmg)

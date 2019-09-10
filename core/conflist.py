@@ -26,10 +26,10 @@ root._1p = character # conf character
         s1.hit       # dict {timing: conf hitattr}
         s1.hitattr = hitattr  # conf 
             hitattr.coef   # float damage coefficent
+            hitattr.type   # string type
             hitattr.to_od  # float damage rate to od+ 
             hitattr.to_bk  # float damage rate to od-
             hitattr.killer # {string type: float value} killer state
-            hitattr.bk     # float break punisher
         s1.hitattr2 = hitattr  # conf 
     character.s2 = skill  # skill
     character.s3 = skill  # skill
@@ -50,7 +50,6 @@ root.target = dummy    # conf dummy
     target.bk_time # int
     target.def_    # int
     target.ele     # string element
-    target.ks      # [string] killer stat
 
 root.ex # list ex
 

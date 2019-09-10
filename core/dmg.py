@@ -3,20 +3,37 @@ from core.ctx import *
 
 
 class Dmg(object):
-    def __init__(this, Dc):
-        this.name = name
-        this.hostname = Dc.hostname
+    def __init__(this):
         this.dmg = 0
         this.to_od = 1 # rate
         this.to_bk = 1 # rate
 
-class Dmg_calc(object):
-    def __init__(this, conf):
-        this.conf 
 
-    def sync_conf(this, c, cc):
-        if cc[0] == 'src':
-            this.conf_src = cc[1]
+class Dmg_calc(object):
+    def __init__(this, src, dst):
+        this.dst_ele = ''
+        this.src_ele = ''
+
+        this.src = src
+        this.dst = dst
+        this.conf_src = src.conf
+        this.conf_dst = dst.conf
+        this.conf_src.sync_dc = this.sync_src
+        this.conf_dst.sync_dc = this.sync_dst
+        this.hostname = src.conf.name
+
+
+    def sync_src(this, c, cc):
+        this.src_ele = c.ele
+        this.set_ele()
+        this.base_atk = c.atk
+
+
+    def sync_dst(this, c, cc):
+        this.dst_ele = c.ele
+        this.set_ele()
+        this.base_def = c.def_
+
 
     def set_ele(this):
         if this.src_ele == 'flame' and this.dst_ele == 'wind':
@@ -40,20 +57,69 @@ class Dmg_calc(object):
         else:
             this.ele = 1
 
-
-    def base(this, conf): # calculate base damage
-        dmg = Dmg()
-        dmg.to_od = 1
-        dmg.to_bk = 1
+        this.base_coef = this.ele / 0.6
 
 
+    def __call__(this, *args, **kwargs):
+        class __Dmg_calc(_Dmg_calc):
+            _static = this
+        return __Dmg_calc(*args, **kwargs)
 
+
+class _Dmg_calc(object):
+    def __init__(this, hitattr):
+        this.src_dp = this._static.src.Dp.get
+        this.dst_dp = this._static.dst.Dp.get
+
+        this.dmg = Dmg()
+        this.dmg.hostname = this._static.hostname
+
+        hitattr.sync_dc = this.sync_attr
+
+
+    def sync_attr(this, c, cc):
+        this.dmg.name = c.name
+        this.dmg.to_od = c.to_od
+        this.dmg.to_bk = c.to_bk
+        this.coef = c.coef
+        this.type = c.type
+        this.killer = c.killer
+
+
+    def __call__(this): # calculate 
+        this.dmg.dmg = this.calc()
+        this._static.dst.dt(this.dmg)
+
+
+    def calc(this):
+        atk  = this._static.base_atk * this.src_dp('atk')
+        def_ = this._static.base_def * this.dst_dp('def')
+        true_dmg = atk / def_ * this._static.base_coef
+        true_dmg *= this.src_dp('dmg')
+        true_dmg *= this.src_dp(this.type)
+        k = 1.0
+        p = 1.0
+        for i in this.killer:
+            if i == 'bk' and dst_dp('bk') > 1 :
+                p = p + this.killer['bk'] - 1
+            elif dst_dp(i) > 1 :
+                k = k + this.killer[i] - 1
+        true_dmg = true_dmg * k * p
+        true_dmg *= this.coef
+        return true_dmg
 
 
 class Dmg_param(object):
-    def __init__(this):
+    def __init__(this, conf):
+        this.conf = conf
+        conf.sync_dp = this.sync
+
         this.type_mods = {}
         this.cache = {}  # type: cache_value(-1:dirty)
+
+
+    def sync(this, c, cc):
+        this.hostname = c.name
 
 
     def add(this, *args, **kwargs):
@@ -145,14 +211,16 @@ class _Dmg_param(object):
 
 
     def __repr__(this):
-        return '<%s %s %s %s>'%(
+        return '%s:<%s %s %s %s>'%(this._static.hostname,
                 this.mod_name, this.mod_type, this.mod_order, this.mod_value)
 
 #} class _Dmg_calc
 
 
 if __name__ == '__main__':
-    dp = Dmg_param()
+    conf = Conf()
+    conf.name = '1p'
+    dp = Dmg_param(conf)
     dp1 = dp('str10', 'atk', 'p', 0.1)()
     dp2 = dp('str15', 'atk', 'b', 0.15)()
     dp3 = dp('str15', 'atk', 'b', 0.15)()

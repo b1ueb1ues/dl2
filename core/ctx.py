@@ -5,7 +5,7 @@ from core.event      import *
 from core.conf       import *
 from core.log        import *
 from core.condition  import *
-from core.dmgcalc    import *
+from core.dmg        import *
 from core.buff       import *
 
 
