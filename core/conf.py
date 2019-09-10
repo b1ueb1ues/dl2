@@ -177,10 +177,12 @@ class Conf(lobject):
                     tmp = i.__tostr()
                     ret2 += tmp
                     if tmp == '':
-                        ret2+= this.__parentname+'.'+this.__name+'.'+k+'=Conf()\n'
+                        ret2+= this.__parentname+'.'+this.__name \
+                                +'.'+k+'=Conf()\n'
                 elif k[:7]!='_Conf__' :
                 #elif k!='_Conf__name' and k!='_Conf__parentname':
-                    ret += '%s.%s.%s=%s\n'%(this.__parentname, this.__name, k, repr(i))
+                    ret += '%s.%s.%s=%s\n'%(this.__parentname, this.__name,
+                            k, repr(i))
         return ret+ret2
 
 
@@ -220,9 +222,11 @@ class Conf(lobject):
                     tmp = str(i)
                     ret2 += tmp
                     if tmp == '':
-                        ret2+= this.__parentname+'.'+this.__name+'.'+k+'=Conf()\n'
+                        ret2 += this.__parentname+'.'+this.__name \
+                            +'.'+k+'=Conf()\n'
                 elif k =='_Conf__sync' :
-                    ret += '%s.%s.%s=%s\n'%(this.__parentname, this.__name, k, repr(i))
+                    ret += '%s.%s.%s=%s\n'%(this.__parentname,
+                            this.__name, k, repr(i))
         return ret+ret2
 
 

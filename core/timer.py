@@ -116,13 +116,13 @@ class Timer(object):
 
     def on(this, timeout = None):
         global _g_now
-        if timeout:
+        if timeout != None:
             this.timeout = timeout
             this.timing = _g_now + timeout
         else:
             this.timing = _g_now + this.timeout
 
-        if this.timeout:
+        if this.timeout != None:
             if this.__online == 0:
                 this.__online = 1
                 this.timeline.add(this)

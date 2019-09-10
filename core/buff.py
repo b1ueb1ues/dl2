@@ -3,9 +3,9 @@ from core.ctx import *
 
 
 class Buff(object):
-    def __init__(this, Dc):
-        this.Dc = Dc
-        Dc.conf.src.sync_buff = this.sync
+    def __init__(this, Dp):
+        this.Dp = Dp
+        Dp.conf.src.sync_buff = this.sync
 
         this.buff_group = {}
 
@@ -47,8 +47,8 @@ class _Buff(object):
         this.hostname = this._static.hostname
         this._active = 0
         this.t_buffend = Timer(this.__buff_end)
-        this.Dc = this._static.Dc
-        this.dc = this._static.Dc(this.name,
+        this.Dp = this._static.Dp
+        this.dc = this._static.Dp(this.name,
                 this.mod_type, this.mod_order, value)
         if group_id not in this._static.buff_group:
             this.group = []
@@ -108,7 +108,7 @@ class _Buff(object):
             if stacks > 1:
                 this.__buff_stack()
         log('dc', '%s: %s'%(this.hostname, this.mod_type),
-                this._static.Dc.get(this.mod_type))
+                this._static.Dp.get(this.mod_type))
 
 
     def __buff_refresh(this, duration):
@@ -144,7 +144,7 @@ class _Buff(object):
         this.dc.off()
         this.end()
         log('dc', '%s: %s'%(this.hostname, this.mod_type),
-                this._static.Dc.get(this.mod_type))
+                this._static.Dp.get(this.mod_type))
 
 
     def end(this):
@@ -201,7 +201,7 @@ class _Selfbuff(_Buff):
 
 
     def on(this, duration):
-        duration *= this.Dc.get('buff')
+        duration *= this.Dp.get('buff')
         super().on(duration)
         return this
 
@@ -237,7 +237,7 @@ class _Debuff(_Buff):
 
 class Teambuff(object):
     def __init__(this, Buff):
-        this.Dc = Buff.Dc
+        this.Dp = Buff.Dp
         this.e = Event('buff')
 
 
@@ -258,11 +258,11 @@ class _Teambuff():
         e.group = group
 
         this.e = e
-        this.Dc = this._static.Dc
+        this.Dp = this._static.Dp
 
 
     def on(this, duration):
-        this.e.duration = duration * this.Dc.get('buff')
+        this.e.duration = duration * this.Dp.get('buff')
         this.e()
         return this
 
@@ -276,7 +276,7 @@ class _Teambuff():
 
 class Zonebuff(object):
     def __init__(this, Buff):
-        this.Dc = Buff.Dc
+        this.Dp = Buff.Dp
         this.e = Event('buff')
 
 
@@ -297,7 +297,7 @@ class _Zonebuff():
         e.group = group
 
         this.e = e
-        this.Dc = this._static.Dc
+        this.Dp = this._static.Dp
 
 
     def on(this, duration):
@@ -314,9 +314,9 @@ class _Zonebuff():
 
 
 class Passive(object):
-    def __init__(this, Dc):
-        this.Dc = Dc
-        Dc.conf.src.sync_passive = this.sync
+    def __init__(this, Dp):
+        this.Dp = Dp
+        Dp.conf.src.sync_passive = this.sync
 
 
     def __call__(this, *args, **kwargs):
@@ -341,8 +341,8 @@ class _Passive():
 
         this.hostname = this._static.hostname
         this._active = 0
-        this.Dc = this._static.Dc
-        this.dc = this._static.Dc(this.name,
+        this.Dp = this._static.Dp
+        this.dc = this._static.Dp(this.name,
                 this.mod_type, this.mod_order, value)
 
 
@@ -392,9 +392,9 @@ if __name__ == '__main__':
                 conf = Conf()
                 conf.src.name = '1p'
                 conf.dst.name = 'dummy'
-                this.Dc = Dmg_calc(conf)
-                this.Buff = Buff(this.Dc)
-                this.Passive = Passive(this.Dc)
+                this.Dp = Dmg_param(conf)
+                this.Buff = Buff(this.Dp)
+                this.Passive = Passive(this.Dp)
                 this.Selfbuff = Selfbuff(this.Buff)
                 this.Teambuff = Teambuff(this.Buff)
 
@@ -403,9 +403,9 @@ if __name__ == '__main__':
                 conf = Conf()
                 conf.src.name = '2p'
                 conf.dst.name = 'dummy'
-                this.Dc = Dmg_calc(conf)
-                this.Buff = Buff(this.Dc)
-                this.Passive = Passive(this.Dc)
+                this.Dp = Dmg_param(conf)
+                this.Buff = Buff(this.Dp)
+                this.Passive = Passive(this.Dp)
                 this.Selfbuff = Selfbuff(this.Buff)
                 this.Teambuff = Teambuff(this.Buff)
                 this.Zonebuff = Zonebuff(this.Buff)
