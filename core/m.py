@@ -6,13 +6,13 @@ from core.mikoto import *
 import benchmark
 
 
-#logset(['buff','debug','dmg', 'od', 'bk', 'ks'])
+logset(['buff','debug','dmg', 'od', 'bk', 'ks'])
 
 tar = Dummy()
 tar.init()
 tar.conf.od = 1000
 tar.conf.bk = 1000
-tar.Passive('',1,'ks','burn')()
+tar.Passive('',0.2,'ks','burn')()
 
 c = Mikoto()
 c.atk = 2000
@@ -24,7 +24,7 @@ ha = Conf()
 ha.name = 's1'
 ha.type = 's'
 ha.coef = 1
-ha.killer = {'bk':1, 'burn':1}
+ha.killer = {'bk':0, 'burn':0}
 
 #c.Passive('dragon', 0.60)()
 #c.Passive('ex-wand', 0.15, 's', 'ex')()
@@ -38,11 +38,12 @@ dmg = c.Dmg(ha)
 def foo():
     for i in range(1000000):
         dmg()
-benchmark.run(foo)
 
-exit()
+#benchmark.run(foo)
+#exit()
+
 def tick(t):
-    log('debug', dmg.calc())
+    #log('debug', 'dmg', dmg.calc())
     dmg()
     
     t(1)

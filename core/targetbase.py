@@ -2,6 +2,7 @@ import __init__
 from core.ctx import *
 
 
+
 class Target(object):
     def default(this, conf):
         conf.def_    = 10
@@ -34,6 +35,10 @@ class Target(object):
         this.skada = {}
         #Event('dmg')(this.l_dmg)
         #this.e_ks = Event('killer')
+        this.logdbg = Logger('debug')
+        this.logod = Logger('od')
+        this.logbk = Logger('bk')
+        this.logdmg = Logger('dmg')
 
 
     def classinit(this):
@@ -50,6 +55,7 @@ class Target(object):
 
     def config(this, conf):
         pass
+
 
     # after all config settle down
     def init(this):
@@ -82,8 +88,8 @@ class Target(object):
 
 
     def recount(this, dmg):
-        log('dmg', 'take', dmg.dmg, 'hp: %d'%(this.hp) )
-        pass
+        if this.logdmg:
+            this.logdmg('take', dmg.dmg, 'hp: %d'%(this.hp) )
 
 
     def dt(this, dmg):
@@ -98,18 +104,18 @@ class Target(object):
 
 
     def dt_odbk(this, dmg): 
-        #this.recount(dmg)
+        this.recount(dmg)
         true_dmg = dmg.dmg
         if this.odbk == 0 :
             this.hp -= true_dmg
             this.od += true_dmg * dmg.to_od
-        #    if verbose('od'):
-        #        log_('od', 'od+', true_dmg * dmg.to_od)
+            if this.logod:
+                this.logod('od+', true_dmg * dmg.to_od)
         elif this.odbk == 1:
             this.hp -= true_dmg
             this.bk -= true_dmg * dmg.to_bk
-        #    if verbose('bk'):
-        #        log_('bk', 'od-', true_dmg * dmg.to_od)
+            if this.logbk:
+                this.logbk('od-', true_dmg * dmg.to_od)
         else:
             this.hp -= true_dmg
 
@@ -122,8 +128,8 @@ class Target(object):
 
 
     def die(this):
-        return
         Timer.stop()
+        return
 
 
     def overdrive(this):
@@ -132,7 +138,8 @@ class Target(object):
         this.bk = this.base_bk
         this.def_ = this.base_def * this.od_def
         this.od_ks()
-        log('od','start')
+        if this.logod:
+            this.logod('start')
         ##
         # TODO: clean afflic
         #
@@ -146,8 +153,10 @@ class Target(object):
         Timer(foo)(this.bk_time)
         this.od_ks.off()
         this.bk_ks()
-        log('od','end')
-        log('bk','start')
+        if this.logod:
+            this.logod('end')
+        if this.logbk:
+            this.logbk('start')
 
 
     def normal(this):
@@ -155,7 +164,8 @@ class Target(object):
         this.od = 0
         this.def_ = this.base_def
         this.bk_ks.off()
-        log('bk','end')
+        if this.logbk:
+            this.logbk('end')
 
 
 if __name__ == '__main__':
@@ -184,7 +194,8 @@ if __name__ == '__main__':
 
     def foo(t):
         tar.dt(dmg)
-        log('debug', '%d, %d, %d'%(tar.hp, tar.od, tar.bk))
+        if this.logdbg:
+            this.logdbg('%d, %d, %d'%(tar.hp, tar.od, tar.bk))
         t(1)
     Timer(foo)()
 

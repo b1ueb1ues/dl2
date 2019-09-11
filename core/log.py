@@ -16,7 +16,7 @@ def Logger(t):
     else:
         def nolog(name, amount=None, misc=''):
             return
-        return nolog
+        return None
 
 
 class Log(object):

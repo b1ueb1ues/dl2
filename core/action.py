@@ -1,6 +1,56 @@
 import __init__
 from core.ctx import *
 
+
+class X(object):
+    def __init__(this, Actionbase):
+        this.Actionbase = Actionbase
+
+
+    def __call__(this, *args, **kwargs):
+        a = this.Actionbase(*args, **kwargs)
+        a.conf.type = 'x'
+        a.conf.interrupt_by = ['fs','s','dodge']
+        a.conf.cancel_by = ['fs','s','dodge']
+        return a
+
+
+class FS(object):
+    def __init__(this, Actionbase):
+        this.Actionbase = Actionbase
+
+
+    def __call__(this, *args, **kwargs):
+        a = this.Actionbase(*args, **kwargs)
+        a.conf.type = 'fs'
+        a.conf.interrupt_by = ['s']
+        a.conf.cancel_by = ['s','dodge']
+        return a
+
+
+class S(object):
+    def __init__(this, Actionbase):
+        this.Actionbase = Actionbase
+
+
+    def __call__(this, *args, **kwargs):
+        a = this.Actionbase(*args, **kwargs)
+        a.conf.type = 's'
+        return a
+
+
+class Dodge(object):
+    def __init__(this, Actionbase):
+        this.Actionbase = Actionbase
+
+
+    def __call__(this, *args, **kwargs):
+        a = this.Actionbase(*args, **kwargs)
+        a.conf.type = 'dodge'
+        a.conf.cancel_by = ['fs','s']
+        return a
+
+
 class Action(object):
     def __init__(this, host):
         this.host = host
@@ -12,6 +62,7 @@ class Action(object):
             index = 0
             status = -2
             idle = 1
+
         this.nop = Nop()
 
         this.prev = this.nop
@@ -29,6 +80,10 @@ class _Action(object):
     def default(this, conf):
         conf.startup = 0.1
         conf.recovery = 1.9
+        conf.interrupt_by = []
+        conf.cancel_by = []
+        conf.type = this.name
+
 
     def __init__(this, name=None, conf=None):  ## can't change name after this
         # conf : startup, recovery, active, action
@@ -44,8 +99,6 @@ class _Action(object):
         else:
             this.name = '_Action'
 
-        this.atype = this.name
-
         this.index = 0
         this.recover_start = 0
         this.startup_start = 0
@@ -53,9 +106,6 @@ class _Action(object):
         this.__recovery = 0
         this.status = -2 # -2nop -1startup 0doing 1recovery
         this.idle = 0
-
-        this.cancel_by = []
-        this.interrupt_by = []
 
         this.t_startup = Timer(this._cb_acting)
         this.t_recovery = Timer(this._cb_act_end)
@@ -71,26 +121,20 @@ class _Action(object):
         this.conf.sync_action = this.sync
 
 
-
     def sync(this, c, cc):
+        this.atype = c.type
         this.__startup = c.startup
         this.__recovery = c.recovery
+        this.cancel_by = c.cancel_by
+        this.interrupt_by = c.interrupt_by
         #this.__active = c.active
         if 'action' in c:
             this.act = c.action
 
+
     def __call__(this):
         return this.start()
     
-    def get_doing(this):
-        return this._static.doing
-    def set_doing(this):
-        this._static.doing = this
-    def get_prev(this):
-        return this._static.prev
-    def set_prev(this):
-        this._static.prev = this._static.doing
-
 
     def get_recovery(this):
         return this.__recovery / this.speed()
@@ -177,43 +221,6 @@ class _Action(object):
         return this.name
 
 
-class X(Action):
-    def __init__(this, name, conf, act=None):
-        Action.__init__(this, name, conf, act)
-        this.atype = 'x'
-        this.interrupt_by = ['fs','s','dodge']
-        this.cancel_by = ['fs','s','dodge']
-
-
-    def realtime(this):
-        this.act_event = Event('x')
-        this.act_event.name = this.name
-        this.rt_name = this.name
-        this.tap, this.o_tap = this.rt_tap, this.tap
-
-
-    def rt_tap(this):
-        if this.rt_name != this.name:
-            if this.atype == this.rt_name:
-                this.atype = this.name
-            this.rt_name = this.name
-            this.act_event.name = this.name
-        return this.o_tap()
-
-
-class Fs(Action):
-    def __init__(this, name, conf, act=None):
-        Action.__init__(this, name, conf, act)
-        this.atype = 'fs'
-        this.interrupt_by = ['s']
-        this.cancel_by = ['s','dodge']
-
-
-    def realtime(this):
-        this.act_event = Event('fs')
-        this.act_event.name = this.name
-
-
 class Fs_group(object):
     def __init__(this, name, conf, act=None):
         this.actions = {}
@@ -249,43 +256,6 @@ class Fs_group(object):
             return this.actions['default']()
 
 
-class Dodge(Action):
-    def __init__(this, name, conf, act=None):
-        Action.__init__(this, name, conf, act)
-        this.atype = 'dodge'
-        this.cancel_by = ['fs','s']
-
-
-    def realtime(this):
-        this.act_event = Event('dodge')
-        this.act_event.name = this.name
-
-
-class S(Action):
-    def __init__(this, name, conf, act=None):
-        Action.__init__(this, name, conf, act)
-        this.atype = 's'
-        this.interrupt_by = []
-        this.cancel_by = []
-
-
-    def realtime(this):
-        this.act_event = Event('s')
-        this.act_event.name = this.name
-
-
-    def _act(this, partidx):
-        this.idx = partidx
-        log('act',this.name)
-
-        this.act(this)
-
-        this.act_event.name = this.name
-        this.act_event.idx = this.idx
-        this.act_event()
-
-
-
 if __name__ == '__main__' :
     logset('act')
     logset('debug')
@@ -293,11 +263,12 @@ if __name__ == '__main__' :
     class C1(object):
         name = 'c1'
         def __init__(this):
-            this.action = Action(this)
-            this.a = this.action('foo')
-            this.a.interrupt_by = ['bar']
-            this.b = this.action('bar')
-            this.c = this.action('baz')
+            this.Action = Action(this)
+            this.X = X(this.Action)
+            this.S = S(this.Action)
+            this.a = this.X('foo')
+            this.b = this.S('bar')
+            this.c = this.X('baz')
 
     class C2(object):
         name = 'c2'

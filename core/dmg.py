@@ -83,6 +83,7 @@ class _Dmg_calc(object):
         conf.type = 's'
         conf.killer = {}
 
+
     def __init__(this, conf):  # conf hitattr
         this.src = this._static.src
         this.dst = this._static.dst
