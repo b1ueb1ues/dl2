@@ -21,6 +21,9 @@ class Character(object):
         conf.ex = ['blade', 'wand']
 
     def __init__(this, conf=None):
+        this.atk = 2000
+        this.killer = {}
+
         tmp = Conf()             
         this.default(tmp)    # conf prior
         this.config(tmp)     # default < class < param
@@ -58,7 +61,6 @@ class Character(object):
             this.base_def = 10
         else:
             this.base_def = 8
-        this.atk = 2000
 
 
     def tar(this, target):

@@ -33,6 +33,7 @@ class Target(object):
 
         this.skada = {}
         #Event('dmg')(this.l_dmg)
+        #this.e_ks = Event('killer')
 
 
     def classinit(this):
@@ -55,6 +56,8 @@ class Target(object):
         this.classinit()
         this.hp = this.base_hp
         this.def_ = this.base_def
+        this.od_ks = this.Dp('od', 'ks', 'od', 1)
+        this.bk_ks = this.Dp('bk', 'ks', 'bk', 1)
 
 
     def sync(this, c, cc):
@@ -95,18 +98,18 @@ class Target(object):
 
 
     def dt_odbk(this, dmg): 
-        this.recount(dmg)
+        #this.recount(dmg)
         true_dmg = dmg.dmg
         if this.odbk == 0 :
             this.hp -= true_dmg
             this.od += true_dmg * dmg.to_od
-            if verbose('od'):
-                log_('od', 'od+', true_dmg * dmg.to_od)
+        #    if verbose('od'):
+        #        log_('od', 'od+', true_dmg * dmg.to_od)
         elif this.odbk == 1:
             this.hp -= true_dmg
             this.bk -= true_dmg * dmg.to_bk
-            if verbose('bk'):
-                log_('bk', 'od-', true_dmg * dmg.to_od)
+        #    if verbose('bk'):
+        #        log_('bk', 'od-', true_dmg * dmg.to_od)
         else:
             this.hp -= true_dmg
 
@@ -119,6 +122,7 @@ class Target(object):
 
 
     def die(this):
+        return
         Timer.stop()
 
 
@@ -127,7 +131,7 @@ class Target(object):
         this.od = -1
         this.bk = this.base_bk
         this.def_ = this.base_def * this.od_def
-        this.od_ks = this.Dp('od', 'od', 'k', 1)()
+        this.od_ks()
         log('od','start')
         ##
         # TODO: clean afflic
@@ -141,7 +145,7 @@ class Target(object):
             this.normal()
         Timer(foo)(this.bk_time)
         this.od_ks.off()
-        this.bk_ks = this.Dp('bk', 'bk', 'k', 1)()
+        this.bk_ks()
         log('od','end')
         log('bk','start')
 

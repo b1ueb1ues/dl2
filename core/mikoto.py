@@ -23,6 +23,11 @@ class Mikoto(Character):
     def test(this):
         this.a1 = this.Action('a1', this.conf.s1)
         this.a1()
+        this.conf.s1.startup = 10
+        def foo(t):
+            this.conf.s1.recovery = 0.5
+            this.a1()
+        Timer(foo)(5)
 
 
 
@@ -42,6 +47,7 @@ if __name__ == '__main__':
     c.Passive('a1', 0.1)()
     c.Buff('buff', 0.20)(10)
 
+    
     c.test()
 
     Timer.run()

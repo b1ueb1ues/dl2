@@ -6,6 +6,19 @@ _g_log = []
 _g_verbose = []
 
 
+def Logger(t):
+    global _g_verbose
+    if t in _g_verbose:
+        def log(name, amount=None, misc=''):
+            global _g_log
+            _g_log.append([now(), t, name, amount, misc])
+        return log
+    else:
+        def nolog(name, amount=None, misc=''):
+            return
+        return nolog
+
+
 class Log(object):
     @classmethod
     def init(cls, l=None):
@@ -103,6 +116,13 @@ def logget():
 
 if __name__ == '__main__':
     logset('debug')
-    log('debug','name',1.0009)
+    ld = Logger('debug')
+    lf = Logger('foo')
+    ld('ld',100)
+    lf('lf',100)
+    
+    #log('debug','name',1.0009)
     logcat()
-    logsave('log.txt')
+    #logsave('log.txt')
+
+

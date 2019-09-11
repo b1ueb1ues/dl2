@@ -5,9 +5,9 @@ from core.targetbase import *
 class Dummy(Target):
     def config(this, conf):
         conf.name = 'dummy'
-        conf.hp = 100000
-        conf.od = 200
-        conf.bk = 1000
+        conf.hp = 1000000
+        conf.od = 200000
+        conf.bk = 200000
 
 
 if __name__ == '__main__':

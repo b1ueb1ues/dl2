@@ -291,8 +291,7 @@ class Debuff(object):
 
 
 class _Debuff(_Buff):
-    def __init__(this, name, value,
-            mtype='def', morder=None, group=None):
+    def __init__(this, name, value, mtype='def', morder=None, group=None):
         super().__init__(name, value, mtype, morder, group)
         this.dp.set(0.0-value)
         

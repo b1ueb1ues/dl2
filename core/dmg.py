@@ -21,6 +21,7 @@ class Dmg_calc(object):
         this.conf_src.sync_dc = this.sync_src
         this.conf_dst.sync_dc = this.sync_dst
         this.hostname = src.conf.name
+        this.killer = {}
 
 
     def sync_src(this, c, cc):
@@ -85,8 +86,10 @@ class _Dmg_calc(object):
     def __init__(this, conf):  # conf hitattr
         this.src = this._static.src
         this.dst = this._static.dst
-        this.src_dp = this._static.src.Dp.get
-        this.dst_dp = this._static.dst.Dp.get
+        this.src_dp = this.src.Dp.get
+        this.dst_dp = this.dst.Dp.get
+        this.dst_ks = this.dst.Dp.type_mods['ks']
+        this.src_killer = this.src.Dp.type_mods['killer']
 
         this.dmg = Dmg()
         this.dmg.hostname = this._static.hostname
@@ -122,14 +125,26 @@ class _Dmg_calc(object):
         true_dmg = atk / def_ * this._static.base_coef
         true_dmg *= this.src_dp('dmg')
         true_dmg *= this.src_dp(this.type)
-        k = 1.0
-        p = 1.0
+        
+        if len(this.src_killer) > 0:
+            ks = {}
+            bk = 1
+            k = 1
+            for i in this.dst_ks:
+                ks[i.mod_order] = 1
+            for i in this.src_killer:
+                if i.mod_order in ks:
+                    if i.mod_order == 'bk':
+                        bk += i.mod_value
+                    else:
+                        k += i.mod_value
+            true_dmg = true_dmg * k * bk
+
         for i in this.killer:
-            if i == 'bk' and dst_dp('bk') > 1 :
-                p = p + this.killer['bk'] - 1
-            elif dst_dp(i) > 1 :
-                k = k + this.killer[i] - 1
-        true_dmg = true_dmg * k * p
+            for j in this.dst_ks :
+                if j.mod_order == i:
+                    true_dmg *= (1+this.killer[i])
+
         true_dmg *= this.coef
         return true_dmg
 
@@ -139,7 +154,7 @@ class Dmg_param(object):
         this.conf = conf
         conf.sync_dp = this.sync
 
-        this.type_mods = {}
+        this.type_mods = {'ks':[], 'killer':[]}
         this.cache = {}  # type: cache_value(-1:dirty)
 
 
@@ -161,7 +176,7 @@ class Dmg_param(object):
                 return this.cache[mtype]
 
         if mtype not in this.type_mods:
-            return 1.0
+            return 1
 
         mods = this.type_mods[mtype]
         m = {}
@@ -169,12 +184,17 @@ class Dmg_param(object):
             if i.mod_order in m:
                 m[i.mod_order] += i.get()
             else:
-                m[i.mod_order] = 1 + i.get()
+                m[i.mod_order] = 1.0 + i.get()
         ret = 1.0
         for i in m:
             ret *= m[i]
         this.cache[mtype] = ret
         return ret
+
+
+    def ks(this):
+        return this.type_mods['ks']
+
 
 
 class _Dmg_param(object):
@@ -236,7 +256,7 @@ class _Dmg_param(object):
 
 
     def __repr__(this):
-        return '%s:<%s %s %s %s>'%(this._static.hostname,
+        return '%s:%s:<%s %s %s>'%(this._static.hostname,
                 this.mod_name, this.mod_type, this.mod_order, this.mod_value)
 
 #} class _Dmg_calc

@@ -12,10 +12,10 @@ class Action(object):
             index = 0
             status = -2
             idle = 1
-        nop = Nop()
+        this.nop = Nop()
 
-        this.prev = nop
-        this.doing = nop
+        this.prev = this.nop
+        this.doing = this.nop
         this.spd = nospeed
 
 
@@ -117,7 +117,8 @@ class _Action(object):
         if this._static.doing == this:
             log('act', this.src+'end', this.name)
             this.status = -2
-            this._static.doing = this # turn this from doing to prev
+            this._static.prev = this # turn this from doing to prev
+            this.idle = 1
             this.e_idle()
 
 
@@ -137,9 +138,9 @@ class _Action(object):
             log('act',this.src+'start',this.name, 'idle:%d'%doing.status)
         else:
             log('act',this.src+'start',this.name, 'doing '+doing.name+':%d'%doing.status)
-
-        if doing == this : # self is doing
-            return 0
+            if doing == this : # self is doing
+                log('act',this.src+'failed',this.name, 'self is doing')
+                return 0
 
         #if doing.idle # idle
         #    pass
@@ -161,7 +162,8 @@ class _Action(object):
             elif doing.status == 0:
                 print('err in action start()')
                 errrrrrrrrrrrr()
-            this._static.doing = this # turn this from doing to prev
+            this._static.prev = this._static.doing # turn this from doing to prev
+        this.idle = 0
         this.status = -1
         this.startup_start = now()
         this.t_startup(this.get_startup())
