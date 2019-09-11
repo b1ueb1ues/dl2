@@ -26,10 +26,14 @@ class Action(object):
 
 
 class _Action(object):   
+    def default(this, conf):
+        conf.startup = 0.1
+        conf.recovery = 1.9
 
     def __init__(this, name=None, conf=None):  ## can't change name after this
         # conf : startup, recovery, active, action
-        this.src = this._static.host.name 
+        this.hostname = this._static.host.name
+        this.src = this.hostname + ', '
         if name != None:
             if type(name) == tuple:
                 this.name = name[0]
@@ -50,24 +54,6 @@ class _Action(object):
         this.status = -2 # -2nop -1startup 0doing 1recovery
         this.idle = 0
 
-
-        def sync_config(c, i):
-            this.__startup = c.startup
-            this.__recovery = c.recovery
-            this.__active = c.active
-            if 'action' in c:
-                this.act = c.action
-
-        if conf :
-            this.conf = conf
-            this.conf.sync_action = sync_config
-        else:
-            this.conf = Conf()
-            this.conf.startup = 0.1
-            this.conf.active = 0
-            this.conf.recovery = 1.9
-            this.conf.sync_action = sync_config
-
         this.cancel_by = []
         this.interrupt_by = []
 
@@ -75,6 +61,23 @@ class _Action(object):
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
 
+        tmp = Conf()
+        this.default(tmp)
+        if conf :
+            tmp(conf)
+            conf(tmp)
+            tmp = conf
+        this.conf = tmp
+        this.conf.sync_action = this.sync
+
+
+
+    def sync(this, c, cc):
+        this.__startup = c.startup
+        this.__recovery = c.recovery
+        #this.__active = c.active
+        if 'action' in c:
+            this.act = c.action
 
     def __call__(this):
         return this.start()
@@ -104,7 +107,7 @@ class _Action(object):
     def _cb_acting(this, e):
         if this._static.doing == this:
             this.status = 0
-            this._act(1)
+            this._act()
             this.status = 1
             this.recover_start = now() 
             this.t_recovery(this.get_recovery())
@@ -118,8 +121,7 @@ class _Action(object):
             this.e_idle()
 
 
-    def _act(this, partidx):
-        this.idx = partidx
+    def _act(this):
         log('act',this.src+'active',this.name)
         this.act(this)
 
@@ -130,7 +132,6 @@ class _Action(object):
 
     def start(this):
         doing = this._static.doing
-        this.src = this.src+', '
 
         if doing.idle :
             log('act',this.src+'start',this.name, 'idle:%d'%doing.status)

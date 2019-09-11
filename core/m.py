@@ -1,42 +1,42 @@
 import __init__
 from core.ctx import *
-from core.target import *
+from core.targetbase import *
+from core.dummy import *
+from core.mikoto import *
+import benchmark
 
 
-c = Conf()
-c.target.name = 'dummy'
-c.target.ele = 'light'
-c.target.hp = 100000
-c.target.od = 200
-c.target.bk = 300
-c.target.def_ = 10
-c.target.od_def = 1
-c.target.bk_def = 0.6
-c.target.bk_time = 5
+logset(['buff','debug','dmg', 'od', 'bk'])
 
-c._1p.name = '1p'
-c._1p.ele = 'shadow'
-c._1p.atk = 3000
-c._1p.target = c.target
-
-tar = Target(c.target)
+tar = Dummy()
 tar.init()
 
-class C():
-    def __init__(this, conf, target):
-        this.conf = conf
-        this.Dp = Dmg_param(conf)
-        this.Dc = Dmg_calc(this, target)
-        hitattr = Conf()
-        hitattr.name = 's1'
-        hitattr.type = 's'
-        hitattr.coef = 1.0
-        hitattr.to_od = 1
-        hitattr.to_bk = 1
-        hitattr.killer = {}
-        this.dmg = this.Dc(hitattr)
-        print(this.dmg.calc())
-        this.dmg()
+c = Mikoto()
+c.tar(tar)
+c.init()
 
-c = C(c._1p, tar)
+ha = Conf()
+ha.name = 's1'
+ha.type = 's'
+ha.coef = 10
 
+c.Passive('dragon', 0.60)()
+c.Passive('ex-wand', 0.15, 's', 'ex')()
+c.Passive('ex-blade', 0.1, 'atk', 'ex')()
+c.Passive('a1', 0.1)()
+c.Buff('buff', 0.20)(10)
+
+dmg = c.Dmg(ha)
+print(dmg.conf)
+
+
+def tick(t):
+    log('debug', dmg.calc())
+    dmg()
+    
+    t(1)
+
+Timer(tick)()
+
+Timer.run(15)
+logcat()

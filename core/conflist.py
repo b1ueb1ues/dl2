@@ -10,7 +10,6 @@ root._1p = character # conf character
     character.a3       # tuple ability (prefix, affix, value)
     character.a        # conf abilities (conbined weapon, wp, character, \
                        #     auto generate)
-    character.ex       # string co-ability
     character.slot = slot  # conf slot
         slot.w   # string weapon
         slot.d   # string dragon
@@ -33,9 +32,6 @@ root._1p = character # conf character
         s1.hitattr2 = hitattr  # conf 
     character.s2 = skill  # skill
     character.s3 = skill  # skill
-    character.dc = Dmg_calc # damage calculator 
-        dc.src = character # conf character self
-        dc.dst = character # conf character target
 
 root._2p = character   # conf character
 root._3p = character   # conf character

@@ -10,7 +10,7 @@ class Dmg(object):
 
 
 class Dmg_calc(object):
-    def __init__(this, src, dst):
+    def __init__(this, src, dst): # src character , dst target
         this.dst_ele = ''
         this.src_ele = ''
 
@@ -26,13 +26,11 @@ class Dmg_calc(object):
     def sync_src(this, c, cc):
         this.src_ele = c.ele
         this.set_ele()
-        this.base_atk = c.atk
 
 
     def sync_dst(this, c, cc):
         this.dst_ele = c.ele
         this.set_ele()
-        this.base_def = c.def_
 
 
     def set_ele(this):
@@ -57,6 +55,15 @@ class Dmg_calc(object):
         else:
             this.ele = 1
 
+        if this.dst_ele == 'on':
+            this.ele = 1.5
+        elif this.dst_ele == 'off':
+            this.ele = 0.5
+        if this.src_ele == 'on':
+            this.ele = 1.5
+        elif this.src_ele == 'off':
+            this.ele = 0.5
+
         this.base_coef = this.ele / 0.6
 
 
@@ -67,17 +74,35 @@ class Dmg_calc(object):
 
 
 class _Dmg_calc(object):
-    def __init__(this, hitattr):
+    def default(this, conf):
+        conf.name = 'dmg'
+        conf.to_od = 1
+        conf.to_bk = 1
+        conf.coef = 1
+        conf.type = 's'
+        conf.killer = {}
+
+    def __init__(this, conf):  # conf hitattr
+        this.src = this._static.src
+        this.dst = this._static.dst
         this.src_dp = this._static.src.Dp.get
         this.dst_dp = this._static.dst.Dp.get
 
         this.dmg = Dmg()
         this.dmg.hostname = this._static.hostname
+        
+        tmp = Conf()             
+        this.default(tmp)    # conf prior
+        #this.config(tmp)     # default < class < param
+        if conf:
+            tmp(conf)
+            conf(tmp)
+            tmp = conf
+        this.conf = tmp
+        this.conf.sync_dc = this.sync
 
-        hitattr.sync_dc = this.sync_attr
 
-
-    def sync_attr(this, c, cc):
+    def sync(this, c, cc):
         this.dmg.name = c.name
         this.dmg.to_od = c.to_od
         this.dmg.to_bk = c.to_bk
@@ -88,12 +113,12 @@ class _Dmg_calc(object):
 
     def __call__(this): # calculate 
         this.dmg.dmg = this.calc()
-        this._static.dst.dt(this.dmg)
+        this.dst.dt(this.dmg)
 
 
     def calc(this):
-        atk  = this._static.base_atk * this.src_dp('atk')
-        def_ = this._static.base_def * this.dst_dp('def')
+        atk  = this.src.atk * this.src_dp('atk')
+        def_ = this.dst.def_ * this.dst_dp('def')
         true_dmg = atk / def_ * this._static.base_coef
         true_dmg *= this.src_dp('dmg')
         true_dmg *= this.src_dp(this.type)

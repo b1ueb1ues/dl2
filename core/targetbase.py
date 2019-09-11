@@ -3,14 +3,33 @@ from core.ctx import *
 
 
 class Target(object):
-    def __init__(this, conf):
+    def default(this, conf):
+        conf.def_    = 10
+        conf.od_def  = 1
+        conf.bk_def  = 0.6
+        conf.bk_time = 10
+
+        conf.name    = 'target'
+        conf.ele     = 'on'
+        conf.hp      = 1000000
+        conf.od      = 200000
+        conf.bk      = 200000
+
+
+    def __init__(this, conf=None):
         this.odbk = 0 # 0: normal, 1: od, -1: bk
         this.od = 0
         this.bk = -1
 
-        this.conf = conf
-        this.config(conf)
-        this.conf.sync_target = this.sync_conf
+        tmp = Conf()             
+        this.default(tmp)    # conf prior
+        this.config(tmp)     # default < class < param
+        if conf:
+            tmp(conf)
+            conf(tmp)
+            tmp = conf
+        this.conf = tmp
+        this.conf.sync_target = this.sync
 
         this.skada = {}
         #Event('dmg')(this.l_dmg)
@@ -31,14 +50,14 @@ class Target(object):
     def config(this, conf):
         pass
 
-
+    # after all config settle down
     def init(this):
         this.classinit()
         this.hp = this.base_hp
         this.def_ = this.base_def
 
 
-    def sync_conf(this, c, cc):
+    def sync(this, c, cc):
         this.base_def = c.def_
 
         this.base_hp = c.hp
@@ -60,6 +79,7 @@ class Target(object):
 
 
     def recount(this, dmg):
+        log('dmg', 'take', dmg.dmg, 'hp: %d'%(this.hp) )
         pass
 
 
@@ -99,7 +119,7 @@ class Target(object):
 
 
     def die(this):
-        pass
+        Timer.stop()
 
 
     def overdrive(this):
@@ -151,7 +171,7 @@ if __name__ == '__main__':
 
     conf_root = c
 
-    tar = Target(c.target)
+    tar = Target()
     tar.init()
     dmg = lobject()
     dmg.dmg = 100

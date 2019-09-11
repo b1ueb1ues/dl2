@@ -160,6 +160,11 @@ class Timer(object):
         _g_timeline.run(duration)
 
 
+    @classmethod
+    def stop(cls):
+        _g_timeline.stop()
+
+
     def __str__(this):
         return '%f: Timer:%s'%(this.timing, this.process)
 
