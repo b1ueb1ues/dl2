@@ -27,7 +27,7 @@ class Mikoto(Character):
         def foo(t):
             this.conf.s1.recovery = 0.5
             this.a1()
-        Timer(foo)(5)
+        Timer(foo)(300)
 
 
 

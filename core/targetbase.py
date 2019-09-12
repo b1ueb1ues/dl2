@@ -2,8 +2,7 @@ import __init__
 from core.ctx import *
 
 
-
-class Target(object):
+class Conf_tar(Config):
     def default(this, conf):
         conf.def_    = 10
         conf.od_def  = 1
@@ -17,20 +16,39 @@ class Target(object):
         conf.bk      = 200000
 
 
+    def sync(this, c):
+        this.name = c.name
+        this.base_def = c.def_
+
+        this.base_hp = c.hp
+        this.base_od = c.od
+        this.base_bk = c.bk
+
+        this.od_def = c.od_def
+        this.bk_def = c.bk_def
+        this.bk_time = c.bk_time
+
+        if this.base_def <= 0:
+            print('base_def:%d <= 0'%this.base_def)
+            errrrrrrrrrrr()
+        if this.base_od > 0:
+            this.dt = this.dt_odbk
+        else:
+            this.od = -1
+            this.dt = this.dt_no_od
+
+
+    def config(this, c):
+        this.config(c)
+
+
+class Target(object):
     def __init__(this, conf=None):
         this.odbk = 0 # 0: normal, 1: od, -1: bk
         this.od = 0
         this.bk = -1
 
-        tmp = Conf()             
-        this.default(tmp)    # conf prior
-        this.config(tmp)     # default < class < param
-        if conf:
-            tmp(conf)
-            conf(tmp)
-            tmp = conf
-        this.conf = tmp
-        this.conf.sync_target = this.sync
+        this.conf = Conf_tar(this, conf)
 
         this.skada = {}
         #Event('dmg')(this.l_dmg)
@@ -64,27 +82,6 @@ class Target(object):
         this.def_ = this.base_def
         this.od_ks = this.Dp('od', 'ks', 'od', 1)
         this.bk_ks = this.Dp('bk', 'ks', 'bk', 1)
-
-
-    def sync(this, c, cc):
-        this.base_def = c.def_
-
-        this.base_hp = c.hp
-        this.base_od = c.od
-        this.base_bk = c.bk
-
-        this.od_def = c.od_def
-        this.bk_def = c.bk_def
-        this.bk_time = c.bk_time
-
-        if this.base_def <= 0:
-            print('base_def:%d <= 0'%this.base_def)
-            errrrrrrrrrrr()
-        if this.base_od > 0:
-            this.dt = this.dt_odbk
-        else:
-            this.od = -1
-            this.dt = this.dt_no_od
 
 
     def recount(this, dmg):
@@ -177,27 +174,26 @@ if __name__ == '__main__':
         c.target.hp = 100000
         c.target.od = 200
         c.target.bk = 300
-        c.target.def_ = 10
-        c.target.od_def = 1
-        c.target.bk_def = 0.6
-        c.target.bk_time = 5
 
         c._1p.atk = 3000
 
         conf_root = c
 
-        tar = Target()
+        tar = Target(c.target)
+        #tar = Target()
         tar.init()
         dmg = lobject()
+        dmg.hostname = 'noone'
         dmg.dmg = 100
         dmg.to_od = 1
         dmg.to_bk = 1
 
         def foo(t):
             tar.dt(dmg)
-            if this.logdbg:
-                this.logdbg('%d, %d, %d'%(tar.hp, tar.od, tar.bk))
-            t(1)
+            log('debug', '%d, %d, %d'%(tar.hp, tar.od, tar.bk))
+            t(60)
         Timer(foo)()
         Timer.run()
+    foo()
     logcat()
+

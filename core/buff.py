@@ -5,7 +5,7 @@ from core.ctx import *
 class Passive(object):
     def __init__(this, Dp):
         this.Dp = Dp
-        Dp.conf.sync_passive = this.sync
+        Dp.conf(this.sync)
 
 
     def __call__(this, *args, **kwargs):
@@ -14,7 +14,7 @@ class Passive(object):
         return __Passive(*args, **kwargs)
 
 
-    def sync(this, c, cc):
+    def sync(this, c):
         this.hostname = c.name
 
 
@@ -81,7 +81,7 @@ class _Passive():
 class Buff(object):
     def __init__(this, Dp):
         this.Dp = Dp
-        Dp.conf.sync_buff = this.sync
+        Dp.conf(this.sync)
 
         this.buff_group = {}
 
@@ -98,7 +98,7 @@ class Buff(object):
         this(e.name, e.value, e.mtype, e.morder, e.group)(e.duration)
 
 
-    def sync(this, c, cc):
+    def sync(this, c):
         this.hostname = c.name
 
 

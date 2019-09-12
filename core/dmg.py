@@ -19,18 +19,18 @@ class Dmg_calc(object):
         this.dst = dst
         this.conf_src = src.conf
         this.conf_dst = dst.conf
-        this.conf_src.sync_dc = this.sync_src
-        this.conf_dst.sync_dc = this.sync_dst
+        this.conf_src(this.sync_src)
+        this.conf_dst(this.sync_dst)
         this.hostname = src.conf.name
         this.killer = {}
 
 
-    def sync_src(this, c, cc):
+    def sync_src(this, c):
         this.src_ele = c.ele
         this.set_ele()
 
 
-    def sync_dst(this, c, cc):
+    def sync_dst(this, c):
         this.dst_ele = c.ele
         this.set_ele()
 
@@ -75,7 +75,7 @@ class Dmg_calc(object):
         return __Dmg_calc(*args, **kwargs)
 
 
-class _Dmg_calc(object):
+class Conf_dc(Config):
     def default(this, conf):
         conf.name = 'dmg'
         conf.to_od = 1
@@ -85,6 +85,16 @@ class _Dmg_calc(object):
         conf.killer = {}
 
 
+    def sync(this, c):
+        this.dmg.name = c.name
+        this.dmg.to_od = c.to_od
+        this.dmg.to_bk = c.to_bk
+        this.coef = c.coef
+        this.type = c.type
+        this.killer = c.killer
+
+
+class _Dmg_calc(object):
     def __init__(this, conf):  # conf hitattr
         this.src = this._static.src
         this.dst = this._static.dst
@@ -96,24 +106,7 @@ class _Dmg_calc(object):
         this.dmg = Dmg()
         this.dmg.hostname = this._static.hostname
         
-        tmp = Conf()             
-        this.default(tmp)    # conf prior
-        #this.config(tmp)     # default < class < param
-        if conf:
-            tmp(conf)
-            conf(tmp)
-            tmp = conf
-        this.conf = tmp
-        this.conf.sync_dc = this.sync
-
-
-    def sync(this, c, cc):
-        this.dmg.name = c.name
-        this.dmg.to_od = c.to_od
-        this.dmg.to_bk = c.to_bk
-        this.coef = c.coef
-        this.type = c.type
-        this.killer = c.killer
+        this.conf = Conf_dc(this, conf)
 
 
     def __call__(this): 
@@ -154,13 +147,13 @@ class _Dmg_calc(object):
 class Dmg_param(object):
     def __init__(this, conf):
         this.conf = conf
-        conf.sync_dp = this.sync
+        conf(this.sync)
 
         this.type_mods = {'ks':[], 'killer':[]}
         this.cache = {}  # type: cache_value(-1:dirty)
 
 
-    def sync(this, c, cc):
+    def sync(this, c):
         this.hostname = c.name
 
 
@@ -192,11 +185,6 @@ class Dmg_param(object):
             ret *= m[i]
         this.cache[mtype] = ret
         return ret
-
-
-    def ks(this):
-        return this.type_mods['ks']
-
 
 
 class _Dmg_param(object):

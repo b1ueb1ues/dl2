@@ -2,55 +2,6 @@ import __init__
 from core.ctx import *
 
 
-class X(object):
-    def __init__(this, Actionbase):
-        this.Actionbase = Actionbase
-
-
-    def __call__(this, *args, **kwargs):
-        a = this.Actionbase(*args, **kwargs)
-        a.conf.type = 'x'
-        a.conf.interrupt_by = ['fs','s','dodge']
-        a.conf.cancel_by = ['fs','s','dodge']
-        return a
-
-
-class FS(object):
-    def __init__(this, Actionbase):
-        this.Actionbase = Actionbase
-
-
-    def __call__(this, *args, **kwargs):
-        a = this.Actionbase(*args, **kwargs)
-        a.conf.type = 'fs'
-        a.conf.interrupt_by = ['s']
-        a.conf.cancel_by = ['s','dodge']
-        return a
-
-
-class S(object):
-    def __init__(this, Actionbase):
-        this.Actionbase = Actionbase
-
-
-    def __call__(this, *args, **kwargs):
-        a = this.Actionbase(*args, **kwargs)
-        a.conf.type = 's'
-        return a
-
-
-class Dodge(object):
-    def __init__(this, Actionbase):
-        this.Actionbase = Actionbase
-
-
-    def __call__(this, *args, **kwargs):
-        a = this.Actionbase(*args, **kwargs)
-        a.conf.type = 'dodge'
-        a.conf.cancel_by = ['fs','s']
-        return a
-
-
 class Action(object):
     def __init__(this, host):
         this.host = host
@@ -78,22 +29,22 @@ class Action(object):
 
 class Conf_Action(Config):
     def default(this, conf):
-        conf.lag = 0
-        conf.startup = 0
-        conf.recovery = 120
+        conf.lag          = 0
+        conf.startup      = 0
+        conf.recovery     = 120
         conf.interrupt_by = []
-        conf.cancel_by = []
-        conf.type = this.name
+        conf.cancel_by    = []
+        conf.type         = this.name
 
 
-    def sync(this, c, cc):
-        this.atype = c.type
-        this.startup = c.startup
-        this.recovery = c.recovery
-        this.cancel_by = c.cancel_by
-        this.interrupt_by = c.interrupt_by
-        if 'action' in c:
-            this.act = c.action
+    def sync(this, conf):
+        this.atype        = conf.type
+        this.lag          = conf.lag
+        this.startup      = conf.startup
+        this.recovery     = conf.recovery
+        this.interrupt_by = conf.interrupt_by
+        this.cancel_by    = conf.cancel_by
+
 
 class _Action(object):   
     def __init__(this, name=None, conf=None, active=None):  
@@ -110,12 +61,12 @@ class _Action(object):
                 this.index = 0
         else:
             this.name = '_Action'
+        if active:
+            this.act = active
 
         this.index = 0
         this.recover_start = 0
         this.startup_start = 0
-        this.startup = 0
-        this.recovery = 0
         this.status = -2 # -2nop -1startup 0doing 1recovery
         this.idle = 0
 
@@ -123,7 +74,8 @@ class _Action(object):
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
 
-        this.conf = Conf_Action(conf)
+        this.conf = Conf_Action(this, conf)
+        this.log = Logger('act')
 
 
     def __call__(this):
@@ -224,40 +176,6 @@ class _Action(object):
     def __str__(this):
         return this.name
 
-
-class Fs_group(object):
-    def __init__(this, name, conf, act=None):
-        this.actions = {}
-        this.conf = conf
-        fsconf = conf.fs
-        xnfsconf = [fsconf,fsconf,fsconf,fsconf,fsconf,fsconf]
-
-        for i in range(5):
-            xnfs = 'x%dfs'%(i+1)
-            if xnfs in this.conf:
-                xnfsconf[i] += this.conf[xnfs]
-
-        if 'dfs' in this.conf:
-            xnfsconf[5] += this.conf.dfs
-
-        this.add('default', Fs(name, fsconf     , act))
-        this.add('x1',      Fs(name, xnfsconf[0], act))
-        this.add('x2',      Fs(name, xnfsconf[1], act))
-        this.add('x3',      Fs(name, xnfsconf[2], act))
-        this.add('x4',      Fs(name, xnfsconf[3], act))
-        this.add('x5',      Fs(name, xnfsconf[4], act))
-        this.add('dodge',   Fs(name, xnfsconf[5], act))
-
-
-    def add(this, name, action):
-        this.actions[name] = action
-
-
-    def __call__(this, before):
-        if before in this.actions:
-            return this.actions[before]()
-        else:
-            return this.actions['default']()
 
 
 if __name__ == '__main__' :

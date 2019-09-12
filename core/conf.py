@@ -234,21 +234,23 @@ class Conf(lobject):
         elif type(a).__name__ == 'instancemethod':
             this.__sync[this.__idx] = a
             this.__idx += 1
+            a(this)
             return this.__idx-1
         elif type(a).__name__ == 'function':
             this.__sync[this.__idx] = a
             this.__idx += 1
+            a(this)
             return this.__idx-1
         elif type(a).__name__ == 'method':
             this.__sync[this.__idx] = a
             this.__idx += 1
+            a(this)
             return this.__idx-1
         elif a==None:
             this.__dosync()
         else:
             print('update conf with none dict/conf')
             errrrrrrrrrrrrrrrrrrr()
-
 
 
     def __dosync(this):
@@ -262,27 +264,24 @@ class Config(Conf):
     def config(this, conf):
         pass
     def sync(this, conf):
-        print('config sync')
         pass
 
     def __new__(cls, host, conf=None):
         tmp = Conf()
-        cls.default(host, conf)
-        cls.config(host, conf)
+        cls.default(host, tmp)
+        cls.config(host, tmp)
         def sync(conf):
             cls.sync(host, conf)
         if conf:
             tmp(conf)
             conf(tmp)
             conf(sync)
+            #conf()
             return conf
         else:
             tmp(sync)
+            #tmp()
             return tmp
-
-
-
-
 
 
 

@@ -5,7 +5,7 @@ from core.action import *
 from core.skill import *
 
 
-class Character(object):
+class Conf_chara(Config):
     def default(this, conf):
         conf.name = 'characterbase'
         conf.star = 5
@@ -43,20 +43,28 @@ class Character(object):
 
         conf.ex = ['blade', 'wand']
 
+    def sync(this, c):
+        this.name = c.name
+        this.base_atk = c.atk
+        if c.wt in ['sword', 'blade', 'dagger', 'axe', 'lance']:
+            this.base_def = 10
+        else:
+            this.base_def = 8
 
+    def config(this, c):
+        this.config(c)
+
+
+
+class Character(object):
     def __init__(this, conf=None):
         this.atk = 2000
         this.killer = {}
+        this.conf = Conf_chara(this, conf)
 
-        tmp = Conf()             
-        this.default(tmp)    # conf prior
-        this.config(tmp)     # default < class < param
-        if conf:
-            tmp(conf)
-            conf(tmp)
-            tmp = conf
-        this.conf = tmp
-        this.conf.sync_characterbase = this.sync
+
+    def config(this, conf):
+        pass
 
 
     # after settle down all config
@@ -89,19 +97,6 @@ class Character(object):
         return this.mod('spd')
 
 
-    def config(this, conf):
-        pass
-
-
-    def sync(this, c, cc):
-        this.name = c.name
-        this.base_atk = c.atk
-        if c.wt in ['sword', 'blade', 'dagger', 'axe', 'lance']:
-            this.base_def = 10
-        else:
-            this.base_def = 8
-
-
     def tar(this, target):
         this.target = target
         this.Dmg = Dmg_calc(this, target)
@@ -118,31 +113,31 @@ if __name__ == '__main__':
     logset('bk')
 
     def foo():
-        for i in range(1000):
-            t = Dummy()
-            t.init()
-            c = Character()
-            c.conf.name = 'c'
-            c.tar(t)
-            c.init()
+        t = Dummy()
+        t.init()
+        c = Character()
+        c.conf.name = 'c'
+        c.tar(t)
+        c.init()
 
-            c.s2.sp.cur = 5000
-            c.s2()
-            c.s2()
-            def foo(t):
-                n = now()
-                if n == 180:
-                    c.s2()
-                if n == 240:
-                    c.s2.sp.cur = 5000
-                    c.s2()
-                if n == 420:
-                    c.s1.sp.cur = 5000
-                    c.s1()
-            Timer(foo)(180)
-            Timer(foo)(240)
-            Timer(foo)(420)
-            Timer.run()
-    benchmark.run(foo)
-    #logcat()
+        c.s2.sp.cur = 5000
+        c.s2()
+        c.s2()
+        def foo(t):
+            n = now()
+            if n == 180:
+                c.s2()
+            if n == 240:
+                c.s2.sp.cur = 5000
+                c.s2()
+            if n == 420:
+                c.s1.sp.cur = 5000
+                c.s1()
+        Timer(foo)(180)
+        Timer(foo)(240)
+        Timer(foo)(420)
+        Timer.run()
+    foo()
+    #benchmark.run(foo)
+    logcat()
 

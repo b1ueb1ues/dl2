@@ -6,7 +6,7 @@ from core.mikoto import *
 import benchmark
 
 
-logset(['buff','debug','dmg', 'od', 'bk', 'ks'])
+#logset(['buff','debug','dmg', 'od', 'bk', 'ks'])
 
 tar = Dummy()
 tar.init()
@@ -39,16 +39,15 @@ def foo():
     for i in range(1000000):
         dmg()
 
-#benchmark.run(foo)
-#exit()
+benchmark.run(foo)
+exit()
 
 def tick(t):
     #log('debug', 'dmg', dmg.calc())
     dmg()
-    
-    t(1)
+    t(60)
 
 Timer(tick)()
 
-Timer.run(10)
+Timer.run()
 logcat()

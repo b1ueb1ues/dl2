@@ -40,8 +40,7 @@ class Sp(object):
         this.cur = 0
         this.max = sp_max
 
-
-class _Skill(object):
+class Conf_skl(Config):
     def default(this, conf):
         conf.lag      = 6
         conf.sp       = 0
@@ -54,20 +53,19 @@ class _Skill(object):
         conf.hitattr  = []
 
 
+    def sync(this, c):
+        this.sp.max = c.sp
+        this.hit = c.hit
+
+
+
+class _Skill(object):
     def __init__(this, name, host, conf=None):
         this.name = name
         this.host = host
         this.sp = Sp(0)
 
-        tmp = Conf()
-        this.default(tmp)
-        if conf:
-            tmp(conf)
-            conf(tmp)
-            this.conf = conf
-        else:
-            this.conf = tmp
-        this.conf.sync_skill = this.sync
+        this.conf = Conf_skl(this, conf)
 
         this.ac = host.Action(this.name, this.conf, this.active)
 
@@ -77,11 +75,6 @@ class _Skill(object):
 
     def __call__(this):
         return this.cast()
-
-
-    def sync(this, c, cc):
-        this.sp.max = c.sp
-        this.hit = c.hit
 
 
     def init(this):
@@ -152,7 +145,7 @@ class _Skill(object):
         elif t.wide == 'zone':
             this.host.Zonebuff(this.name, t.value, *t.buffarg)(t.time)
         else:
-            this.host.Buff(this.name, t.value, *t.buffarg).on()
+            this.host.Buff(this.name, t.value, *t.buffarg)(t.time)
 
 
     def dmg(this, t):
