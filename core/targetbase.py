@@ -108,12 +108,14 @@ class Target(object):
             this.hp -= true_dmg
             this.od += true_dmg * dmg.to_od
             if this.logod:
-                this.logod('%s, od+'%dmg.hostname, true_dmg * dmg.to_od)
+                this.logod('%s, od+'%dmg.hostname, true_dmg * dmg.to_od,
+                        'od: %d/%d'%(this.od, this.base_od) )
         elif this.odbk == 1:
             this.hp -= true_dmg
             this.bk -= true_dmg * dmg.to_bk
             if this.logbk:
-                this.logbk('%s, od-'%dmg.hostname, true_dmg * dmg.to_bk)
+                this.logbk('%s, od-'%dmg.hostname, true_dmg * dmg.to_bk,
+                        'bk: %d/%d'%(this.bk, this.base_bk) )
         else:
             this.hp -= true_dmg
 
@@ -148,7 +150,7 @@ class Target(object):
         this.def_ = this.base_def * this.bk_def
         def foo(t):
             this.normal()
-        Timer(foo)(this.bk_time)
+        Timer(foo)(this.bk_time*60)
         this.od_ks.off()
         this.bk_ks()
         if this.logod:

@@ -20,15 +20,17 @@ class Conf_chara(Config):
         conf.s1.sp = 4500       # int sp_max
         conf.s1.recovery = 84  # int recovery frames
         conf.s1.hit = { 
-                0.4:'h1', 
-                0.5:'h1', 
-                0.6:'h1',
-                0.8:'h2',
+                24:'h1', 
+                30:'h1', 
+                36:'h1',
+                48:'h2',
                 }    # dict {float timing: idx hitattr}
         conf.s1.hitattr.h1.coef = 2
-        conf.s1.hitattr.h2.coef = 3
-        conf.s1.hitattr.h2.to_od = 2
-        conf.s1.hitattr.h2.to_bk = 2
+        conf.s1.hitattr.h1.to_od = 0.5
+        conf.s1.hitattr.h1.to_bk = 2
+        conf.s1.hitattr.h2.coef = 2
+        conf.s1.hitattr.h2.killer = {'bk':1}
+
 
         conf.s2.sp = 4500
         conf.s2.recovery = 60
@@ -59,7 +61,6 @@ class Conf_chara(Config):
 class Character(object):
     def __init__(this, conf=None):
         this.atk = 2000
-        this.killer = {}
         this.conf = Conf_chara(this, conf)
 
 
@@ -72,6 +73,7 @@ class Character(object):
         this.classinit()
         this.s1 = this.Skill('s1', this, this.conf.s1)
         this.s2 = this.Skill('s2', this, this.conf.s2)
+        this.s3 = this.Skill('s2', this, this.conf.s2)
         this.s1.init()
         this.s2.init()
 
@@ -111,9 +113,14 @@ if __name__ == '__main__':
     logset('skill')
     logset('od')
     logset('bk')
+    logset('debug')
+    logset('dbg')
 
     def foo():
         t = Dummy()
+        t.conf.od = 100
+        t.conf.bk = 100
+        t.conf()
         t.init()
         c = Character()
         c.conf.name = 'c'
