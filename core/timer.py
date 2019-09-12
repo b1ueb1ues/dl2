@@ -60,7 +60,7 @@ class Timeline(object):
         this._stop = 1
 
 
-    def run(this, last = 100):
+    def run(this, last = 6000):
         global _g_now
         last += _g_now
         while 1:
@@ -104,7 +104,7 @@ class Timer(object):
             this.process = this._process
 
         if timeout :
-            this.timeout = timeout
+            this.timeout = int(timeout)
         else:
             this.timeout = 0
 
@@ -117,7 +117,7 @@ class Timer(object):
     def on(this, timeout = None):
         global _g_now
         if timeout != None:
-            this.timeout = timeout
+            this.timeout = int(timeout)
             this.timing = _g_now + timeout
         else:
             this.timing = _g_now + this.timeout
@@ -156,7 +156,7 @@ class Timer(object):
 
 
     @classmethod
-    def run(cls, duration=100):
+    def run(cls, duration=6000):
         _g_timeline.run(duration)
 
 
@@ -166,11 +166,11 @@ class Timer(object):
 
 
     def __str__(this):
-        return '%f: Timer:%s'%(this.timing, this.process)
+        return '%d: Timer:%s'%(this.timing, this.process)
 
 
     def __repr__(this):
-        return '%f: Timer:%s'%(this.timing, this.process)
+        return '%d: Timer:%s'%(this.timing, this.process)
 
 
     def _process(this):
@@ -186,6 +186,6 @@ if __name__ == '__main__':
     def test(t):
         print(t)
         t()
-    t = Timer(test)(3)
-    Timer.run(120)
+    t = Timer(test)(180)
+    Timer.run()
 

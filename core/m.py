@@ -24,7 +24,7 @@ ha = Conf()
 ha.name = 's1'
 ha.type = 's'
 ha.coef = 1
-ha.killer = {'bk':0, 'burn':0}
+ha.killer = {'bk':1, 'burn':0}
 
 #c.Passive('dragon', 0.60)()
 #c.Passive('ex-wand', 0.15, 's', 'ex')()

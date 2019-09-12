@@ -89,11 +89,12 @@ class Target(object):
 
     def recount(this, dmg):
         if this.logdmg:
-            this.logdmg('take', dmg.dmg, 'hp: %d'%(this.hp) )
+            this.logdmg('%s, %s'%(dmg.hostname, dmg.name), dmg.dmg, 'hp: %d'%(this.hp) )
 
 
     def dt(this, dmg):
-        pass
+        print('targetbase dt not init')
+        errrrrrrrrrrrrrrrrrrrr()
 
 
     def dt_no_od(this, dmg):
@@ -110,12 +111,12 @@ class Target(object):
             this.hp -= true_dmg
             this.od += true_dmg * dmg.to_od
             if this.logod:
-                this.logod('od+', true_dmg * dmg.to_od)
+                this.logod('%s, od+'%dmg.hostname, true_dmg * dmg.to_od)
         elif this.odbk == 1:
             this.hp -= true_dmg
             this.bk -= true_dmg * dmg.to_bk
             if this.logbk:
-                this.logbk('od-', true_dmg * dmg.to_od)
+                this.logbk('%s, od-'%dmg.hostname, true_dmg * dmg.to_bk)
         else:
             this.hp -= true_dmg
 
@@ -170,34 +171,33 @@ class Target(object):
 
 if __name__ == '__main__':
     logset(['od','bk','debug'])
+    def foo():
+        c = Conf()
+        c.target.name = 'dummy'
+        c.target.hp = 100000
+        c.target.od = 200
+        c.target.bk = 300
+        c.target.def_ = 10
+        c.target.od_def = 1
+        c.target.bk_def = 0.6
+        c.target.bk_time = 5
 
-    c = Conf()
-    c.target.name = 'dummy'
-    c.target.hp = 100000
-    c.target.od = 200
-    c.target.bk = 300
-    c.target.def_ = 10
-    c.target.od_def = 1
-    c.target.bk_def = 0.6
-    c.target.bk_time = 5
+        c._1p.atk = 3000
 
-    c._1p.atk = 3000
+        conf_root = c
 
-    conf_root = c
+        tar = Target()
+        tar.init()
+        dmg = lobject()
+        dmg.dmg = 100
+        dmg.to_od = 1
+        dmg.to_bk = 1
 
-    tar = Target()
-    tar.init()
-    dmg = lobject()
-    dmg.dmg = 100
-    dmg.to_od = 1
-    dmg.to_bk = 1
-
-    def foo(t):
-        tar.dt(dmg)
-        if this.logdbg:
-            this.logdbg('%d, %d, %d'%(tar.hp, tar.od, tar.bk))
-        t(1)
-    Timer(foo)()
-
-    Timer.run()
+        def foo(t):
+            tar.dt(dmg)
+            if this.logdbg:
+                this.logdbg('%d, %d, %d'%(tar.hp, tar.od, tar.bk))
+            t(1)
+        Timer(foo)()
+        Timer.run()
     logcat()

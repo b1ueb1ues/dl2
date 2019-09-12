@@ -22,16 +22,18 @@ class _Passive():
     def __init__(this, name, value, mtype='atk', morder=None):
         this.name = name
         this._value = value
-        this.mod_type = mtype # atk def_ cc cd buff sp x fs s dmg
+        this.mod_type = mtype # atk def_ cc cd buff sp x fs s dmg killer ks
         if morder == None:
             this.mod_order = 'p'
         else:
-            this.mod_order = morder # p: passive, b: buff, k: killer, ex: co-ab
+            this.mod_order = morder # p: passive, b: buff, ex: co-ab, 
+            # od, bk, burn, poison...  (mtype = killer/ks)
 
         this._active = 0
         this.Dp = this._static.Dp
         this.dp = this._static.Dp(this.name,
                 this.mod_type, this.mod_order, value)
+
 
     def hostname(this):
         return this._static.hostname
@@ -168,7 +170,7 @@ class _Buff(object):
         this._active = 1
         this.dp.on()
         if duration > 0:
-            this.t_buffend.on(duration)
+            this.t_buffend(duration*60)
         stacks = len(this.group)
         if stacks >= 10:
             log('buff', '%s: %s'%(this.hostname(), this.name),
@@ -188,7 +190,7 @@ class _Buff(object):
 
     def __buff_refresh(this, duration):
         if duration > 0:
-            this.t_buffend.on(duration)
+            this.t_buffend.on(duration*60)
         if verbose('buff'):
             log('buff', '%s: %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this.get()),

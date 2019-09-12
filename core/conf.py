@@ -340,6 +340,11 @@ class Conf(lobject):
 
 if __name__ == '__main__':
     a = Conf()
+    for i in a:
+        print(i, a[i])
+    exit()
+    print(a)
+    exit()
     a.b = 'b'
     a.c.d = 'c.d'
     print(a)
@@ -352,3 +357,4 @@ if __name__ == '__main__':
         print('if')
     else:
         print('else')
+    
