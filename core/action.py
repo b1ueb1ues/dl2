@@ -76,7 +76,7 @@ class Action(object):
         return __Action(*args, **kwargs)
 
 
-class _Action(object):   
+class Conf_Action(Config):
     def default(this, conf):
         conf.startup = 0.1
         conf.recovery = 1.9
@@ -85,6 +85,16 @@ class _Action(object):
         conf.type = this.name
 
 
+    def sync(this, c, cc):
+        this.atype = c.type
+        this.startup = c.startup
+        this.recovery = c.recovery
+        this.cancel_by = c.cancel_by
+        this.interrupt_by = c.interrupt_by
+        if 'action' in c:
+            this.act = c.action
+
+class _Action(object):   
     def __init__(this, name=None, conf=None):  ## can't change name after this
         # conf : startup, recovery, active, action
         this.hostname = this._static.host.name
@@ -102,8 +112,8 @@ class _Action(object):
         this.index = 0
         this.recover_start = 0
         this.startup_start = 0
-        this.__startup = 0
-        this.__recovery = 0
+        this.startup = 0
+        this.recovery = 0
         this.status = -2 # -2nop -1startup 0doing 1recovery
         this.idle = 0
 
@@ -111,25 +121,7 @@ class _Action(object):
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
 
-        tmp = Conf()
-        this.default(tmp)
-        if conf :
-            tmp(conf)
-            conf(tmp)
-            tmp = conf
-        this.conf = tmp
-        this.conf.sync_action = this.sync
-
-
-    def sync(this, c, cc):
-        this.atype = c.type
-        this.__startup = c.startup
-        this.__recovery = c.recovery
-        this.cancel_by = c.cancel_by
-        this.interrupt_by = c.interrupt_by
-        #this.__active = c.active
-        if 'action' in c:
-            this.act = c.action
+        this.conf = Conf_Action(conf)
 
 
     def __call__(this):
@@ -137,11 +129,11 @@ class _Action(object):
     
 
     def get_recovery(this):
-        return this.__recovery / this.speed()
+        return this.recovery / this.speed()
 
 
     def get_startup(this):
-        return this.__startup / this.speed()
+        return this.startup / this.speed()
 
 
     def speed(this):
