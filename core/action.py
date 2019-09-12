@@ -78,8 +78,9 @@ class Action(object):
 
 class Conf_Action(Config):
     def default(this, conf):
-        conf.startup = 0.1
-        conf.recovery = 1.9
+        conf.lag = 0
+        conf.startup = 0
+        conf.recovery = 120
         conf.interrupt_by = []
         conf.cancel_by = []
         conf.type = this.name
@@ -95,8 +96,9 @@ class Conf_Action(Config):
             this.act = c.action
 
 class _Action(object):   
-    def __init__(this, name=None, conf=None):  ## can't change name after this
-        # conf : startup, recovery, active, action
+    def __init__(this, name=None, conf=None, active=None):  
+        ## can't change name after this
+        #  conf : startup, recovery, active
         this.hostname = this._static.host.name
         this.src = this.hostname + ', '
         if name != None:
@@ -151,7 +153,8 @@ class _Action(object):
 
     def _cb_act_end(this, e):
         if this._static.doing == this:
-            log('act', this.src+'end', this.name)
+            if this.log:
+                this.log(this.src+'end', this.name)
             this.status = -2
             this._static.prev = this # turn this from doing to prev
             this.idle = 1
@@ -159,7 +162,8 @@ class _Action(object):
 
 
     def _act(this):
-        log('act',this.src+'active',this.name)
+        if this.log:
+            this.log(this.src+'active',this.name)
         this.act(this)
 
 
@@ -171,11 +175,15 @@ class _Action(object):
         doing = this._static.doing
 
         if doing.idle :
-            log('act',this.src+'start',this.name, 'idle:%d'%doing.status)
+            if this.log:
+                this.log(this.src+'start',this.name, 'idle:%d'%doing.status)
         else:
-            log('act',this.src+'start',this.name, 'doing '+doing.name+':%d'%doing.status)
+            if this.log:
+                this.log(this.src+'start',this.name,
+                        'doing '+doing.name+':%d'%doing.status)
             if doing == this : # self is doing
-                log('act',this.src+'failed',this.name, 'self is doing')
+                if this.log:
+                    this.log(this.src+'failed',this.name, 'self is doing')
                 return 0
 
         #if doing.idle # idle
@@ -184,16 +192,22 @@ class _Action(object):
             if doing.status == -1: # try to interrupt an action
                 if this.atype in doing.interrupt_by : # can interrupt action
                     doing.t_startup.off()
-                    log('act', this.src+'interrupt', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.startup_start) )
+                    if this.log:
+                        this.log(this.src+'interrupt', doing.name,
+                                'by '+this.name \
+                                +'\tafter %.2fs'%(now()-doing.startup_start) )
                 else:
-                    log('act',this.src+'failed', this.name)
+                    if this.log:
+                        this.log(this.src+'failed', this.name)
                     return 0
             elif doing.status == 1: # try to cancel an action
                 if this.atype in doing.cancel_by : # can interrupt action
                     doing.t_recovery.off()
-                    log('act', this.src+'cancel', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.recover_start) )
+                    if this.log:
+                        this.log(this.src+'cancel', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.recover_start) )
                 else:
-                    log('act',this.src+'failed', this.name)
+                    if this.log:
+                        log('act',this.src+'failed', this.name)
                     return 0
             elif doing.status == 0:
                 print('err in action start()')
@@ -202,10 +216,8 @@ class _Action(object):
         this.idle = 0
         this.status = -1
         this.startup_start = now()
-        this.t_startup(this.get_startup())
+        this.t_startup(this.get_startup()+this.lag)
         this._static.doing = this # setdoing
-        #if now() <= 3:
-        #    log('debug','tap,startup', this.get_startup())
         return 1
 
 

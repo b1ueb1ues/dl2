@@ -4,6 +4,7 @@ from core.ctx import *
 
 class Dmg(object):
     def __init__(this):
+        this.name = ''
         this.dmg = 0
         this.to_od = 1 # rate
         this.to_bk = 1 # rate
@@ -115,7 +116,7 @@ class _Dmg_calc(object):
         this.killer = c.killer
 
 
-    def __call__(this): # calculate 
+    def __call__(this): 
         this.dmg.dmg = this.calc()
         this.dst.dt(this.dmg)
 

@@ -292,6 +292,11 @@ if __name__ == '__main__':
         print(e)
         pass
     a = Conf()
+    for i in a:
+        print(i, a[i])
+    exit()
+    print(a)
+    exit()
     a.b = 'b'
     a.c.d = 'c.d'
     a(foo)
