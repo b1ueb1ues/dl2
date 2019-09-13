@@ -13,7 +13,7 @@ class Skill(object):
         this.silence_duration = 110
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = Event('silence_end')
-        this.log = Logger('skill')
+        this.log = Logger('s')
 
 
 
@@ -40,6 +40,7 @@ class Sp(object):
         this.cur = 0
         this.max = sp_max
 
+
 class Conf_skl(Config):
     def default(this, conf):
         conf.lag      = 6
@@ -58,18 +59,18 @@ class Conf_skl(Config):
         this.hit = c.hit
 
 
-
 class _Skill(object):
     def __init__(this, name, host, conf=None):
         this.name = name
         this.host = host
         this.sp = Sp(0)
+        this.firsthit = 1
 
         this.conf = Conf_skl(this, conf)
 
         this.ac = host.Action(this.name, this.conf, this.active)
 
-        this.log = Logger('skill')
+        this.log = Logger('s')
         this.src = this.host.name+', '
 
 
@@ -119,6 +120,7 @@ class _Skill(object):
                 this.log(this.src+this.name, 'cast')
             if not this.ac() :
                 return 0
+            this.firsthit = 1
             this.sp.cur = 0
             this._static.s_prev = this.name
             # Even if animation is shorter than 1.9
@@ -141,7 +143,9 @@ class _Skill(object):
         elif t.wide == 'self':
             this.host.Selfbuff(this.name, t.value, *t.buffarg)(t.time)
         elif t.wide == 'debuff':
-            this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
+            print('cant proc debuff at skill start')
+            errrrrrrrrrr()
+     #       this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
         elif t.wide == 'zone':
             this.host.Zonebuff(this.name, t.value, *t.buffarg)(t.time)
         else:
@@ -149,6 +153,16 @@ class _Skill(object):
 
 
     def dmg(this, t):
+        if this.firsthit:
+            this.firsthit = 0
+            if 'debuff' in this.conf:
+                buffarg = this.conf.debuff
+                t.wide = buffarg[0]
+                t.value = buffarg[1]
+                t.time = buffarg[2]
+                t.buffarg = buffarg[3:]
+                this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
+            this.proc()
         t.dmg()
 
 
@@ -168,4 +182,128 @@ class _Skill(object):
             t.time = buffarg[2]
             t.buffarg = buffarg[3:]
 
-        this.proc()
+        #this.proc()
+
+
+class Combo(object):
+    def __init__(this, host):
+        this.host = host
+        this.x_prev = ''
+        this.log = Logger('x')
+
+
+
+    def __call__(this, *args, **kwargs):
+        class __Combo(_Skill):
+            _static = this
+        return __Combo(*args, **kwargs)
+
+
+
+class Conf_cmb(Config):
+    def default(this, conf):
+        conf.lag      = 0
+        conf.sp       = 0
+        conf.startup  = 0
+        conf.recovery = 120
+        conf.on_start = None
+        conf.on_end   = None
+        conf.proc     = None
+        conf.hit      = {}
+        conf.hitattr  = []
+
+
+    def sync(this, c):
+        this.sp  = c.sp
+        this.hit = c.hit
+
+
+
+class _Combo(object):
+    def __init__(this, name, host, conf=None):
+        this.name = name
+        this.host = host
+        this.sp = 0
+        this.firsthit = 1
+        this.hitnext = 0
+
+        this.conf = Conf_smb(this, conf)
+
+        this.ac = host.Action(this.name, this.conf, this.active)
+
+        this.log = Logger('x')
+        this.src = this.host.name+', '
+
+
+    def __call__(this):
+        return this.cast()
+
+
+    def init(this):
+        this.hitcount = len(this.hit)
+        this.hitattr = {}
+        for i in this.conf.hitattr:
+            attr = this.conf.hitattr[i]
+            attr.name = this.name
+            ha = this.host.Dmg(attr)
+            this.hitattr[i] = ha
+
+
+
+    def cast(this):
+        if this.log:
+            this.log(this.src+this.name, 'tap')
+        else:
+            if not this.ac() :
+                return 0
+            this.firsthit = 1
+            this._static.x_prev = this.name
+            return 1
+
+
+    def before(this):
+        pass
+    
+
+    def proc(this):
+        pass
+
+
+    def dmg(this, t):
+        if this.firsthit:
+            this.firsthit = 0
+            this.host.charge(this.name, this.sp)
+            this.proc()
+
+        t.dmg()
+
+        if this.hitnext < this.hitcount :
+            hitlabel = this.hit[this.hitnext]
+            t = Timer(this.dmg)(this.hitnext)
+            t.dmg = this.hitattr[hitlabel]
+            this.hitnext += 1
+
+
+    def active(this, e):
+        this.before()
+
+        if this.hitnext < this.hitcount :
+            hitlabel = this.hit[this.hitnext]
+            t = Timer(this.dmg)(this.hitnext)
+            t.dmg = this.hitattr[hitlabel]
+            this.hitnext += 1
+
+        for i in this.hit:
+            hitlabel = this.hit[i]
+            t = Timer(this.dmg)(i)
+            t.dmg = this.hitattr[hitlabel]
+
+        if 'buff' in this.conf:
+            buffarg = this.conf.buff
+            t = Timer(this.buff)(15)
+            t.wide = buffarg[0]
+            t.value = buffarg[1]
+            t.time = buffarg[2]
+            t.buffarg = buffarg[3:]
+
+

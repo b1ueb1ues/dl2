@@ -3,6 +3,7 @@ from core.ctx import *
 from core.buff import *
 from core.action import *
 from core.skill import *
+from core import floatsingle
 
 
 class Conf_chara(Config):
@@ -36,7 +37,12 @@ class Conf_chara(Config):
         conf.s2.recovery = 60
         conf.s2.buff = ('self', 0.2, 10, 'spd')
 
-        conf.s3
+        conf.s3.hit = {
+                15:'h1'
+                }
+        conf.s3.hitattr.h1.coef = 0
+        conf.s3.sp = 8000
+        conf.s3.debuff = ('debuff', 0.15, 10)
 
         conf.slot.w = 'c534'
         conf.slot.d = 'Cerb'
@@ -63,6 +69,8 @@ class Character(object):
         this.atk = 2000
         this.conf = Conf_chara(this, conf)
 
+        this.logsp = Logger('sp')
+
 
     def config(this, conf):
         pass
@@ -73,9 +81,10 @@ class Character(object):
         this.classinit()
         this.s1 = this.Skill('s1', this, this.conf.s1)
         this.s2 = this.Skill('s2', this, this.conf.s2)
-        this.s3 = this.Skill('s2', this, this.conf.s2)
+        this.s3 = this.Skill('s3', this, this.conf.s3)
         this.s1.init()
         this.s2.init()
+        this.s3.init()
 
 
     def classinit(this):
@@ -102,6 +111,21 @@ class Character(object):
     def tar(this, target):
         this.target = target
         this.Dmg = Dmg_calc(this, target)
+
+
+    def charge(this, name, sp):
+        sp = int(sp) * floatsingle.tofloat(this.mod('sp'))
+        sp = floatsingle.tofloat(sp)
+        sp = floatsingle.ceiling(sp)
+        this.s1.charge(sp)
+        this.s2.charge(sp)
+        this.s3.charge(sp)
+        if this.logsp :
+            this.logsp(name, sp,'%d/%d, %d/%d, %d/%d'%(\
+                this.s1.charged, this.s1.sp,
+                this.s2.charged, this.s2.sp,
+                this.s3.charged, this.s3.sp) )
+
 
 
 if __name__ == '__main__':
@@ -140,9 +164,17 @@ if __name__ == '__main__':
             if n == 420:
                 c.s1.sp.cur = 5000
                 c.s1()
+            if n == 600:
+                c.s3.sp.cur = 8000
+                c.s3()
+            if n == 720:
+                c.s3.sp.cur = 8000
+                c.s3()
         Timer(foo)(180)
         Timer(foo)(240)
         Timer(foo)(420)
+        Timer(foo)(600)
+        Timer(foo)(720)
         Timer.run()
     foo()
     #benchmark.run(foo)

@@ -103,6 +103,7 @@ class Buff(object):
 
 
 class _Buff(object):
+    bufftype = 'buff'
     def __init__(this, name, value, mtype='atk', morder=None, group=None):
         if morder == None:
             if mtype in ['atk','s','hp']:
@@ -111,7 +112,7 @@ class _Buff(object):
                 morder = 'p'
         this.name = name
         this._value = value
-        this.mod_type = mtype # atk def_ cc cd buff sp x fs s dmg
+        this.mod_type = mtype   # atk def_ cc cd buff sp x fs s dmg
         this.mod_order = morder # p: passive, b: buff, k: killer, ex: co-ab
         if group == None:
             this.group_name = mtype
@@ -181,7 +182,8 @@ class _Buff(object):
         if verbose('buff'):
             log('buff', '%s: %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this.get()),
-                    '%s buff start <%ds>'%(this.group_name, duration))
+                    '%s %s start <%ds>'%(this.group_name,
+                        this.bufftype, duration))
             if stacks > 1:
                 this.__buff_stack()
         log('dp', '%s: %s'%(this.hostname(), this.mod_type),
@@ -194,7 +196,8 @@ class _Buff(object):
         if verbose('buff'):
             log('buff', '%s: %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this.get()),
-                    '%s buff refresh <%ds>'%(this.group_name, duration))
+                    '%s %s refresh <%ds>'%(this.group_name,
+                        this.bufftype, duration))
             stacks = len(this.group)
             if stacks > 1:
                 this.__buff_stack()
@@ -215,7 +218,7 @@ class _Buff(object):
         if verbose('buff'):
             log_('buff', '%s: %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this._value),
-                    'buff end <timeout>')
+                    '%s end <timeout>'%this.bufftype)
             if stack > 1:
                 this.__buff_stack()
         this.dp.off()
@@ -243,7 +246,7 @@ class _Buff(object):
         if this._active == 0:
             return
         log('buff', this.name, '%s: %.2f'%(this.mod_type, this.get()),
-                '%s buff end <turn off>'%(this.name))
+                '%s %s end <turn off>'%(this.name, this.bufftime))
         this._active = 0
 
         idx = len(this.group)
@@ -273,6 +276,7 @@ class Selfbuff(object):
 
 
 class _Selfbuff(_Buff):
+    bufftype = 'selfbuff'
     def on(this, duration):
         duration *= this.Dp.get('buff')
         super().on(duration)
@@ -293,16 +297,17 @@ class Debuff(object):
 
 
 class _Debuff(_Buff):
+    bufftype = 'debuff'
     def __init__(this, name, value, mtype='def', morder=None, group=None):
-        super().__init__(name, value, mtype, morder, group)
-        this.dp.set(0.0-value)
+        super().__init__(name, 0.0-value, mtype, morder, group)
+        #this.dp.set(0.0-value)
         
 
     def set(this, v):
         if this._active:
             print('can not set buff when active')
             errrrrrrrrrrrrr()
-        this._value = v
+        this._value = 0.0-v
         this.dp.set(0.0-v)
         return this
 
@@ -320,6 +325,7 @@ class Teambuff(object):
 
 
 class _Teambuff():
+    bufftype = 'teambuff'
     def __init__(this, name, value,
             mtype='atk', morder=None, group=None):
         e = this._static.e
@@ -359,6 +365,7 @@ class Zonebuff(object):
 
 
 class _Zonebuff():
+    bufftype = 'buffzone'
     def __init__(this, name, value,
             mtype='atk', morder=None, group=None):
         e = this._static.e
