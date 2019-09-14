@@ -60,7 +60,7 @@ class Timeline(object):
         this._stop = 1
 
 
-    def run(this, last = 6000):
+    def run(this, last = 100):
         global _g_now
         last += _g_now
         while 1:
@@ -156,7 +156,7 @@ class Timer(object):
 
 
     @classmethod
-    def run(cls, duration=6000):
+    def run(cls, duration=100):
         _g_timeline.run(duration)
 
 

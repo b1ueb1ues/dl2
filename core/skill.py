@@ -10,7 +10,8 @@ class Skill(object):
         this.s_prev = ''
         this.first_x_after_s = 0
         this.silence = 0
-        this.silence_duration = 110
+        this.silence_duration = 2.1 # 0.1 button lag, 2s ui hide
+        #this.lag = 0.1
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = Event('silence_end')
         this.log = Logger('s')
@@ -43,10 +44,10 @@ class Sp(object):
 
 class Conf_skl(Config):
     def default(this, conf):
-        conf.lag      = 6
+        conf.lag      = 0.1
         conf.sp       = 0
         conf.startup  = 0
-        conf.recovery = 120
+        conf.recovery = 2
         conf.on_start = None
         conf.on_end   = None
         conf.proc     = None
@@ -123,8 +124,8 @@ class _Skill(object):
             this.firsthit = 1
             this.sp.cur = 0
             this._static.s_prev = this.name
-            # Even if animation is shorter than 1.9
-            # you can't cast next skill before 1.9, after which ui shows
+            # Even if animation is shorter than 2s
+            # you can't cast next skill before 2s, after which ui shows
             this._static.silence_start()
             return 1
 
@@ -153,6 +154,8 @@ class _Skill(object):
 
 
     def dmg(this, t):
+        t.dmg()
+
         if this.firsthit:
             this.firsthit = 0
             if 'debuff' in this.conf:
@@ -163,7 +166,6 @@ class _Skill(object):
                 t.buffarg = buffarg[3:]
                 this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
             this.proc()
-        t.dmg()
 
 
     def active(this, e):
@@ -176,7 +178,7 @@ class _Skill(object):
 
         if 'buff' in this.conf:
             buffarg = this.conf.buff
-            t = Timer(this.buff)(15)
+            t = Timer(this.buff)(0.15)
             t.wide = buffarg[0]
             t.value = buffarg[1]
             t.time = buffarg[2]
@@ -205,7 +207,7 @@ class Conf_cmb(Config):
         conf.lag      = 0
         conf.sp       = 0
         conf.startup  = 0
-        conf.recovery = 120
+        conf.recovery = 2
         conf.on_start = None
         conf.on_end   = None
         conf.proc     = None
@@ -225,7 +227,7 @@ class _Combo(object):
         this.host = host
         this.sp = 0
         this.firsthit = 1
-        this.hitnext = 0
+        this.hit_next = 0
 
         this.conf = Conf_smb(this, conf)
 
@@ -240,7 +242,7 @@ class _Combo(object):
 
 
     def init(this):
-        this.hitcount = len(this.hit)
+        this.hit_count = len(this.hit)
         this.hitattr = {}
         for i in this.conf.hitattr:
             attr = this.conf.hitattr[i]
@@ -261,10 +263,6 @@ class _Combo(object):
             return 1
 
 
-    def before(this):
-        pass
-    
-
     def proc(this):
         pass
 
@@ -277,33 +275,16 @@ class _Combo(object):
 
         t.dmg()
 
-        if this.hitnext < this.hitcount :
-            hitlabel = this.hit[this.hitnext]
-            t = Timer(this.dmg)(this.hitnext)
+        if this.hit_next < this.hit_count :
+            hitlabel = this.hit[this.hit_next]
+            t = Timer(this.dmg)(this.hit_next)
             t.dmg = this.hitattr[hitlabel]
-            this.hitnext += 1
+            this.hit_next += 1
 
 
     def active(this, e):
-        this.before()
-
-        if this.hitnext < this.hitcount :
-            hitlabel = this.hit[this.hitnext]
-            t = Timer(this.dmg)(this.hitnext)
+        if this.hit_next < this.hit_count :
+            hitlabel = this.hit[this.hit_next]
+            t = Timer(this.dmg)(this.hit_next)
             t.dmg = this.hitattr[hitlabel]
-            this.hitnext += 1
-
-        for i in this.hit:
-            hitlabel = this.hit[i]
-            t = Timer(this.dmg)(i)
-            t.dmg = this.hitattr[hitlabel]
-
-        if 'buff' in this.conf:
-            buffarg = this.conf.buff
-            t = Timer(this.buff)(15)
-            t.wide = buffarg[0]
-            t.value = buffarg[1]
-            t.time = buffarg[2]
-            t.buffarg = buffarg[3:]
-
-
+            this.hit_next += 1

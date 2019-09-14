@@ -171,7 +171,7 @@ class _Buff(object):
         this._active = 1
         this.dp.on()
         if duration > 0:
-            this.t_buffend(duration*60)
+            this.t_buffend(duration)
         stacks = len(this.group)
         if stacks >= 10:
             log('buff', '%s: %s'%(this.hostname(), this.name),
@@ -192,7 +192,7 @@ class _Buff(object):
 
     def __buff_refresh(this, duration):
         if duration > 0:
-            this.t_buffend.on(duration*60)
+            this.t_buffend.on(duration)
         if verbose('buff'):
             log('buff', '%s: %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this.get()),

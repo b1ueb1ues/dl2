@@ -11,7 +11,7 @@ def Logger(t):
     if t in _g_verbose:
         def log(name, amount=None, misc=''):
             global _g_log
-            _g_log.append([now()/60.0, t, name, amount, misc])
+            _g_log.append([now(), t, name, amount, misc])
         return log
     else:
         return None
@@ -39,12 +39,12 @@ def verbose(t):
 def log(t, name, amount=None, misc=''):
     global _g_verbose
     if t in _g_verbose:
-        _g_log.append([now()/60.0, t, name, amount, misc])
+        _g_log.append([now(), t, name, amount, misc])
 
 
 def log_(t, name, amount=None, misc=''):
     global _g_verbose
-    _g_log.append([now()/60.0, t, name, amount, misc])
+    _g_log.append([now(), t, name, amount, misc])
 
 
 def logset(v):

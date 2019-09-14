@@ -150,7 +150,7 @@ class Target(object):
         this.def_ = this.base_def * this.bk_def
         def foo(t):
             this.normal()
-        Timer(foo)(this.bk_time*60)
+        Timer(foo)(this.bk_time)
         this.od_ks.off()
         this.bk_ks()
         if this.logod:

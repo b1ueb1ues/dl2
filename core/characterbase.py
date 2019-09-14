@@ -19,12 +19,12 @@ class Conf_chara(Config):
         conf.a3 = (''       , 'cc'   , 8   )
 
         conf.s1.sp = 4500       # int sp_max
-        conf.s1.recovery = 84  # int recovery frames
+        conf.s1.recovery = 1.4  # int recovery frames
         conf.s1.hit = { 
-                24:'h1', 
-                30:'h1', 
-                36:'h1',
-                48:'h2',
+                0.4:'h1', 
+                0.5:'h1', 
+                0.6:'h1',
+                0.8:'h2',
                 }    # dict {float timing: idx hitattr}
         conf.s1.hitattr.h1.coef = 2
         conf.s1.hitattr.h1.to_od = 0.5
@@ -34,15 +34,20 @@ class Conf_chara(Config):
 
 
         conf.s2.sp = 4500
-        conf.s2.recovery = 60
+        conf.s2.startup = 0
+        conf.s2.recovery = 1
         conf.s2.buff = ('self', 0.2, 10, 'spd')
 
         conf.s3.hit = {
-                15:'h1'
+                0.15:'h1'
                 }
         conf.s3.hitattr.h1.coef = 0
         conf.s3.sp = 8000
         conf.s3.debuff = ('debuff', 0.15, 10)
+
+        conf.x1.hit = {
+                0:'h1'
+                }
 
         conf.slot.w = 'c534'
         conf.slot.d = 'Cerb'
@@ -51,6 +56,7 @@ class Conf_chara(Config):
 
         conf.ex = ['blade', 'wand']
 
+
     def sync(this, c):
         this.name = c.name
         this.base_atk = c.atk
@@ -58,6 +64,7 @@ class Conf_chara(Config):
             this.base_def = 10
         else:
             this.base_def = 8
+
 
     def config(this, c):
         this.config(c)
@@ -156,25 +163,25 @@ if __name__ == '__main__':
         c.s2()
         def foo(t):
             n = now()
-            if n == 180:
+            if n == 1:
                 c.s2()
-            if n == 240:
+            if n == 4:
                 c.s2.sp.cur = 5000
                 c.s2()
-            if n == 420:
+            if n == 7:
                 c.s1.sp.cur = 5000
                 c.s1()
-            if n == 600:
+            if n == 11:
                 c.s3.sp.cur = 8000
                 c.s3()
-            if n == 720:
+            if n == 14:
                 c.s3.sp.cur = 8000
                 c.s3()
-        Timer(foo)(180)
-        Timer(foo)(240)
-        Timer(foo)(420)
-        Timer(foo)(600)
-        Timer(foo)(720)
+        Timer(foo)(1)
+        Timer(foo)(4)
+        Timer(foo)(7)
+        Timer(foo)(11)
+        Timer(foo)(14)
         Timer.run()
     foo()
     #benchmark.run(foo)

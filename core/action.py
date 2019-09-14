@@ -31,7 +31,7 @@ class Conf_Action(Config):
     def default(this, conf):
         conf.lag          = 0
         conf.startup      = 0
-        conf.recovery     = 120
+        conf.recovery     = 2
         conf.interrupt_by = []
         conf.cancel_by    = []
         conf.type         = this.name
