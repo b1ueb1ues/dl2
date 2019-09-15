@@ -3,22 +3,23 @@ from core.ctx import *
 
 
 class Action(object):
-    def __init__(this, host):
+    def __init__(this, host, spd=None):
         this.host = host
         def nospeed():
             return 1
 
         class Nop(object):
             name = '__idle__'
-            index = 0
-            status = -2
-            idle = 1
+            status = 0
 
         this.nop = Nop()
 
         this.prev = this.nop
         this.doing = this.nop
-        this.spd = nospeed
+        if spd:
+            this.speed = spd
+        else:
+            this.speed = nospeed
 
 
     def __call__(this, *args, **kwargs):
@@ -29,48 +30,33 @@ class Action(object):
 
 class Conf_Action(Config):
     def default(this, conf):
-        conf.lag          = 0
+        conf.type         = this.name
         conf.startup      = 0
         conf.recovery     = 2
-        conf.interrupt_by = []
         conf.cancel_by    = []
-        conf.type         = this.name
+        conf.cancel       = None
 
 
     def sync(this, conf):
         this.atype        = conf.type
-        this.lag          = conf.lag
         this.startup      = conf.startup
         this.recovery     = conf.recovery
-        this.interrupt_by = conf.interrupt_by
         this.cancel_by    = conf.cancel_by
+        this.cancel       = conf.cancel
 
 
 class _Action(object):   
-    def __init__(this, name=None, conf=None, active=None):  
+    def __init__(this, name, conf=None):  
         ## can't change name after this
-        #  conf : startup, recovery, active
+        this.name = name
         this.hostname = this._static.host.name
         this.src = this.hostname + ', '
-        if name != None:
-            if type(name) == tuple:
-                this.name = name[0]
-                this.index = name[1]
-            else:
-                this.name = name
-                this.index = 0
-        else:
-            this.name = '_Action'
-        if active:
-            this.act = active
 
-        this.index = 0
-        this.recover_start = 0
-        this.startup_start = 0
-        this.status = -2 # -2nop -1startup 0doing 1recovery
-        this.idle = 0
+        this.speed = this._static.speed
 
-        this.t_startup = Timer(this._cb_acting)
+        this.action_start = 0
+        this.status = 0 # 0nop 1doing 2cancel
+
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
 
@@ -86,47 +72,19 @@ class _Action(object):
         return this.recovery / this.speed()
 
 
-    def get_startup(this):
-        return this.startup / this.speed()
-
-
-    def speed(this):
-        return this._static.spd()
-
-
-    def _cb_acting(this, e):
-        if this._static.doing == this:
-            this.status = 0
-            this._act()
-            this.status = 1
-            this.recover_start = now() 
-            this.t_recovery(this.get_recovery())
-
-
     def _cb_act_end(this, e):
         if this._static.doing == this:
             if this.log:
                 this.log(this.src+'end', this.name)
-            this.status = -2
+            this.status = 0
             this._static.prev = this # turn this from doing to prev
-            this.idle = 1
             this.e_idle()
-
-
-    def _act(this):
-        if this.log:
-            this.log(this.src+'active',this.name)
-        this.act(this)
-
-
-    def act(this, action):
-        Event(this.atype)()
 
 
     def start(this):
         doing = this._static.doing
 
-        if doing.idle :
+        if doing.status == 0 :
             if this.log:
                 this.log(this.src+'start',this.name, 'idle:%d'%doing.status)
         else:
@@ -138,38 +96,25 @@ class _Action(object):
                     this.log(this.src+'failed',this.name, 'self is doing')
                 return 0
 
-        #if doing.idle # idle
-        #    pass
-        if not doing.idle : # doing != this
-            if doing.status == -1: # try to interrupt an action
-                if this.atype in doing.interrupt_by : # can interrupt action
-                    doing.t_startup.off()
-                    if this.log:
-                        this.log(this.src+'interrupt', doing.name,
-                                'by '+this.name \
-                                +'\tafter %.2fs'%(now()-doing.startup_start) )
-                else:
-                    if this.log:
-                        this.log(this.src+'failed', this.name)
-                    return 0
-            elif doing.status == 1: # try to cancel an action
+            # doing != this
+            if doing.status == 1: # try to cancel an action
                 if this.atype in doing.cancel_by : # can interrupt action
                     doing.t_recovery.off()
+                    if doing.cancel:
+                        doing.cancel()
                     if this.log:
-                        this.log(this.src+'cancel', doing.name , 'by '+this.name+'\t'+'after %.2fs'%(now()-doing.recover_start) )
+                        this.log(this.src+'cancel', doing.name,
+                                'by '+this.name \
+                                +' after %.2fs'%(now()-doing.action_start))
                 else:
                     if this.log:
-                        log('act',this.src+'failed', this.name)
+                        this.log(this.src+'failed', this.name, 'cannot cancel')
                     return 0
-            elif doing.status == 0:
-                print('err in action start()')
-                errrrrrrrrrrrr()
             this._static.prev = this._static.doing # turn this from doing to prev
-        this.idle = 0
-        this.status = -1
-        this.startup_start = now()
-        this.t_startup(this.get_startup()+this.lag)
+        this.status = 1
+        this.action_start = now()
         this._static.doing = this # setdoing
+        this.t_recovery(this.startup + this.get_recovery())
         return 1
 
 
@@ -186,11 +131,13 @@ if __name__ == '__main__' :
         name = 'c1'
         def __init__(this):
             this.Action = Action(this)
-            this.X = X(this.Action)
-            this.S = S(this.Action)
-            this.a = this.X('foo')
-            this.b = this.S('bar')
-            this.c = this.X('baz')
+            this.a = this.Action('foo')
+            this.a.conf.cancel_by=['s']
+            this.a.conf()
+            this.b = this.Action('bar', Conf({'type':'x'}) )
+            this.c = this.Action('baz')
+            this.c.conf.type = 's'
+            this.c.conf()
 
     class C2(object):
         name = 'c2'
