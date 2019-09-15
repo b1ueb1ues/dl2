@@ -3,10 +3,8 @@ from core.ctx import *
 
 
 class Action(object):
-    def __init__(this, host, spd=None):
+    def __init__(this, host):
         this.host = host
-        def nospeed():
-            return 1
 
         class Nop(object):
             name = '__idle__'
@@ -16,10 +14,8 @@ class Action(object):
 
         this.prev = this.nop
         this.doing = this.nop
-        if spd:
-            this.speed = spd
-        else:
-            this.speed = nospeed
+
+        this.speed = this.host.speed
 
 
     def __call__(this, *args, **kwargs):

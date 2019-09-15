@@ -11,7 +11,6 @@ class Skill(object):
         this.first_x_after_s = 0
         this.silence = 0
         this.silence_duration = 2.1 # 0.1 button lag, 2s ui hide
-        #this.lag = 0.1
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = Event('silence_end')
         this.log = Logger('s')
@@ -44,9 +43,8 @@ class Sp(object):
 
 class Conf_skl(Config):
     def default(this, conf):
-        conf.lag      = 0.1
         conf.sp       = 0
-        conf.startup  = 0
+        conf.startup  = 0.1
         conf.recovery = 2
         conf.on_start = None
         conf.on_end   = None
@@ -69,7 +67,7 @@ class _Skill(object):
 
         this.conf = Conf_skl(this, conf)
 
-        this.ac = host.Action(this.name, this.conf, this.active)
+        this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('s')
         this.src = this.host.name+', '
@@ -119,15 +117,17 @@ class _Skill(object):
         else:
             if this.log:
                 this.log(this.src+this.name, 'cast')
-            if not this.ac() :
+            if this.ac():
+                this.active()
+                this.firsthit = 1
+                this.sp.cur = 0
+                this._static.s_prev = this.name
+                # Even if animation is shorter than 2s
+                # you can't cast next skill before 2s, after which ui shows
+                this._static.silence_start()
+                return 1
+            else:
                 return 0
-            this.firsthit = 1
-            this.sp.cur = 0
-            this._static.s_prev = this.name
-            # Even if animation is shorter than 2s
-            # you can't cast next skill before 2s, after which ui shows
-            this._static.silence_start()
-            return 1
 
 
     def before(this):
@@ -168,7 +168,7 @@ class _Skill(object):
             this.proc()
 
 
-    def active(this, e):
+    def active(this):
         this.before()
 
         for i in this.hit:
@@ -204,7 +204,6 @@ class Combo(object):
 
 class Conf_cmb(Config):
     def default(this, conf):
-        conf.lag      = 0
         conf.sp       = 0
         conf.startup  = 0
         conf.recovery = 2

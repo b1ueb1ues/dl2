@@ -34,7 +34,6 @@ class Conf_chara(Config):
 
 
         conf.s2.sp = 4500
-        conf.s2.startup = 0
         conf.s2.recovery = 1
         conf.s2.buff = ('self', 0.2, 10, 'spd')
 
@@ -107,7 +106,6 @@ class Character(object):
         this.Debuff = Debuff(this.Buff)
 
         this.Action = Action(this)
-        this.Action.spd = this.speed
         this.Skill = Skill(this)
 
     
@@ -155,6 +153,7 @@ if __name__ == '__main__':
         t.init()
         c = Character()
         c.conf.name = 'c'
+        c.conf()
         c.tar(t)
         c.init()
 
