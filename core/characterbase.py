@@ -20,12 +20,12 @@ class Conf_chara(Config):
 
         conf.s1.sp = 4500       # int sp_max
         conf.s1.recovery = 1.4  # int recovery frames
-        conf.s1.hit = { 
-                0.4:'h1', 
-                0.5:'h1', 
-                0.6:'h1',
-                0.8:'h2',
-                }    # dict {float timing: idx hitattr}
+        conf.s1.hit = [
+                (0.4, 'h1'), 
+                (0.5, 'h1'), 
+                (0.6, 'h1'),
+                (0.8, 'h2'),
+                ]    # dict {float timing: idx hitattr}
         conf.s1.hitattr.h1.coef = 2
         conf.s1.hitattr.h1.to_od = 0.5
         conf.s1.hitattr.h1.to_bk = 2
@@ -37,16 +37,19 @@ class Conf_chara(Config):
         conf.s2.recovery = 1
         conf.s2.buff = ('self', 0.2, 10, 'spd')
 
-        conf.s3.hit = {
-                0.15:'h1'
-                }
+        conf.s3.hit = [
+                (0.15, 'h1')
+                ]
         conf.s3.hitattr.h1.coef = 0
         conf.s3.sp = 8000
         conf.s3.debuff = ('debuff', 0.15, 10)
 
-        conf.x1.hit = {
-                0:'h1'
-                }
+        conf.x1.sp = 130
+        conf.x1.hit = [
+                (1, 'h1')
+                ]
+        conf.x1.hitattr.h1.coef = 1
+        conf.x1.recovery = 2
 
         conf.slot.w = 'c534'
         conf.slot.d = 'Cerb'
@@ -88,9 +91,12 @@ class Character(object):
         this.s1 = this.Skill('s1', this, this.conf.s1)
         this.s2 = this.Skill('s2', this, this.conf.s2)
         this.s3 = this.Skill('s3', this, this.conf.s3)
+        this.x1 = this.Combo('x1', this, this.conf.x1)
         this.s1.init()
         this.s2.init()
         this.s3.init()
+        this.x1.init()
+
 
 
     def classinit(this):
@@ -107,6 +113,7 @@ class Character(object):
 
         this.Action = Action(this)
         this.Skill = Skill(this)
+        this.Combo = Combo(this)
 
     
     def speed(this):
@@ -126,10 +133,12 @@ class Character(object):
         this.s2.charge(sp)
         this.s3.charge(sp)
         if this.logsp :
-            this.logsp(name, sp,'%d/%d, %d/%d, %d/%d'%(\
-                this.s1.charged, this.s1.sp,
-                this.s2.charged, this.s2.sp,
-                this.s3.charged, this.s3.sp) )
+            this.logsp('%s, %s'%(this.name, name), sp,
+                    '%d/%d, %d/%d, %d/%d'%(\
+                    this.s1.sp.cur, this.s1.sp.max,
+                    this.s2.sp.cur, this.s2.sp.max,
+                    this.s3.sp.cur, this.s3.sp.max) 
+                    )
 
 
 
@@ -139,6 +148,7 @@ if __name__ == '__main__':
     logset('act')
     logset('buff')
     logset('dmg')
+    logset('sp')
     logset('skill')
     logset('od')
     logset('bk')
@@ -151,29 +161,27 @@ if __name__ == '__main__':
         t.conf.bk = 100
         t.conf()
         t.init()
+
         c = Character()
         c.conf.name = 'c'
         c.conf()
         c.tar(t)
         c.init()
 
-        c.s2.sp.cur = 5000
-        c.s2()
-        c.s2()
         def foo(t):
             n = now()
             if n == 1:
-                c.s2()
-            if n == 4:
+                c.x1()
+            elif n == 4:
                 c.s2.sp.cur = 5000
                 c.s2()
-            if n == 7:
+            elif n == 7:
                 c.s1.sp.cur = 5000
                 c.s1()
-            if n == 11:
+            elif n == 11:
                 c.s3.sp.cur = 8000
                 c.s3()
-            if n == 14:
+            elif n == 14:
                 c.s3.sp.cur = 8000
                 c.s3()
         Timer(foo)(1)

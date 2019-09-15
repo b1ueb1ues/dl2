@@ -44,18 +44,19 @@ class Sp(object):
 class Conf_skl(Config):
     def default(this, conf):
         conf.sp       = 0
-        conf.startup  = 0.1
+        conf.startup  = 0.1 # ui lag
         conf.recovery = 2
         conf.on_start = None
         conf.on_end   = None
         conf.proc     = None
-        conf.hit      = {}
+        conf.hit      = []
         conf.hitattr  = []
 
 
     def sync(this, c):
         this.sp.max = c.sp
-        this.hit = c.hit
+        this.hit    = c.hit
+        this.proc   = c.proc
 
 
 class _Skill(object):
@@ -78,12 +79,11 @@ class _Skill(object):
 
 
     def init(this):
-        this.hitattr = {}
+        this.dmg = {}
         for i in this.conf.hitattr:
             attr = this.conf.hitattr[i]
             attr.name = this.name
-            ha = this.host.Dmg(attr)
-            this.hitattr[i] = ha
+            this.dmg[i] = this.host.Dmg(attr)
 
 
     def charge(this, sp):
@@ -153,7 +153,7 @@ class _Skill(object):
             this.host.Buff(this.name, t.value, *t.buffarg)(t.time)
 
 
-    def dmg(this, t):
+    def dmg_make(this, t):
         t.dmg()
 
         if this.firsthit:
@@ -165,16 +165,16 @@ class _Skill(object):
                 t.time = buffarg[2]
                 t.buffarg = buffarg[3:]
                 this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
-            this.proc()
+            if this.proc:
+                this.proc()
 
 
     def active(this):
         this.before()
 
         for i in this.hit:
-            hitlabel = this.hit[i]
-            t = Timer(this.dmg)(i)
-            t.dmg = this.hitattr[hitlabel]
+            t = Timer(this.dmg_make)(i[0])
+            t.dmg = this.dmg[i[1]]
 
         if 'buff' in this.conf:
             buffarg = this.conf.buff
@@ -196,7 +196,7 @@ class Combo(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Combo(_Skill):
+        class __Combo(_Combo):
             _static = this
         return __Combo(*args, **kwargs)
 
@@ -205,7 +205,7 @@ class Combo(object):
 class Conf_cmb(Config):
     def default(this, conf):
         conf.sp       = 0
-        conf.startup  = 0
+        conf.startup  = 0 # only for c1
         conf.recovery = 2
         conf.on_start = None
         conf.on_end   = None
@@ -215,8 +215,10 @@ class Conf_cmb(Config):
 
 
     def sync(this, c):
-        this.sp  = c.sp
-        this.hit = c.hit
+        this.sp      = c.sp
+        this.hit     = c.hit
+        this.hitattr = c.hitattr
+        this.proc    = c.proc
 
 
 
@@ -226,11 +228,12 @@ class _Combo(object):
         this.host = host
         this.sp = 0
         this.firsthit = 1
+        this.hit_count = 1
         this.hit_next = 0
 
-        this.conf = Conf_smb(this, conf)
+        this.conf = Conf_cmb(this, conf)
 
-        this.ac = host.Action(this.name, this.conf, this.active)
+        this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('x')
         this.src = this.host.name+', '
@@ -242,48 +245,57 @@ class _Combo(object):
 
     def init(this):
         this.hit_count = len(this.hit)
-        this.hitattr = {}
+        this.dmg = {}
         for i in this.conf.hitattr:
             attr = this.conf.hitattr[i]
             attr.name = this.name
-            ha = this.host.Dmg(attr)
-            this.hitattr[i] = ha
-
+            this.dmg[i] = this.host.Dmg(attr)
 
 
     def cast(this):
         if this.log:
             this.log(this.src+this.name, 'tap')
         else:
-            if not this.ac() :
+            if this.ac():
+                this.active()
+                this.firsthit = 1
+                this._static.x_prev = this.name
+                return 1
+            else:
                 return 0
-            this.firsthit = 1
-            this._static.x_prev = this.name
-            return 1
 
 
     def proc(this):
         pass
 
 
-    def dmg(this, t):
-        if this.firsthit:
-            this.firsthit = 0
-            this.host.charge(this.name, this.sp)
-            this.proc()
+    def dmg_make(this, t):
+        if this.ac.status != 1:
+            return
 
         t.dmg()
 
+        if this.firsthit:
+            this.firsthit = 0
+            this.host.charge('x', this.sp)
+            if this.proc:
+                this.proc()
+
         if this.hit_next < this.hit_count :
             hitlabel = this.hit[this.hit_next]
             t = Timer(this.dmg)(this.hit_next)
-            t.dmg = this.hitattr[hitlabel]
+            t.dmg = this.dmg[hitlabel]
             this.hit_next += 1
 
 
-    def active(this, e):
+    def active(this):
+        print(this.hit_next, this.hit_count)
+        print(this.hit)
+        print(this.dmg)
+
         if this.hit_next < this.hit_count :
-            hitlabel = this.hit[this.hit_next]
-            t = Timer(this.dmg)(this.hit_next)
-            t.dmg = this.hitattr[hitlabel]
+            timing   = this.hit[this.hit_next][0]
+            hitlabel = this.hit[this.hit_next][1]
+            t = Timer(this.dmg_make)(timing)
+            t.dmg = this.dmg[hitlabel]
             this.hit_next += 1
