@@ -80,9 +80,11 @@ class Conf_dc(Config):
         conf.name = 'dmg'
         conf.to_od = 1
         conf.to_bk = 1
-        conf.coef = 1
+        conf.coef = 0
         conf.type = 's'
         conf.killer = {}
+        conf.missile = None
+        conf.proc = None
 
 
     def sync(this, c):
@@ -92,6 +94,7 @@ class Conf_dc(Config):
         this.coef = c.coef
         this.type = c.type
         this.killer = c.killer
+        this.missile = c.missile
 
 
 class _Dmg_calc(object):
@@ -111,7 +114,25 @@ class _Dmg_calc(object):
 
     def __call__(this): 
         this.dmg.dmg = this.calc()
+        if this.missile :
+            for i in this.missile:
+                if i == 0 :
+                    this.dst.dt(this.dmg)
+                    if this.proc:
+                        this.proc()
+                else:
+                    Timer(this.cb_dmg_make)(i)
+        else:
+            this.dst.dt(this.dmg)
+            if this.proc:
+                this.proc()
+
+
+    def cb_dmg_make(this, t):
+        this.dmg.dmg = this.calc()
         this.dst.dt(this.dmg)
+        if this.proc:
+            this.proc()
 
 
     def calc(this):

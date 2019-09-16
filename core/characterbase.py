@@ -25,12 +25,12 @@ class Conf_chara(Config):
                 (0.5, 'h1'), 
                 (0.6, 'h1'),
                 (0.8, 'h2'),
-                ]    # dict {float timing: idx hitattr}
-        conf.s1.hitattr.h1.coef = 2
-        conf.s1.hitattr.h1.to_od = 0.5
-        conf.s1.hitattr.h1.to_bk = 2
-        conf.s1.hitattr.h2.coef = 2
-        conf.s1.hitattr.h2.killer = {'bk':1}
+                ]    # dict {float timing: idx attr}
+        conf.s1.attr.h1.coef = 2
+        conf.s1.attr.h1.to_od = 0.5
+        conf.s1.attr.h1.to_bk = 2
+        conf.s1.attr.h2.coef = 2
+        conf.s1.attr.h2.killer = {'bk':1}
 
 
         conf.s2.sp = 4500
@@ -40,7 +40,7 @@ class Conf_chara(Config):
         conf.s3.hit = [
                 (0.15, 'h1')
                 ]
-        conf.s3.hitattr.h1.coef = 0
+        conf.s3.attr.h1.coef = 0
         conf.s3.sp = 8000
         conf.s3.debuff = ('debuff', 0.15, 10)
 
@@ -48,7 +48,8 @@ class Conf_chara(Config):
         conf.x1.hit = [
                 (1, 'h1')
                 ]
-        conf.x1.hitattr.h1.coef = 1
+        conf.x1.attr.h1.coef = 1
+        conf.x1.attr.h1.missile = [0,0,0.1]
         conf.x1.recovery = 2
 
         conf.slot.w = 'c534'
@@ -150,8 +151,8 @@ if __name__ == '__main__':
     logset('dmg')
     logset('sp')
     logset('skill')
-    logset('od')
-    logset('bk')
+    #logset('od')
+    #logset('bk')
     logset('debug')
     logset('dbg')
 

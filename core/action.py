@@ -8,12 +8,13 @@ class Action(object):
 
         class Nop(object):
             name = '__idle__'
-            status = 0
+            status = -1
 
         this.nop = Nop()
 
         this.prev = this.nop
         this.doing = this.nop
+        this.next = this.nop
 
         this.speed = this.host.speed
 
@@ -30,6 +31,7 @@ class Conf_Action(Config):
         conf.startup      = 0
         conf.recovery     = 2
         conf.cancel_by    = []
+        conf.precharge    = False
         conf.cancel       = None
 
 
@@ -51,7 +53,7 @@ class _Action(object):
         this.speed = this._static.speed
 
         this.action_start = 0
-        this.status = 0 # 0nop 1doing 2cancel
+        this.status = 0 # -1: idle/end 0:wait 1:doing 2cancel
 
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
@@ -69,18 +71,24 @@ class _Action(object):
 
 
     def _cb_act_end(this, e):
-        if this._static.doing == this:
-            if this.log:
-                this.log(this.src+'end', this.name)
-            this.status = 0
-            this._static.prev = this # turn this from doing to prev
-            this.e_idle()
+        if this._static.doing != this:
+            return 
+
+        if this.log:
+            this.log(this.src+'end', this.name)
+        this.status = -1
+        this._static.prev = this # turn this from doing to prev
+
+        if this._static.next.status == 0:
+            this._static.next.start()
+
+        this.e_idle()
 
 
     def start(this):
         doing = this._static.doing
 
-        if doing.status == 0 :
+        if doing.status == -1 :
             if this.log:
                 this.log(this.src+'start',this.name, 'idle:%d'%doing.status)
         else:
@@ -106,7 +114,8 @@ class _Action(object):
                     if this.log:
                         this.log(this.src+'failed', this.name, 'cannot cancel')
                     return 0
-            this._static.prev = this._static.doing # turn this from doing to prev
+            doing.status = 2
+            this._static.prev = doing # turn this from doing to prev
         this.status = 1
         this.action_start = now()
         this._static.doing = this # setdoing
