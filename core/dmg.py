@@ -77,24 +77,25 @@ class Dmg_calc(object):
 
 class Conf_dc(Config):
     def default(this, conf):
-        conf.name = 'dmg'
-        conf.to_od = 1
-        conf.to_bk = 1
-        conf.coef = 0
-        conf.type = 's'
-        conf.killer = {}
+        conf.name    = 'dmg'
+        conf.to_od   = 1
+        conf.to_bk   = 1
+        conf.coef    = 0
+        conf.type    = 's'
+        conf.killer  = {}
         conf.missile = None
-        conf.proc = None
+        conf.proc    = None
 
 
     def sync(this, c):
-        this.dmg.name = c.name
+        this.dmg.name  = c.name
         this.dmg.to_od = c.to_od
         this.dmg.to_bk = c.to_bk
-        this.coef = c.coef
-        this.type = c.type
-        this.killer = c.killer
-        this.missile = c.missile
+        this.coef      = c.coef
+        this.type      = c.type
+        this.killer    = c.killer
+        this.missile   = c.missile
+        this.proc      = c.proc
 
 
 class _Dmg_calc(object):

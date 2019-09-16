@@ -24,17 +24,16 @@ class Conf_chara(Config):
                 (0.4, 'h1'), 
                 (0.5, 'h1'), 
                 (0.6, 'h1'),
-                (0.8, 'h2'),
+                (0.8, '_h2'),
                 ]    # dict {float timing: idx attr}
         conf.s1.attr.h1.coef = 2
         conf.s1.attr.h1.to_od = 0.5
         conf.s1.attr.h1.to_bk = 2
-        conf.s1.attr.h2.coef = 2
-        conf.s1.attr.h2.killer = {'bk':1}
-
+        conf.s1.attr._h2.coef = 2
+        conf.s1.attr._h2.killer = {'bk':1}
 
         conf.s2.sp = 4500
-        conf.s2.recovery = 1
+        conf.s2.recovery = 2.5
         conf.s2.buff = ('self', 0.2, 10, 'spd')
 
         conf.s3.hit = [
@@ -45,12 +44,21 @@ class Conf_chara(Config):
         conf.s3.debuff = ('debuff', 0.15, 10)
 
         conf.x1.sp = 130
+        conf.x1.startup = 0.3
         conf.x1.hit = [
                 (1, 'h1')
                 ]
         conf.x1.attr.h1.coef = 1
         conf.x1.attr.h1.missile = [0,0,0.1]
         conf.x1.recovery = 2
+
+        conf.fs.sp = 200
+        conf.fs.hit = [
+                (1, 'h1')
+                ]
+        conf.fs.attr.h1.coef = 1
+        conf.fs.startup = 1
+        conf.fs.recovery = 2
 
         conf.slot.w = 'c534'
         conf.slot.d = 'Cerb'
@@ -93,10 +101,12 @@ class Character(object):
         this.s2 = this.Skill('s2', this, this.conf.s2)
         this.s3 = this.Skill('s3', this, this.conf.s3)
         this.x1 = this.Combo('x1', this, this.conf.x1)
+        this.fs = this.Fs('fs', this, this.conf.fs)
         this.s1.init()
         this.s2.init()
         this.s3.init()
         this.x1.init()
+        this.fs.init()
 
 
 
@@ -115,6 +125,7 @@ class Character(object):
         this.Action = Action(this)
         this.Skill = Skill(this)
         this.Combo = Combo(this)
+        this.Fs = Fs(this)
 
     
     def speed(this):
@@ -150,7 +161,9 @@ if __name__ == '__main__':
     logset('buff')
     logset('dmg')
     logset('sp')
-    logset('skill')
+    logset('s')
+    logset('x')
+    logset('fs')
     #logset('od')
     #logset('bk')
     logset('debug')
@@ -176,6 +189,9 @@ if __name__ == '__main__':
             elif n == 4:
                 c.s2.sp.cur = 5000
                 c.s2()
+            elif n == 6.2:
+                c.s2.sp.cur = 5000
+                c.s2()
             elif n == 7:
                 c.s1.sp.cur = 5000
                 c.s1()
@@ -185,11 +201,16 @@ if __name__ == '__main__':
             elif n == 14:
                 c.s3.sp.cur = 8000
                 c.s3()
+            elif n == 20:
+                c.fs()
+
         Timer(foo)(1)
         Timer(foo)(4)
+        Timer(foo)(6.2)
         Timer(foo)(7)
         Timer(foo)(11)
         Timer(foo)(14)
+        Timer(foo)(20)
         Timer.run()
     foo()
     #benchmark.run(foo)

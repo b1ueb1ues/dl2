@@ -27,20 +27,19 @@ class Action(object):
 
 class Conf_Action(Config):
     def default(this, conf):
-        conf.type         = this.name
-        conf.startup      = 0
-        conf.recovery     = 2
-        conf.cancel_by    = []
-        conf.precharge    = False
-        conf.cancel       = None
+        conf.type      = this.name
+        conf.startup   = 0
+        conf.recovery  = 2
+        conf.cancel_by = []
+        conf.cancel    = None
 
 
     def sync(this, conf):
-        this.atype        = conf.type
-        this.startup      = conf.startup
-        this.recovery     = conf.recovery
-        this.cancel_by    = conf.cancel_by
-        this.cancel       = conf.cancel
+        this.atype     = conf.type
+        this.startup   = conf.startup
+        this.recovery  = conf.recovery
+        this.cancel_by = conf.cancel_by
+        this.cancel    = conf.cancel
 
 
 class _Action(object):   

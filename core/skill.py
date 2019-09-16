@@ -10,7 +10,7 @@ class Skill(object):
         this.s_prev = ''
         this.first_x_after_s = 0
         this.silence = 0
-        this.silence_duration = 2.1 # 0.1 button lag, 2s ui hide
+        this.silence_duration = 2 # 2s ui hide
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = Event('silence_end')
         this.log = Logger('s')
@@ -47,6 +47,7 @@ class Conf_skl(Config):
         conf.recovery = 2
 #        conf.on_start = None
 #        conf.on_end   = None
+        conf.before   = None
         conf.proc     = None
         conf.hit      = []
         conf.attr     = {}
@@ -58,6 +59,7 @@ class Conf_skl(Config):
         this.attr     = c.attr
         this.proc     = c.proc
         this.startup  = c.startup
+        this.before   = c.before
 
 class _Skill(object):
     def __init__(this, name, host, conf=None):
@@ -74,12 +76,12 @@ class _Skill(object):
         this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('s')
-        this.src = this.host.name+', '
-        this.speed = this.host.speed # function
+        this.src = host.name+', '
+        this.speed = host.speed # function
 
 
     def __call__(this):
-        return this.cast()
+        return this.tap()
 
 
     def init(this):
@@ -87,7 +89,11 @@ class _Skill(object):
         this.dmg = {}
         for i in this.attr:
             label = this.attr[i]
-            label.name = this.name
+            if i[0] == '_':
+                label.name = this.name + i
+            else:
+                label.name = this.name
+            label.proc = this.collid
             this.dmg[i] = this.host.Dmg(label)
 
 
@@ -114,7 +120,7 @@ class _Skill(object):
             return 1
 
 
-    def cast(this):
+    def tap(this):
         if this.log:
             this.log(this.src+this.name, 'tap')
         if not this.check():
@@ -124,68 +130,48 @@ class _Skill(object):
                 this.log(this.src+this.name, 'cast')
             if this.ac():
                 this.active()
-                this.firsthit = 1
-                this.sp.cur = 0
-                this._static.s_prev = this.name
-                # Even if animation is shorter than 2s
-                # you can't cast next skill before 2s, after which ui shows
-                this._static.silence_start()
                 return 1
             else:
                 return 0
 
 
-    def before(this):
-        pass
-    
-
-    def proc(this):
-        pass
-
-
     def buff(this, t):
-        if t.wide == 'team':
-            this.host.Teambuff(this.name, t.value, *t.buffarg)(t.time)
-        elif t.wide == 'self':
-            this.host.Selfbuff(this.name, t.value, *t.buffarg)(t.time)
-        elif t.wide == 'debuff':
+        buffarg = this.conf.buff
+        wide = buffarg[0]
+        value = buffarg[1]
+        time = buffarg[2]
+        buffarg = buffarg[3:]
+        if wide == 'team':
+            this.host.Teambuff(this.name, value, *buffarg)(time)
+        elif wide == 'self':
+            this.host.Selfbuff(this.name, value, *buffarg)(time)
+        elif wide == 'debuff':
             print('cant proc debuff at skill start')
             errrrrrrrrrr()
-     #       this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
-        elif t.wide == 'zone':
-            this.host.Zonebuff(this.name, t.value, *t.buffarg)(t.time)
+     #       this.host.target.Debuff(this.name, value, *buffarg)(time)
+        elif wide == 'zone':
+            this.host.Zonebuff(this.name, value, *buffarg)(time)
         else:
-            this.host.Buff(this.name, t.value, *t.buffarg)(t.time)
+            this.host.Buff(this.name, value, *buffarg)(time)
 
 
-    def do_(this, t):
+    def _do(this, t):
         if this.ac.status != 1:
             return
 
-        t.dmg()
+        hitlabel = this.hit[this.hit_next][1]
+        this.dmg[hitlabel]()
 
-#        if this.firsthit:
-#            this.firsthit = 0
-#            if 'debuff' in this.conf:
-#                buffarg = this.conf.debuff
-#                t.wide = buffarg[0]
-#                t.value = buffarg[1]
-#                t.time = buffarg[2]
-#                t.buffarg = buffarg[3:]
-#                this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
-#            if this.proc:
-#                this.proc()
-#
+        this.hit_prev = this.hit_next
+        this.hit_next += 1
+
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
             timing /= this.speed()
-            hitlabel = this.hit[this.hit_next][1]
-            t = Timer(this.dmg_make)(timing)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_prev = this.hit_next
-            this.hit_next += 1
+            Timer(this._do)(timing)
 
-    def hit(this):
+
+    def collid(this):
         if this.firsthit:
             this.firsthit = 0
             if 'debuff' in this.conf:
@@ -199,70 +185,31 @@ class _Skill(object):
                 this.proc()
 
 
-
-    def shot(this, t):
-        if this.ac.status != 1:
-            return
-
-        t.dmg()
-
-        if this.firsthit:
-            this.firsthit = 0
-            if 'debuff' in this.conf:
-                buffarg = this.conf.debuff
-                t.wide = buffarg[0]
-                t.value = buffarg[1]
-                t.time = buffarg[2]
-                t.buffarg = buffarg[3:]
-                this.host.target.Debuff(this.name, t.value, *t.buffarg)(t.time)
-            if this.proc:
-                this.proc()
-
-        if this.hit_next < this.hit_count :
-            timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
-            timing /= this.speed()
-            hitlabel = this.hit[this.hit_next][1]
-            t = Timer(this.dmg_make)(timing)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_prev = this.hit_next
-            this.hit_next += 1
-
-
     def active(this):
-        this.before()
+        Timer(this._active)(this.startup)
+
+
+    def _active(this, t):
+        if this.log:
+            this.log('%s, %s'%(this.host.name, this.name),'cutin')
+
+        this.firsthit = 1
+        this.sp.cur = 0
+        this._static.s_prev = this.name
+        # Even if animation is shorter than 2s
+        # you can't cast next skill before 2s, after which ui shows
+        this._static.silence_start()
+
+        if this.before:
+            this.before()
+
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] / this.speed()
-            timing += this.startup
-            hitlabel = this.hit[this.hit_next][1]
-            t = Timer(this.dmg_make)(timing)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_prev = this.hit_next
-            this.hit_next += 1
+            Timer(this._do)(timing)
 
         if 'buff' in this.conf:
-            buffarg = this.conf.buff
-            t = Timer(this.buff)(0.15/this.speed())
-            t.wide = buffarg[0]
-            t.value = buffarg[1]
-            t.time = buffarg[2]
-            t.buffarg = buffarg[3:]
-
-
-#    def active(this):
-#        this.before()
-#
-#        for i in this.hit:
-#            t = Timer(this.dmg_make)
-#            t.dmg = this.dmg[i[1]]
-#            t(this.startup + i[0]/this.speed())
-#
-#        if 'buff' in this.conf:
-#            buffarg = this.conf.buff
-#            t = Timer(this.buff)(0.15/this.speed())
-#            t.wide = buffarg[0]
-#            t.value = buffarg[1]
-#            t.time = buffarg[2]
-#            t.buffarg = buffarg[3:]
+            timing = 0.15/this.speed()
+            Timer(this.buff)(timing)
 
 
 class Combo(object):
@@ -320,7 +267,7 @@ class _Combo(object):
 
 
     def __call__(this):
-        return this.cast()
+        return this.tap()
 
 
     def init(this):
@@ -332,54 +279,56 @@ class _Combo(object):
             this.dmg[i] = this.host.Dmg(attr)
 
 
-    def cast(this):
+    def tap(this):
         if this.log:
             this.log(this.src+this.name, 'tap')
+
+        if this.ac():
+            this.active()
+            this.firsthit = 1
+            this._static.x_prev = this.name
+            return 1
         else:
-            if this.ac():
-                this.active()
-                this.firsthit = 1
-                this._static.x_prev = this.name
-                return 1
-            else:
-                return 0
+            return 0
 
 
-    def proc(this):
-        pass
-
-
-    def dmg_make(this, t):
+    def _do(this, t):
         if this.ac.status != 1:
             return
 
-        t.dmg()
+        hitlabel = this.hit[this.hit_next][1]
+        this.dmg[hitlabel]()
 
-        if this.firsthit:
-            this.firsthit = 0
-            this.host.charge('x', this.sp)
-            if this.proc:
-                this.proc()
+        this.hit_prev = this.hit_next
+        this.hit_next += 1
 
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
             timing /= this.speed()
-            hitlabel = this.hit[this.hit_next][1]
-            t = Timer(this.dmg_make)(timing)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_prev = this.hit_next
-            this.hit_next += 1
+            Timer(this._do)(timing)
+
+
+    def collid(this):
+        if this.firsthit:
+            this.firsthit = 0
+            if this.proc:
+                this.proc()
 
 
     def active(this):
+        if this.startup:
+            Timer(this._active)(this.startup)
+        else:
+            this._active(0)
+
+
+    def _active(this, t):
+        if this.log:
+            this.log('%s, %s'%(this.host.name, this.name),'combo_start')
+
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] / this.speed()
-            timing += this.startup
-            hitlabel = this.hit[this.hit_next][1]
-            t = Timer(this.dmg_make)(timing)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_prev = this.hit_next
-            this.hit_next += 1
+            Timer(this._do)(timing)
 
 
 class Fs(object):
@@ -397,7 +346,7 @@ class Fs(object):
 class Conf_fs(Config):
     def default(this, conf):
         conf.sp        = 0
-        conf.startup   = 0 # charge time, which didn't affect by speed?
+        conf.startup   = 0 # charge time, which didn't affect by speed
         conf.recovery  = 2
        #conf.on_start  = None
        #conf.on_end    = None
@@ -430,11 +379,12 @@ class _Fs(object):
         this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('fs')
-        this.src = this.host.name+', '
+        this.src = host.name+', '
+        this.speed = host.speed
 
 
     def __call__(this):
-        return this.cast()
+        return this.hold()
 
 
     def init(this):
@@ -446,45 +396,54 @@ class _Fs(object):
             this.dmg[i] = this.host.Dmg(attr)
 
 
-    def cast(this):
+    def hold(this):
         if this.log:
             this.log(this.src+this.name, 'hold')
+        if this.ac():
+            this.active()
+            this.firsthit = 1
+            return 1
         else:
-            if this.ac():
-                this.active()
-                this.firsthit = 1
-                return 1
-            else:
-                return 0
+            return 0
 
 
-    def proc(this):
-        pass
-
-
-    def dmg_make(this, t):
+    def _do(this, t):
         if this.ac.status != 1:
             return
 
-        t.dmg()
+        hitlabel = this.hit[this.hit_next][1]
+        this.dmg[hitlabel]()
 
+        this.hit_prev = this.hit_next
+        this.hit_next += 1
+
+        if this.hit_next < this.hit_count :
+            timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
+            timing /= this.speed()
+            Timer(this._do)(timing)
+
+
+    def collid(this):
         if this.firsthit:
             this.firsthit = 0
-            this.host.charge('fs', this.sp)
             if this.proc:
                 this.proc()
 
-        if this.hit_next < this.hit_count :
-            hitlabel = this.hit[this.hit_next]
-            t = Timer(this.dmg)(this.hit_next)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_next += 1
-
 
     def active(this):
+        if this.startup:
+            Timer(this._active)(this.startup)
+        else:
+            this._active(0)
+
+
+    def _active(this, t):
+        if this.log:
+            this.log('%s, %s'%(this.host.name, this.name),'release')
+
         if this.hit_next < this.hit_count :
-            timing   = this.hit[this.hit_next][0]
-            hitlabel = this.hit[this.hit_next][1]
-            t = Timer(this.dmg_make)(timing)
-            t.dmg = this.dmg[hitlabel]
-            this.hit_next += 1
+            timing = this.hit[this.hit_next][0] / this.speed()
+            Timer(this._do)(timing)
+
+
+
