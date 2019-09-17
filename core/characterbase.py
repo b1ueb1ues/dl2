@@ -120,12 +120,32 @@ class Character(object):
         this.Passive('base_crit_damage', 0.7, 'cd')()
 
 
-    def think(this, e):
+    def think_cancel(this, e):
+        if e.hit == e.last:
+            x = e.idx
+        else:
+            x = e.idx*10+e.hit
         if e.idx == 5 and e.hit==e.last:
             this.fs()
+        if this.s1.sp.cur >= this.s1.sp.max:
+            this.think_s1()
+        if this.s2.sp.cur >= this.s2.sp.max:
+            this.think_s2()
+        if this.s3.sp.cur >= this.s3.sp.max:
+            this.think_s3()
+
+    def think_s(this):
+        pass
+
+    def think_s1(this):
         this.s1()
+    def think_s2(this):
         this.s2()
+    def think_s3(this):
         this.s3()
+
+    def think_fs(this):
+        pass
 
     def listeners(this):
         Event('idle')(this.x)
@@ -214,8 +234,8 @@ if __name__ == '__main__':
         c.init()
         Timer.run(180)
 
-    foo()
-    #benchmark.run(foo, 2000)
+    #foo()
+    benchmark.run(foo, 2000)
 
     logcat()
 
