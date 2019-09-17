@@ -58,6 +58,10 @@ class Conf_chara(Config):
             this.base_def = 10
         else:
             this.base_def = 8
+        if c.wt in ['axe'] :
+            this.base_crit = 0.04
+        else:
+            this.base_crit = 0.02
 
 
     def config(this, c):
@@ -79,11 +83,15 @@ class Character(object):
     # after settle down all config
     def init(this):
         this.classinit()
+        this.listeners()
+        this.setup()
+
         this.s1 = this.Skill('s1', this, this.conf.s1)
         this.s2 = this.Skill('s2', this, this.conf.s2)
-        this.s3 = this.Skill('s3', this, this.conf.s3)
         this.s1.init()
         this.s2.init()
+
+        this.s3 = this.Skill('s3', this, this.conf.s3)
         this.s3.init()
 
         import config.weapon
@@ -100,9 +108,28 @@ class Character(object):
         this.x5.init()
         this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
 
-        #this.fs = this.Fs('fs', this, this.conf.fs)
-        #this.fs.init()
+        this.fs = this.Fs('fs', this, wtconf.fs)
+        this.fs.init()
+
+
+        Event('idle')()
+
+
+    def setup(this):
+        this.Passive('base_crit_chance', this.base_crit, 'cc')()
+        this.Passive('base_crit_damage', 0.7, 'cd')()
+
+
+    def think(this, e):
+        if e.idx == 5 and e.hit==e.last:
+            this.fs()
+        this.s1()
+        this.s2()
+        this.s3()
+
+    def listeners(this):
         Event('idle')(this.x)
+        Event('cancel')(this.think)
 
 
     def classinit(this):
@@ -170,8 +197,10 @@ if __name__ == '__main__':
     #logset('bk')
     logset('debug')
     logset('dbg')
+    #logset([])
 
     def foo():
+        Ctx()
         t = Dummy()
         t.conf.od = 100
         t.conf.bk = 100
@@ -183,38 +212,10 @@ if __name__ == '__main__':
         c.conf()
         c.tar(t)
         c.init()
+        Timer.run(180)
 
-        def foo(t):
-            n = now()
-            if n == 1:
-                c.x1()
-            elif n == 4:
-                c.s2.sp.cur = 5000
-                c.s2()
-            elif n == 6.2:
-                c.s2.sp.cur = 5000
-                c.s2()
-            elif n == 7:
-                c.s1.sp.cur = 5000
-                c.s1()
-            elif n == 11:
-                c.s3.sp.cur = 8000
-                c.s3()
-            elif n == 14:
-                c.s3.sp.cur = 8000
-                c.s3()
-            #elif n == 20:
-            #    c.fs()
-
-        Timer(foo)(1)
-        Timer(foo)(4)
-        Timer(foo)(6.2)
-        Timer(foo)(7)
-        Timer(foo)(11)
-        Timer(foo)(14)
-        Timer(foo)(20)
-        Timer.run()
     foo()
-    #benchmark.run(foo)
+    #benchmark.run(foo, 2000)
+
     logcat()
 

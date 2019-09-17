@@ -9,9 +9,8 @@ class Passive(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Passive(_Passive):
-            _static = this
-        return __Passive(*args, **kwargs)
+        _Passive._static = this
+        return _Passive(*args, **kwargs)
 
 
     def sync(this, c):
@@ -89,9 +88,8 @@ class Buff(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Buff(_Buff):
-            _static = this
-        return __Buff(*args, **kwargs)
+        _Buff._static = this
+        return _Buff(*args, **kwargs)
 
 
     def l_buff(this, e):
@@ -270,9 +268,9 @@ class Selfbuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Selfbuff(_Selfbuff):
-            _static = this.Buff
-        return __Selfbuff(*args, **kwargs)
+        _Selfbuff._static = this.Buff
+        return _Selfbuff(*args, **kwargs)
+
 
 
 class _Selfbuff(_Buff):
@@ -291,9 +289,8 @@ class Debuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Debuff(_Debuff):
-            _static = this.Buff
-        return __Debuff(*args, **kwargs)
+        _Debuff._static = this.Buff
+        return _Debuff(*args, **kwargs)
 
 
 class _Debuff(_Buff):
@@ -319,9 +316,8 @@ class Teambuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Teambuff(_Teambuff):
-            _static = this
-        return __Teambuff(*args, **kwargs)
+        _Teambuff._static = this
+        return _Teambuff(*args, **kwargs)
 
 
 class _Teambuff():
@@ -359,9 +355,8 @@ class Zonebuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Zonebuff(_Zonebuff):
-            _static = this
-        return __Zonebuff(*args, **kwargs)
+        _Zonebuff._static = this
+        return _Zonebuff(*args, **kwargs)
 
 
 class _Zonebuff():

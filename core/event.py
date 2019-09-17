@@ -106,6 +106,7 @@ class Event(object):
         for i in this._trigger:
             i(this)
 
+
     def __call__(this, l=None):
         if l :
             return Listener(this.__name, l)

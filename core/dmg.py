@@ -142,6 +142,11 @@ class _Dmg_calc(object):
         true_dmg = atk / def_ * this._static.base_coef
         true_dmg *= this.src_dp('dmg')
         true_dmg *= this.src_dp(this.type)
+
+        cc  = this.src_dp('cc')
+        cd  = this.src_dp('cd')
+        crit_ave = (cd-1) * (cc-1) + 1
+        true_dmg *= crit_ave
         
         if len(this.src_killer) > 0:
             ks = {}

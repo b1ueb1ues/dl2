@@ -5,6 +5,7 @@ from core.targetbase import *
 class Dummy(Target):
     def config(this, conf):
         conf.name = 'dummy'
+        conf.ele = 'light'
         conf.hp = 1000000
         conf.od = 200000
         conf.bk = 200000

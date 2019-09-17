@@ -17,9 +17,9 @@ class Skill(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Skill(_Skill):
-            _static = this
-        return __Skill(*args, **kwargs)
+        r = _Skill(*args, **kwargs)
+        r._static = this
+        return r
 
 
     def silence_end(this, t):
@@ -188,6 +188,9 @@ class _Skill(object):
 
 
     def active(this):
+        this.firsthit = 1
+        this.hit_prev = -1
+        this.hit_next = 0
         Timer(this._active)(this.startup)
 
 
@@ -195,7 +198,6 @@ class _Skill(object):
         if this.log:
             this.log('%s, %s'%(this.host.name, this.name),'cutin')
 
-        this.firsthit = 1
         this.sp.cur = 0
         this._static.s_prev = this.name
         # Even if animation is shorter than 2s
@@ -221,14 +223,15 @@ class Combo(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Combo(_Combo):
-            _static = this
-        return __Combo(*args, **kwargs)
+        r = _Combo(*args, **kwargs)
+        r._static = this
+        return r
 
 
 class Conf_cmb(Config):
     def default(this, conf):
         conf.type      = 'x'
+        conf.idx       = 1 # 1~5
         conf.sp        = 0
         conf.startup   = 0
         conf.recovery  = 2
@@ -241,6 +244,8 @@ class Conf_cmb(Config):
 
 
     def sync(this, c):
+        this.type    = c.type
+        this.idx     = c.idx
         this.sp      = c.sp
         this.hit     = c.hit
         this.attr    = c.attr
@@ -266,6 +271,7 @@ class _Combo(object):
         this.src = this.host.name+', '
         this.speed = host.speed # function
         this.charge = host.charge
+        this.e_x = Event('cancel')
 
 
     def __call__(this):
@@ -280,6 +286,10 @@ class _Combo(object):
             label.name = this.name
             label.proc = this.collid
             this.dmg[i] = this.host.Dmg(label)
+        this.e_x.name = this.name
+        this.e_x.type = this.type
+        this.e_x.idx = this.idx
+        this.e_x.last = this.hit_count
 
 
     def tap(this):
@@ -288,7 +298,6 @@ class _Combo(object):
 
         if this.ac():
             this.active()
-            this.firsthit = 1
             this._static.x_prev = this.name
             return 1
         else:
@@ -298,6 +307,7 @@ class _Combo(object):
     def _do(this, t):
         if this.ac.status != 1:
             return
+
 
         hitlabel = this.hit[this.hit_next][1]
         this.dmg[hitlabel]()
@@ -310,6 +320,9 @@ class _Combo(object):
             timing /= this.speed()
             Timer(this._do)(timing)
 
+        this.e_x.hit = this.hit_next
+        this.e_x()
+
 
     def collid(this):
         if this.firsthit:
@@ -320,7 +333,10 @@ class _Combo(object):
 
 
     def active(this):
-        if this.hit_next < this.hit_count :
+        if this.hit_count :
+            this.firsthit = 1
+            this.hit_prev= -1
+            this.hit_next = 0
             timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
 
@@ -329,11 +345,10 @@ class Fs(object):
     def __init__(this, host):
         this.host = host
 
-
     def __call__(this, *args, **kwargs):
-        class __Fs(_Fs):
-            _static = this
-        return __Fs(*args, **kwargs)
+        r = _Fs(*args, **kwargs)
+        r._static = this
+        return r
 
 
 class Conf_fs(Config):
@@ -351,6 +366,7 @@ class Conf_fs(Config):
 
 
     def sync(this, c):
+        this.type    = c.type
         this.sp      = c.sp
         this.hit     = c.hit
         this.attr    = c.attr
@@ -367,7 +383,7 @@ class _Fs(object):
         this.hit_count = 1
         this.hit_next = 0
 
-        this.conf = Conf_cmb(this, conf)
+        this.conf = Conf_fs(this, conf)
 
         this.ac = host.Action(this.name, this.conf)
 
@@ -375,6 +391,7 @@ class _Fs(object):
         this.src = host.name+', '
         this.speed = host.speed
         this.charge = host.charge
+        this.e_fs = Event('cancel')
 
 
     def __call__(this):
@@ -389,6 +406,10 @@ class _Fs(object):
             label.name = this.name
             label.proc = this.collid
             this.dmg[i] = this.host.Dmg(label)
+        this.e_fs.type = this.type
+        this.e_fs.name = this.name
+        this.e_fs.idx = 0
+        this.e_fs.last = this.hit_count
 
 
     def hold(this):
@@ -396,7 +417,6 @@ class _Fs(object):
             this.log(this.src+this.name, 'hold')
         if this.ac():
             this.active()
-            this.firsthit = 1
             return 1
         else:
             return 0
@@ -416,6 +436,9 @@ class _Fs(object):
             timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
             timing /= this.speed()
             Timer(this._do)(timing)
+
+        this.e_fs.hit = this.hit_next
+        this.e_fs()
 
 
     def collid(this):
@@ -437,6 +460,9 @@ class _Fs(object):
         if this.log:
             this.log('%s, %s'%(this.host.name, this.name),'release')
 
-        if this.hit_next < this.hit_count :
+        if this.hit_count :
+            this.firsthit = 1
+            this.hit_next = 0
+            this.hit_prev = -1
             timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)

@@ -19,9 +19,8 @@ class Action(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Action(_Action):
-            _static = this
-        return __Action(*args, **kwargs)
+        _Action._static = this
+        return _Action(*args, **kwargs)
 
 
 class Conf_Action(Config):
@@ -81,6 +80,7 @@ class _Action(object):
 
         if this.on_end:
             this.on_end()
+        #this._static.host.x(0)
         this.e_idle()
 
 
