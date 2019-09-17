@@ -42,6 +42,7 @@ class Sp(object):
 
 class Conf_skl(Config):
     def default(this, conf):
+        conf.type     = 's'
         conf.sp       = 0
         conf.startup  = 0.1 # ui lag
         conf.recovery = 2
@@ -60,6 +61,7 @@ class Conf_skl(Config):
         this.proc     = c.proc
         this.startup  = c.startup
         this.before   = c.before
+
 
 class _Skill(object):
     def __init__(this, name, host, conf=None):
@@ -224,11 +226,11 @@ class Combo(object):
         return __Combo(*args, **kwargs)
 
 
-
 class Conf_cmb(Config):
     def default(this, conf):
+        conf.type      = 'x'
         conf.sp        = 0
-        conf.startup   = 0 # only for c1
+        conf.startup   = 0
         conf.recovery  = 2
        #conf.on_start  = None
        #conf.on_end    = None
@@ -244,7 +246,6 @@ class Conf_cmb(Config):
         this.attr    = c.attr
         this.proc    = c.proc
         this.startup = c.startup
-
 
 
 class _Combo(object):
@@ -264,6 +265,7 @@ class _Combo(object):
         this.log = Logger('x')
         this.src = this.host.name+', '
         this.speed = host.speed # function
+        this.charge = host.charge
 
 
     def __call__(this):
@@ -274,9 +276,10 @@ class _Combo(object):
         this.hit_count = len(this.hit)
         this.dmg = {}
         for i in this.attr:
-            attr = this.attr[i]
-            attr.name = this.name
-            this.dmg[i] = this.host.Dmg(attr)
+            label = this.attr[i]
+            label.name = this.name
+            label.proc = this.collid
+            this.dmg[i] = this.host.Dmg(label)
 
 
     def tap(this):
@@ -311,21 +314,12 @@ class _Combo(object):
     def collid(this):
         if this.firsthit:
             this.firsthit = 0
+            this.charge('x', this.sp)
             if this.proc:
                 this.proc()
 
 
     def active(this):
-        if this.startup:
-            Timer(this._active)(this.startup)
-        else:
-            this._active(0)
-
-
-    def _active(this, t):
-        if this.log:
-            this.log('%s, %s'%(this.host.name, this.name),'combo_start')
-
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
@@ -342,9 +336,9 @@ class Fs(object):
         return __Fs(*args, **kwargs)
 
 
-
 class Conf_fs(Config):
     def default(this, conf):
+        conf.type      = 'fs'
         conf.sp        = 0
         conf.startup   = 0 # charge time, which didn't affect by speed
         conf.recovery  = 2
@@ -364,7 +358,6 @@ class Conf_fs(Config):
         this.startup = c.startup
 
 
-
 class _Fs(object):
     def __init__(this, name, host, conf=None):
         this.name = name
@@ -381,6 +374,7 @@ class _Fs(object):
         this.log = Logger('fs')
         this.src = host.name+', '
         this.speed = host.speed
+        this.charge = host.charge
 
 
     def __call__(this):
@@ -391,9 +385,10 @@ class _Fs(object):
         this.hit_count = len(this.hit)
         this.dmg = {}
         for i in this.attr:
-            attr = this.attr[i]
-            attr.name = this.name
-            this.dmg[i] = this.host.Dmg(attr)
+            label = this.attr[i]
+            label.name = this.name
+            label.proc = this.collid
+            this.dmg[i] = this.host.Dmg(label)
 
 
     def hold(this):
@@ -426,6 +421,7 @@ class _Fs(object):
     def collid(this):
         if this.firsthit:
             this.firsthit = 0
+            this.charge('fs', this.sp)
             if this.proc:
                 this.proc()
 
@@ -444,6 +440,3 @@ class _Fs(object):
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
-
-
-

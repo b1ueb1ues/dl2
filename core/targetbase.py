@@ -86,7 +86,8 @@ class Target(object):
 
     def recount(this, dmg):
         if this.logdmg:
-            this.logdmg('%s, %s'%(dmg.hostname, dmg.name), dmg.dmg, 'hp: %d'%(this.hp) )
+            this.logdmg('%s, %s'%(dmg.hostname, dmg.name), dmg.dmg,
+                    'hp: %d-%d'%(this.hp, dmg.dmg) )
 
 
     def dt(this, dmg):

@@ -14,7 +14,6 @@ class Action(object):
 
         this.prev = this.nop
         this.doing = this.nop
-        this.next = this.nop
 
         this.speed = this.host.speed
 
@@ -31,7 +30,8 @@ class Conf_Action(Config):
         conf.startup   = 0
         conf.recovery  = 2
         conf.cancel_by = []
-        conf.cancel    = None
+        conf.on_cancel = None
+        conf.on_end    = None
 
 
     def sync(this, conf):
@@ -39,7 +39,8 @@ class Conf_Action(Config):
         this.startup   = conf.startup
         this.recovery  = conf.recovery
         this.cancel_by = conf.cancel_by
-        this.cancel    = conf.cancel
+        this.on_cancel = conf.on_cancel
+        this.on_end    = conf.on_end
 
 
 class _Action(object):   
@@ -78,9 +79,8 @@ class _Action(object):
         this.status = -1
         this._static.prev = this # turn this from doing to prev
 
-        if this._static.next.status == 0:
-            this._static.next.start()
-
+        if this.on_end:
+            this.on_end()
         this.e_idle()
 
 
@@ -101,10 +101,10 @@ class _Action(object):
 
             # doing != this
             if doing.status == 1: # try to cancel an action
-                if this.atype in doing.cancel_by : # can interrupt action
+                if this.atype in doing.cancel_by : # can cancel action
                     doing.t_recovery.off()
-                    if doing.cancel:
-                        doing.cancel()
+                    if doing.on_cancel:
+                        doing.on_cancel()
                     if this.log:
                         this.log(this.src+'cancel', doing.name,
                                 'by '+this.name \

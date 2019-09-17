@@ -43,23 +43,6 @@ class Conf_chara(Config):
         conf.s3.sp = 8000
         conf.s3.debuff = ('debuff', 0.15, 10)
 
-        conf.x1.sp = 130
-        conf.x1.startup = 0.3
-        conf.x1.hit = [
-                (1, 'h1')
-                ]
-        conf.x1.attr.h1.coef = 1
-        conf.x1.attr.h1.missile = [0,0,0.1]
-        conf.x1.recovery = 2
-
-        conf.fs.sp = 200
-        conf.fs.hit = [
-                (1, 'h1')
-                ]
-        conf.fs.attr.h1.coef = 1
-        conf.fs.startup = 1
-        conf.fs.recovery = 2
-
         conf.slot.w = 'c534'
         conf.slot.d = 'Cerb'
         conf.slot.a1 = 'RR'
@@ -81,7 +64,6 @@ class Conf_chara(Config):
         this.config(c)
 
 
-
 class Character(object):
     def __init__(this, conf=None):
         this.atk = 2000
@@ -100,14 +82,27 @@ class Character(object):
         this.s1 = this.Skill('s1', this, this.conf.s1)
         this.s2 = this.Skill('s2', this, this.conf.s2)
         this.s3 = this.Skill('s3', this, this.conf.s3)
-        this.x1 = this.Combo('x1', this, this.conf.x1)
-        this.fs = this.Fs('fs', this, this.conf.fs)
         this.s1.init()
         this.s2.init()
         this.s3.init()
-        this.x1.init()
-        this.fs.init()
 
+        import config.weapon
+        wtconf = Conf( config.weapon.wtconf[this.conf.wt] )
+        this.x1 = this.Combo('x1', this, wtconf.x1)
+        this.x2 = this.Combo('x2', this, wtconf.x2)
+        this.x3 = this.Combo('x3', this, wtconf.x3)
+        this.x4 = this.Combo('x4', this, wtconf.x4)
+        this.x5 = this.Combo('x5', this, wtconf.x5)
+        this.x1.init()
+        this.x2.init()
+        this.x3.init()
+        this.x4.init()
+        this.x5.init()
+        this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
+
+        #this.fs = this.Fs('fs', this, this.conf.fs)
+        #this.fs.init()
+        Event('idle')(this.x)
 
 
     def classinit(this):
@@ -152,6 +147,13 @@ class Character(object):
                     this.s3.sp.cur, this.s3.sp.max) 
                     )
 
+
+    def x(this, e):
+        doing = this.Action.doing.name
+        if doing[0] == 'x':
+            this.a_x[int(doing[1])]()
+        else:
+            this.a_x[0]()
 
 
 if __name__ == '__main__':
@@ -201,8 +203,8 @@ if __name__ == '__main__':
             elif n == 14:
                 c.s3.sp.cur = 8000
                 c.s3()
-            elif n == 20:
-                c.fs()
+            #elif n == 20:
+            #    c.fs()
 
         Timer(foo)(1)
         Timer(foo)(4)
