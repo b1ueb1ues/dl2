@@ -2,7 +2,7 @@ import __init__
 from weapon import *
 
 class c534_flame(Weapon):
-    ele = ['flame']
+    ele = ['flame','wind']
     wt = 'blade'
     atk = 572
     s3 = {
@@ -12,28 +12,15 @@ class c534_flame(Weapon):
         ,"recovery"     : 2.65
     }
 
-class c534_wind(Weapon):
-    ele = ['wind']
-    wt = 'blade'
-    atk = 572
-    s3 = {
-        "hit"           : [(0,'h1'), (0,'h1'), (0,'h1')]
-        ,"attr.h1.coef" : 3.54
-        ,"sp"           : 8030
-        ,"recovery"     : 2.65
-    }
+c534_wind = c534_flame
 
 
 class c534_water(Weapon):
-    ele = ['light']
+    ele = ['water','light']
     wt = 'blade'
     atk = 544
 
-
-class c534_light(Weapon):
-    ele = ['light']
-    wt = 'blade'
-    atk = 544
+c534_light = c534_water
 
 
 class c534_shadow(Weapon):
@@ -57,6 +44,8 @@ class c434_light(Weapon):
         ,"sp"           : 8178
         ,"recovery"     : 1.95
     }
+
+c434_water = c434_light
 
 class v534_flame_zephyr(Weapon):
     ele = ['flame']

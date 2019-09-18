@@ -2,10 +2,10 @@ conf = {
 
 'xtype' : 'melee'
 
-, 'x1.hit'          : [(-1, 'h1')]
+, 'x1.hit'          : [(0.15, 'h1')]
 , 'x1.attr.coef.h1' : 0.84
 , 'x1.sp'           : 120
-, 'x1.startup'      : -1
+, 'x1.startup'      : 0.15
 , 'x1.recovery'     : -1
 
 , 'x2.hit'          : [(-1, 'h1'), (-1, 'h1')]
@@ -26,7 +26,7 @@ conf = {
 , 'x5.hit'          : [(-1, 'h1')]
 , 'x5.attr.coef.h1' : 1.12
 , 'x5.sp'           : 600
-, 'x5.recovery'     : -1
+, 'x5.recovery'     : 1.43
 
 , 'fs.hit'          : [(-1, 'h1'), (-1, 'h1'), (-1, 'h1'), (-1, 'h1'), (-1, 'h1')]
 , 'fs.attr.coef.h1' : 0.30

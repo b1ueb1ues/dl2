@@ -6,6 +6,7 @@ conf = {
 , 'x1.hit'          : [(0.17, 'h1')]
 , 'x1.attr.h1.coef' : 0.97
 , 'x1.sp'           : 130
+, 'x1.startup'      : 0.15
 , 'x1.recovery'     : 0.57
 
 , 'x2.idx'          : 2
@@ -33,14 +34,16 @@ conf = {
 , 'x5.sp'           : 660
 , 'x5.recovery'     : 1.29
 
-, 'fsf.startup'     : 0            #?
-, 'fsf.recovery'    : 33/60.0      #?
+, 'fsf.startup'     : 0.68
+, 'fsf.recovery'    : 0
 
-, 'fs.hit'          : [(0, 'h1')]  #?
-, 'fs.attr.h1.coef' : 0.92         #?
+, 'fs.hit'          : [(0.15, 'h1')]
+, 'fs.attr.h1.coef' : 0.92
 , 'fs.attr.h1.to_bk': 6
-, 'fs.sp'           : 200          #?
-, 'fs.startup'      : 30/60.0      #?
-, 'fs.recovery'     : 41/60.0      #?
+, 'fs.sp'           : 200
+, 'fs.startup'      : 0.37
+, 'fs.recovery'     : 0.85
+
+, 'x1fs.startup'    : 0.68
 
 }

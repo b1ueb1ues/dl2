@@ -20,6 +20,8 @@ class Conf_chara(Config):
         conf.a1 = ('hp70'   , 'cc'   , 10  )
         conf.a3 = (''       , 'cc'   , 8   )
 
+        conf.dodge.recovery = 0.7
+
         conf.ex = ['blade', 'wand']
         #conf.ex = ['blade']
 
@@ -91,8 +93,26 @@ class Character(object):
         this.x5.init()
         this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
 
-        this.fs = this.Fs('fs', this, wtconf.fs)
+        this.a_fs = this.Fs('fs', this, wtconf.fs)
         this.fs.init()
+        this.fss = {}
+        for i in range(1, 6):
+            fsname = 'x%dfs'%i
+            if fsname in wtconf:
+                tmp = Conf(wtconf.fs)
+                tmp(wtconf[fsname])
+                wtconf[fsname](tmp)
+                this.fss[fsname] = this.Fs('fs', this, wtconf[fsname])
+            else:
+                this.fss[fsname] = this.Fs('fs', this, wtconf.fs)
+        if dfs in wtconf:
+            tmp = Conf(wtconf.fs)
+            tmp(wtconf.dfs)
+            wtconf.dfs(tmp)
+            this.fss['dfs'] = this.Fs('fs', this, wtconf.dfs)
+
+        for i in this.fss:
+            this.fss[i].init()
 
         this.child_init()
 

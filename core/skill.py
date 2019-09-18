@@ -473,3 +473,130 @@ class _Fs(object):
             this.hit_prev = -1
             timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
+
+class Dodge(object):
+    def __init__(this, host):
+        this.host = host
+        this.x_prev = ''
+
+
+    def __call__(this, *args, **kwargs):
+        r = _Dodge(*args, **kwargs)
+        r._static = this
+        return r
+
+
+class Conf_cmb(Config):
+    def default(this, conf):
+        conf.type      = 'x'
+        conf.idx       = 1 # 1~5
+        conf.sp        = 0
+        conf.startup   = 0
+        conf.recovery  = 2
+       #conf.on_start  = None
+       #conf.on_end    = None
+        conf.proc      = None
+        conf.hit       = []
+        conf.attr      = {}
+        conf.cancel_by = ['s']
+
+
+    def sync(this, c):
+        this.type    = c.type
+        this.idx     = c.idx
+        this.sp      = c.sp
+        this.hit     = c.hit
+        this.attr    = c.attr
+        this.proc    = c.proc
+        this.startup = c.startup
+        
+        this.init()
+
+
+class _Dodge(object):
+    def __init__(this, name, host, conf=None):
+        this.name = name
+        this.host = host
+        this.sp = 0
+        this.firsthit = 1
+        this.hit_count = 0
+        this.hit_prev= -1
+        this.hit_next = 0
+        this.e_x = Event('cancel')
+
+        this.conf = Conf_cmb(this, conf)
+
+        this.ac = host.Action(this.name, this.conf)
+
+        this.log = Logger('x')
+        this.src = this.host.name+', '
+        this.speed = host.speed # function
+        this.charge = host.charge
+
+
+    def __call__(this):
+        return this.tap()
+
+
+    def init(this):
+        this.hit_count = len(this.hit)
+        this.dmg = {}
+        for i in this.attr:
+            label = this.attr[i]
+            label.name = this.name
+            label.proc = this.collid
+            this.dmg[i] = this.host.Dmg(label)
+        this.e_x.name = this.name
+        this.e_x.type = this.type
+        this.e_x.idx = this.idx
+        this.e_x.last = this.hit_count
+
+
+    def tap(this):
+        if this.log:
+            this.log(this.src+this.name, 'tap')
+
+        if this.ac():
+            this.active()
+            this._static.x_prev = this.name
+            return 1
+        else:
+            return 0
+
+
+    def _do(this, t):
+        if this.ac.status != 1:
+            return
+
+
+        hitlabel = this.hit[this.hit_next][1]
+        this.dmg[hitlabel]()
+
+        this.hit_prev = this.hit_next
+        this.hit_next += 1
+
+        if this.hit_next < this.hit_count :
+            timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
+            timing /= this.speed()
+            Timer(this._do)(timing)
+
+        this.e_x.hit = this.hit_next
+        this.e_x()
+
+
+    def collid(this):
+        if this.firsthit:
+            this.firsthit = 0
+            this.charge('x', this.sp)
+            if this.proc:
+                this.proc()
+
+
+    def active(this):
+        if this.hit_count :
+            this.firsthit = 1
+            this.hit_prev= -1
+            this.hit_next = 0
+            timing = this.hit[this.hit_next][0] / this.speed()
+            Timer(this._do)(timing)
+
