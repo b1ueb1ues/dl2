@@ -7,6 +7,7 @@ from core import floatsingle
 from ability import *
 from amulet import *
 from weapon import *
+from dragon import *
 
 
 class Conf_chara(Config):
@@ -16,45 +17,20 @@ class Conf_chara(Config):
         conf.ele = 'flame'
         conf.wt = 'blade'
         conf.atk = 500
-        conf.a = []
         conf.a1 = ('hp70'   , 'cc'   , 10  )
-        conf.a2 = ('resist' , 'stun' , 100 )
         conf.a3 = (''       , 'cc'   , 8   )
 
-        conf.s1.sp = 4500       # int sp_max
-        conf.s1.recovery = 1.4  # int recovery frames
-        conf.s1.hit = [
-                (0.4, 'h1'), 
-                (0.5, 'h1'), 
-                (0.6, 'h1'),
-                (0.8, '_h2'),
-                ]    # dict {float timing: idx attr}
-        conf.s1.attr.h1.coef = 2
-        conf.s1.attr.h1.to_od = 0.5
-        conf.s1.attr.h1.to_bk = 2
-        conf.s1.attr._h2.coef = 2
-        conf.s1.attr._h2.killer = {'bk':1}
-
-        conf.s2.sp = 4500
-        conf.s2.recovery = 2.5
-        conf.s2.buff = ('self', 0.2, 10, 'spd')
-
-        conf.s3.sp = -1
-
-        conf.slot.w = 'c534'
-        conf.slot.d = 'Cerb'
-        conf.slot.a1 = 'RR'
-        conf.slot.a2 = 'FP'
-
         conf.ex = ['blade', 'wand']
+        #conf.ex = ['blade']
 
 
     def sync(this, c):
-        this.name = c.name
+        this.name     = c.name
         this.base_atk = c.atk
-        this.wt = c.wt
-        this.ele = c.ele
-        this.star = c.star
+        this.wt       = c.wt
+        this.ele      = c.ele
+        this.star     = c.star
+        this.ex       = c.ex
         if c.wt in ['sword', 'blade', 'dagger', 'axe', 'lance']:
             this.base_def = 10
         else:
@@ -80,23 +56,25 @@ class Character(object):
         this.logsp = Logger('sp')
         this.loghit = Logger('hit')
 
+        this.child_init = this.init
+        this.init = this.character_init
+
 
     def config(this, conf):
         pass
 
 
     # after settle down all config
-    def init(this):
+    def character_init(this):
         this.classinit()
         this.listeners()
         this.setup()
 
         this.s1 = this.Skill('s1', this, this.conf.s1)
         this.s2 = this.Skill('s2', this, this.conf.s2)
+        this.s3 = this.Skill('s3', this, this.conf.s3)
         this.s1.init()
         this.s2.init()
-
-        this.s3 = this.Skill('s3', this, this.conf.s3)
         this.s3.init()
 
         import config.weapon
@@ -116,6 +94,8 @@ class Character(object):
         this.fs = this.Fs('fs', this, wtconf.fs)
         this.fs.init()
 
+        this.child_init()
+
         this.e_idle = Event('idle')
         this.e_idle()
 
@@ -124,14 +104,45 @@ class Character(object):
         this.Passive('base_crit_chance', this.base_crit, 'cc')()
         this.Passive('base_crit_damage', 0.7, 'cd')()
 
+        this.a1 = this.Ability('chara_a1', *this.conf.a1)()
+        this.a3 = this.Ability('chara_a3', *this.conf.a3)()
+
+        this.d = this.Dragon(this.conf.slot.d)
+        this.w = this.Weapon(this.conf.wt, this.conf.slot.w)
+        this.a = this.Amulet(this.conf.slot.a1, this.conf.slot.a2)
+
+        this.d.init()
+        this.w.init()
+        this.a.init()
+
+        ex = {}
+        for i in this.ex:
+            ex[i] = 1
+        ex[this.wt] = 1
+
+        for i in ex:
+            if i == 'blade':
+                this.Passive('ex_blade',  0.10, 'atk', 'ex')()
+            elif i == 'wand':
+                this.Passive('ex_wand',   0.15, 'sd',  'ex')()
+            elif i == 'dagger':
+                this.Passive('ex_dagger', 0.10, 'cc',  'p')()
+            elif i == 'bow':
+                this.Passive('ex_bow',    0.15, 'sp',  'p')()
+
+        from config import forte
+        this.atk = this.base_atk * forte.c(this.ele, this.wt)
+        this.atk += this.d.atk * forte.d(this.ele)
+        this.atk += this.w.atk + this.a.atk
+
 
     def think_cancel(this, e):
         if e.hit == e.last:
             x = e.idx
         else:
             x = e.idx*10+e.hit
-        if e.idx == 5 and e.hit==e.last:
-            this.fs()
+        #if e.idx == 5 and e.hit==e.last:
+        #    this.fs()
         if this.s1.sp.cur >= this.s1.sp.max:
             this.think_s1()
         if this.s2.sp.cur >= this.s2.sp.max:
@@ -153,8 +164,11 @@ class Character(object):
         pass
 
     def listeners(this):
-        Event('idle')(this.x)
-        Event('cancel')(this.think_cancel)
+        if this.conf.rotation :
+            Event('idle')(this.l_rotation)
+        else:
+            Event('idle')(this.x)
+            Event('cancel')(this.think_cancel)
 
 
     def classinit(this):
@@ -175,8 +189,9 @@ class Character(object):
         this.Fs = Fs(this)
 
         this.Ability = Ability(this)
-        this.Amulet = Amulet(this)
+        this.Dragon = Dragon(this)
         this.Weapon = Weapon(this)
+        this.Amulet = Amulet(this)
 
     
     def speed(this):
@@ -218,7 +233,7 @@ class Character(object):
         this.s2.charge( floatsingle.ceiling(this.conf.s2.sp * charge) )
         this.s3.charge( floatsingle.ceiling(this.conf.s3.sp * charge) )
         if this.logsp:
-            this.logsp(name, '%d%%   '%(charge*100),
+            this.logsp('%s, %s'%(this.name, name), '%d%%'%(charge*100),
                     '%d/%d, %d/%d, %d/%d'%( \
                     this.s1.sp.cur, this.s1.sp.max,
                     this.s2.sp.cur, this.s2.sp.max,

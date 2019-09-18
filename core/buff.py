@@ -241,6 +241,7 @@ class _Buff(object):
 
 
     def on(this, duration):
+        this.duration = duration
         if this._active == 0:
             this.__buff_start(duration)
         else:
@@ -255,7 +256,7 @@ class _Buff(object):
         if this._active == 0:
             return
         log('buff', this.name, '%s: %.2f'%(this.mod_type, this.get()),
-                '%s %s end <turn off>'%(this.name, this.bufftime))
+                '%s %s end <turn off>'%(this.name, this.duration))
         this._active = 0
 
         idx = len(this.group)

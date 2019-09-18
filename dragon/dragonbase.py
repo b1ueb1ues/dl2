@@ -1,13 +1,13 @@
 
 _initialize = 0
-class Weapon(object):
+class Dragon(object):
     a = []
     s3 = None
     def __init__(this, host=None):
         global _initialize
         if not _initialize:
             if not host:
-                print('Amulet need a character as host')
+                print('dragon need a character as host')
                 errrrrrrrrrrr()
             _initialize = 1
             this.host = host
@@ -16,26 +16,25 @@ class Weapon(object):
                 this.subclasses[i.__name__] = i
 
     
-    def __call__(this, wt, name):
+    def __call__(this, name):
         global _max
-        import weapon
-        weapons = vars(weapon.type_[wt])
-        weapons[name]._static = this
-        weapons[name].host = this.host
-        this.w = weapons[name]()
-        return this.w
+        import dragon
+        dragons = vars(dragon)
+        dragons[name]._static = this
+        dragons[name].host = this.host
+        this.d = dragons[name]()
+
+        return this.d
 
 
     def init(this):
         if this.host.ele in this.ele:
             this.atk *= 1.5
-            if this.s3 :
-                this.host.conf.s3(this.s3)
 
             idx = 0
             for i in this.a:
                 idx += 1
-                this.host.Ability('weapon_a%d'%idx, *i)()
+                this.host.Ability('dragon_a%d'%idx, *i)()
 
 
 

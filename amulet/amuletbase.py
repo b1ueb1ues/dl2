@@ -43,8 +43,9 @@ class Amulet(object):
     def __call__(this, classname1, classname2):
         global _max
         import amulet
-        this.a1 = amulet.__dict__[classname1](this.host)
-        this.a2 = amulet.__dict__[classname2](this.host)
+        this.a1 = vars(amulet)[classname1](this.host)
+        this.a2 = vars(amulet)[classname2](this.host)
+        this.atk = this.a1.atk + this.a2.atk
         this.tmp = this.a1.a + this.a2.a
         this.a = {}
 

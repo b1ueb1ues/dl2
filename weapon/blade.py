@@ -58,7 +58,7 @@ class c434_light(Weapon):
         ,"recovery"     : 1.95
     }
 
-class v534_zephyr(Weapon):
+class v534_flame_zephyr(Weapon):
     ele = ['flame']
     wt = 'blade'
     atk = 353

@@ -61,6 +61,8 @@ class Conf_skl(Config):
         this.startup  = c.startup
         this.before   = c.before
         this.on_start = c.on_start
+        
+        this.init()
 
 
 class _Skill(object):
@@ -252,6 +254,8 @@ class Conf_cmb(Config):
         this.attr    = c.attr
         this.proc    = c.proc
         this.startup = c.startup
+        
+        this.init()
 
 
 class _Combo(object):
@@ -263,6 +267,7 @@ class _Combo(object):
         this.hit_count = 0
         this.hit_prev= -1
         this.hit_next = 0
+        this.e_x = Event('cancel')
 
         this.conf = Conf_cmb(this, conf)
 
@@ -272,7 +277,6 @@ class _Combo(object):
         this.src = this.host.name+', '
         this.speed = host.speed # function
         this.charge = host.charge
-        this.e_x = Event('cancel')
 
 
     def __call__(this):
@@ -373,6 +377,8 @@ class Conf_fs(Config):
         this.attr    = c.attr
         this.proc    = c.proc
         this.startup = c.startup
+        
+        this.init()
 
 
 class _Fs(object):
@@ -383,6 +389,7 @@ class _Fs(object):
         this.firsthit = 1
         this.hit_count = 1
         this.hit_next = 0
+        this.e_fs = Event('cancel')
 
         this.conf = Conf_fs(this, conf)
 
@@ -392,7 +399,6 @@ class _Fs(object):
         this.src = host.name+', '
         this.speed = host.speed
         this.charge = host.charge
-        this.e_fs = Event('cancel')
 
 
     def __call__(this):
