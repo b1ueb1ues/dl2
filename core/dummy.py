@@ -7,8 +7,9 @@ class Dummy(Target):
         conf.name = 'dummy'
         conf.ele = 'light'
         conf.hp = 1000000
-        conf.od = 200000
-        conf.bk = 200000
+        conf.od = 10000
+        conf.bk = 10000
+        #conf.ks = ['hms']
 
 
 if __name__ == '__main__':

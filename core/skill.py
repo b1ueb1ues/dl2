@@ -46,9 +46,8 @@ class Conf_skl(Config):
         conf.sp       = 0
         conf.startup  = 0.1 # ui lag
         conf.recovery = 2
-#        conf.on_start = None
-#        conf.on_end   = None
-        conf.before   = None
+        conf.on_start = None
+        conf.on_end   = None
         conf.proc     = None
         conf.hit      = []
         conf.attr     = {}
@@ -61,6 +60,7 @@ class Conf_skl(Config):
         this.proc     = c.proc
         this.startup  = c.startup
         this.before   = c.before
+        this.on_start = c.on_start
 
 
 class _Skill(object):
@@ -100,13 +100,14 @@ class _Skill(object):
 
 
     def charge(this, sp):
-        this.sp.cur += sp   
+        if this.sp.max > 0:
+            this.sp.cur += sp   
         #if this.charged > this.sp:  # should be 
             #this.charged = this.sp
 
 
     def check(this):
-        if this.sp.max == 0:
+        if this.sp.max <= 0:
             if this.log:
                 this.log(this.src+this.name, 'failed','no skill')
             return 0
@@ -204,8 +205,8 @@ class _Skill(object):
         # you can't cast next skill before 2s, after which ui shows
         this._static.silence_start()
 
-        if this.before:
-            this.before()
+        if this.on_start :
+            this.on_start()
 
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] / this.speed()

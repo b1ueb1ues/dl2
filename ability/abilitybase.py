@@ -11,7 +11,12 @@ class Ability(object):
                 this.subclasses[i.__name__] = i
 
     
-    def __call__(this, name, *args, **kwargs):
-        ability = this.subclasses[name]
+    def __call__(this, name, classname, *args, **kwargs):
+        ability = this.subclasses[classname]
         ability._static = this
-        return ability(*args, **kwargs)
+        ability.host = this.host
+        return ability(name, *args, **kwargs)
+
+
+    def init(this):
+        pass

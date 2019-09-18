@@ -6,6 +6,7 @@ class Dmg(object):
     def __init__(this):
         this.name = ''
         this.dmg = 0
+        this.hit = 1
         this.to_od = 1 # rate
         this.to_bk = 1 # rate
 
@@ -78,6 +79,7 @@ class Dmg_calc(object):
 class Conf_dc(Config):
     def default(this, conf):
         conf.name    = 'dmg'
+        conf.hit     = 1
         conf.to_od   = 1
         conf.to_bk   = 1
         conf.coef    = 0
@@ -91,6 +93,7 @@ class Conf_dc(Config):
         this.dmg.name  = c.name
         this.dmg.to_od = c.to_od
         this.dmg.to_bk = c.to_bk
+        this.dmg.hit   = c.hit
         this.coef      = c.coef
         this.type      = c.type
         this.killer    = c.killer
@@ -118,12 +121,14 @@ class _Dmg_calc(object):
         if this.missile :
             for i in this.missile:
                 if i == 0 :
+                    this.src.hit(this.dmg.hit)
                     this.dst.dt(this.dmg)
                     if this.proc:
                         this.proc()
                 else:
                     Timer(this.cb_dmg_make)(i)
         else:
+            this.src.hit(this.dmg.hit)
             this.dst.dt(this.dmg)
             if this.proc:
                 this.proc()
@@ -131,6 +136,7 @@ class _Dmg_calc(object):
 
     def cb_dmg_make(this, t):
         this.dmg.dmg = this.calc()
+        this.src.hit(this.dmg.hit)
         this.dst.dt(this.dmg)
         if this.proc:
             this.proc()

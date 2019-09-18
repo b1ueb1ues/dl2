@@ -4,6 +4,9 @@ from core.buff import *
 from core.action import *
 from core.skill import *
 from core import floatsingle
+from ability import *
+from amulet import *
+from weapon import *
 
 
 class Conf_chara(Config):
@@ -36,12 +39,7 @@ class Conf_chara(Config):
         conf.s2.recovery = 2.5
         conf.s2.buff = ('self', 0.2, 10, 'spd')
 
-        conf.s3.hit = [
-                (0.15, 'h1')
-                ]
-        conf.s3.attr.h1.coef = 0
-        conf.s3.sp = 8000
-        conf.s3.debuff = ('debuff', 0.15, 10)
+        conf.s3.sp = -1
 
         conf.slot.w = 'c534'
         conf.slot.d = 'Cerb'
@@ -54,6 +52,9 @@ class Conf_chara(Config):
     def sync(this, c):
         this.name = c.name
         this.base_atk = c.atk
+        this.wt = c.wt
+        this.ele = c.ele
+        this.star = c.star
         if c.wt in ['sword', 'blade', 'dagger', 'axe', 'lance']:
             this.base_def = 10
         else:
@@ -72,8 +73,12 @@ class Character(object):
     def __init__(this, conf=None):
         this.atk = 2000
         this.conf = Conf_chara(this, conf)
+        this.hitcount = 0
+        this.t_hitreset = Timer(this.hitreset)
+        this.e_hit = Event('hit')
 
         this.logsp = Logger('sp')
+        this.loghit = Logger('hit')
 
 
     def config(this, conf):
@@ -111,8 +116,8 @@ class Character(object):
         this.fs = this.Fs('fs', this, wtconf.fs)
         this.fs.init()
 
-
-        Event('idle')()
+        this.e_idle = Event('idle')
+        this.e_idle()
 
 
     def setup(this):
@@ -149,7 +154,7 @@ class Character(object):
 
     def listeners(this):
         Event('idle')(this.x)
-        Event('cancel')(this.think)
+        Event('cancel')(this.think_cancel)
 
 
     def classinit(this):
@@ -168,6 +173,10 @@ class Character(object):
         this.Skill = Skill(this)
         this.Combo = Combo(this)
         this.Fs = Fs(this)
+
+        this.Ability = Ability(this)
+        this.Amulet = Amulet(this)
+        this.Weapon = Weapon(this)
 
     
     def speed(this):
@@ -188,11 +197,34 @@ class Character(object):
         this.s3.charge(sp)
         if this.logsp :
             this.logsp('%s, %s'%(this.name, name), sp,
-                    '%d/%d, %d/%d, %d/%d'%(\
+                    '%d/%d, %d/%d, %d/%d'%( \
                     this.s1.sp.cur, this.s1.sp.max,
                     this.s2.sp.cur, this.s2.sp.max,
-                    this.s3.sp.cur, this.s3.sp.max) 
+                    this.s3.sp.cur, this.s3.sp.max)
                     )
+
+
+    def charge_p(this, name, sp):
+        if type(sp) == str and sp[-1] == '%':
+            charge = int(sp[:-1]) / 100
+        elif type(sp) == int :
+            charge = sp
+        elif type(sp) == float :
+            charge = sp
+        else:
+            charge = 0
+
+        this.s1.charge( floatsingle.ceiling(this.conf.s1.sp * charge) )
+        this.s2.charge( floatsingle.ceiling(this.conf.s2.sp * charge) )
+        this.s3.charge( floatsingle.ceiling(this.conf.s3.sp * charge) )
+        if this.logsp:
+            this.logsp(name, '%d%%   '%(charge*100),
+                    '%d/%d, %d/%d, %d/%d'%( \
+                    this.s1.sp.cur, this.s1.sp.max,
+                    this.s2.sp.cur, this.s2.sp.max,
+                    this.s3.sp.cur, this.s3.sp.max)
+                    )
+        #this.think_pin('prep')
 
 
     def x(this, e):
@@ -201,6 +233,24 @@ class Character(object):
             this.a_x[int(doing[1])]()
         else:
             this.a_x[0]()
+
+
+    def hit(this, count):
+        if this.loghit:
+            this.loghit('add', '%d+%d'%(this.hitcount, count) )
+        this.hitcount += count
+        this.t_hitreset(2)
+        this.e_hit.hit = this.hitcount
+        this.e_hit()
+
+
+    def hitreset(this, t):
+        this.hitcount = 0
+        if this.loghit:
+            this.loghit('reset', 0)
+        this.e_hit.hit = 0
+        this.e_hit()
+
 
 
 if __name__ == '__main__':
@@ -234,8 +284,8 @@ if __name__ == '__main__':
         c.init()
         Timer.run(180)
 
-    #foo()
-    benchmark.run(foo, 2000)
+    foo()
+    #benchmark.run(foo, 2000)
 
     logcat()
 

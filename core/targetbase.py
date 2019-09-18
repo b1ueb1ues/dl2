@@ -15,6 +15,8 @@ class Conf_tar(Config):
         conf.od      = 200000
         conf.bk      = 200000
 
+        conf.ks      = []
+
 
     def sync(this, c):
         this.name = c.name
@@ -37,6 +39,7 @@ class Conf_tar(Config):
             this.od = -1
             this.dt = this.dt_no_od
 
+        this.ks = c.ks
 
     def config(this, c):
         this.config(c)
@@ -82,6 +85,8 @@ class Target(object):
         this.def_ = this.base_def
         this.od_ks = this.Dp('od', 'ks', 'od', 1)
         this.bk_ks = this.Dp('bk', 'ks', 'bk', 1)
+        for i in this.ks:
+            this.Passive('ks_%s'%i, 1, 'ks', i)()
 
 
     def recount(this, dmg):

@@ -10,29 +10,52 @@ class Mikoto(Character):
         conf.ele     = 'flame'
         conf.wt      = 'blade'
         conf.atk     = 520
-        conf.a1      = ('hp70', 'cc', 10)
-        conf.a1      = ('resist', 'stun', 100)
-        conf.a3      = ('', 'cc', 0)
-        conf.slot.w  = 'c534'
+        conf.a1      = ('cc', 0.10, 'hp70')
+        conf.a3      = ('cc', 0.08)
+        #conf.slot.w  = 'c534_flame'
+        conf.slot.w  = 'v534_zephyr'
         conf.slot.d  = 'Cerb'
         conf.slot.a1 = 'RR'
         conf.slot.a2 = 'CE'
 
-        conf.s1.recovery = 1.4
+        conf.s1.recovery = 1.6
+        conf.s1.sp = 4500
+        conf.s1.hit = [
+                (0.4, 'h1'), 
+                (0.5, 'h1'), 
+                ]
+        conf.s1.attr.h1.coef = 5.32
+        conf.s1.on_end = this.s1buff
+
+        conf.s2.recovery = 1
+        conf.s2.sp = 4500
+        conf.s2.buff = ('self', 0.2, 10, 'spd')
+
+        
+    def s1buff(this):
+        this.Selfbuff('s1', 0.1)(10)
+
 
     def test(this):
-        this.a1 = this.Action('a1', this.conf.s1)
-        this.a1()
-        this.conf.s1.startup = 10
-        def foo(t):
-            this.conf.s1.recovery = 0.5
-            this.a1()
-        Timer(foo)(300)
+        this.a1 = this.Ability('c1', *this.conf.a1)
+        this.a3 = this.Ability('c3', *this.conf.a3)
+
+        this.a = this.Amulet(this.conf.slot.a1, this.conf.slot.a2)
+        this.a.init()
+
+        this.w = this.Weapon(this.conf.wt, this.conf.slot.w)
+        this.w.init()
+        print(this.w.atk)
+        print(this.w.a)
+
+        this.d1 = this.Ability('d', 'atk', 0.60)()
 
 
 
 if __name__ == '__main__':
-    logset(['act','buff','debug','dmg', 'od', 'bk'])
+    logset(['buff', 'dmg', 'od', 'bk'])
+    logset('sp')
+    #logset(['buff','debug','dmg', 'hit'])
 
     tar = Dummy()
     tar.init()
@@ -40,15 +63,7 @@ if __name__ == '__main__':
     c = Mikoto()
     c.tar(tar)
     c.init()
-
-    c.Passive('dragon', 0.60)()
-    c.Passive('ex-wand', 0.15, 's', 'ex')()
-    c.Passive('ex-blade', 0.1, 'atk', 'ex')()
-    c.Passive('a1', 0.1)()
-    c.Buff('buff', 0.20)(10)
-
-    
     c.test()
 
-    Timer.run()
+    Timer.run(5)
     logcat()
