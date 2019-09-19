@@ -17,13 +17,15 @@ class Conf_chara(Config):
         conf.ele = 'flame'
         conf.wt = 'blade'
         conf.atk = 500
-        conf.a1 = ('hp70'   , 'cc'   , 10  )
-        conf.a3 = (''       , 'cc'   , 8   )
+        conf.a1 = None
+        conf.a3 = None
 
         conf.dodge.recovery = 0.7
 
         conf.ex = ['blade', 'wand']
         #conf.ex = ['blade']
+        conf.rotation = 0
+        conf.acl = 0
 
 
     def sync(this, c):
@@ -57,6 +59,7 @@ class Character(object):
 
         this.logsp = Logger('sp')
         this.loghit = Logger('hit')
+        this.logx = Logger('x')
 
         this.child_init = this.init
         this.init = this.character_init
@@ -72,47 +75,24 @@ class Character(object):
         this.listeners()
         this.setup()
 
-        this.s1 = this.Skill('s1', this, this.conf.s1)
-        this.s2 = this.Skill('s2', this, this.conf.s2)
-        this.s3 = this.Skill('s3', this, this.conf.s3)
-        this.s1.init()
-        this.s2.init()
-        this.s3.init()
+        this.s1 = this.Skill('s1', this, this.conf.s1).init()
+        this.s2 = this.Skill('s2', this, this.conf.s2).init()
+        this.s3 = this.Skill('s3', this, this.conf.s3).init()
 
         import config.weapon
         wtconf = Conf( config.weapon.wtconf[this.conf.wt] )
-        this.x1 = this.Combo('x1', this, wtconf.x1)
-        this.x2 = this.Combo('x2', this, wtconf.x2)
-        this.x3 = this.Combo('x3', this, wtconf.x3)
-        this.x4 = this.Combo('x4', this, wtconf.x4)
-        this.x5 = this.Combo('x5', this, wtconf.x5)
-        this.x1.init()
-        this.x2.init()
-        this.x3.init()
-        this.x4.init()
-        this.x5.init()
+        this.x1 = this.Combo('x1', this, wtconf.x1).init()
+        this.x2 = this.Combo('x2', this, wtconf.x2).init()
+        this.x3 = this.Combo('x3', this, wtconf.x3).init()
+        this.x4 = this.Combo('x4', this, wtconf.x4).init()
+        this.x5 = this.Combo('x5', this, wtconf.x5).init()
+
         this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
+        this.a_s = [this.s1, this.s2, this.s3]
 
-        this.a_fs = this.Fs('fs', this, wtconf.fs)
-        this.fs.init()
-        this.fss = {}
-        for i in range(1, 6):
-            fsname = 'x%dfs'%i
-            if fsname in wtconf:
-                tmp = Conf(wtconf.fs)
-                tmp(wtconf[fsname])
-                wtconf[fsname](tmp)
-                this.fss[fsname] = this.Fs('fs', this, wtconf[fsname])
-            else:
-                this.fss[fsname] = this.Fs('fs', this, wtconf.fs)
-        if dfs in wtconf:
-            tmp = Conf(wtconf.fs)
-            tmp(wtconf.dfs)
-            wtconf.dfs(tmp)
-            this.fss['dfs'] = this.Fs('fs', this, wtconf.dfs)
-
-        for i in this.fss:
-            this.fss[i].init()
+        this.fs = Fs_group(this, wtconf)
+        if 'fsf' in wtconf:
+            this.fsf = this.Fs('fsf', this, wtconf.fsf).init()
 
         this.child_init()
 
@@ -124,8 +104,10 @@ class Character(object):
         this.Passive('base_crit_chance', this.base_crit, 'cc')()
         this.Passive('base_crit_damage', 0.7, 'cd')()
 
-        this.a1 = this.Ability('chara_a1', *this.conf.a1)()
-        this.a3 = this.Ability('chara_a3', *this.conf.a3)()
+        if this.conf.a1:
+            this.a1 = this.Ability('chara_a1', *this.conf.a1)()
+        if this.conf.a3:
+            this.a3 = this.Ability('chara_a3', *this.conf.a3)()
 
         this.d = this.Dragon(this.conf.slot.d)
         this.w = this.Weapon(this.conf.wt, this.conf.slot.w)
@@ -156,38 +138,11 @@ class Character(object):
         this.atk += this.w.atk + this.a.atk
 
 
-    def think_cancel(this, e):
-        if e.hit == e.last:
-            x = e.idx
-        else:
-            x = e.idx*10+e.hit
-        #if e.idx == 5 and e.hit==e.last:
-        #    this.fs()
-        if this.s1.sp.cur >= this.s1.sp.max:
-            this.think_s1()
-        if this.s2.sp.cur >= this.s2.sp.max:
-            this.think_s2()
-        if this.s3.sp.cur >= this.s3.sp.max:
-            this.think_s3()
-
-    def think_s(this):
-        pass
-
-    def think_s1(this):
-        this.s1()
-    def think_s2(this):
-        this.s2()
-    def think_s3(this):
-        this.s3()
-
-    def think_fs(this):
-        pass
-
     def listeners(this):
         if this.conf.rotation :
             Event('idle')(this.l_rotation)
         else:
-            Event('idle')(this.x)
+            Event('idle')(this.l_idle)
             Event('cancel')(this.think_cancel)
 
 
@@ -262,12 +217,20 @@ class Character(object):
         #this.think_pin('prep')
 
 
-    def x(this, e):
-        doing = this.Action.doing.name
-        if doing[0] == 'x':
-            this.a_x[int(doing[1])]()
-        else:
+    def x(this):
+        doing = this.Action.doing.conf
+        if doing.type == 'x' :
+            this.a_x[doing.idx]()
+        elif doing.type == 'fs' :
             this.a_x[0]()
+        else:
+            if this.logx:
+                this.logx('%s, tap'%this.name, 'plain start')
+            Timer(this.start_x)(0.15)
+
+
+    def start_x(this, t):
+        this.a_x[0]()
 
 
     def hit(this, count):
@@ -285,6 +248,44 @@ class Character(object):
             this.loghit('reset', 0)
         this.e_hit.hit = 0
         this.e_hit()
+
+
+    def l_idle(this, e):
+        this.x()
+
+
+    def l_rotation(this, e):
+        pass
+
+
+    def think_cancel(this, e):
+        if e.hit == e.last:
+            x = e.idx
+        else:
+            x = e.idx*10+e.hit
+        if x == 5:
+            this.fsf()
+        if this.s1.sp.cur >= this.s1.sp.max:
+            this.think_s1()
+        if this.s2.sp.cur >= this.s2.sp.max:
+            this.think_s2()
+        if this.s3.sp.cur >= this.s3.sp.max:
+            this.think_s3()
+
+    def think_s(this):
+        pass
+
+    def think_s1(this):
+        if this.stance == 0:
+            this.s1()
+    def think_s2(this):
+        this.s2()
+    def think_s3(this):
+        this.s3()
+
+    def think_fs(this):
+        pass
+
 
 
 

@@ -6,7 +6,6 @@ conf = {
 , 'x1.hit'          : [(0.17, 'h1')]
 , 'x1.attr.h1.coef' : 0.97
 , 'x1.sp'           : 130
-, 'x1.startup'      : 0.15
 , 'x1.recovery'     : 0.57
 
 , 'x2.idx'          : 2
@@ -32,9 +31,9 @@ conf = {
 , 'x5.hit'          : [(0, 'h1')]
 , 'x5.attr.h1.coef' : 1.94
 , 'x5.sp'           : 660
-, 'x5.recovery'     : 1.29
+, 'x5.recovery'     : 1.28
 
-, 'fsf.startup'     : 0.68
+, 'fsf.startup'     : 0.76 # 0.62 my best
 , 'fsf.recovery'    : 0
 
 , 'fs.hit'          : [(0.15, 'h1')]

@@ -24,22 +24,22 @@ _max = {
       , 'k_burn'       : 0.30   # burn killer
         }
 
-_initialize = 0
 class Amulet(object):
     a = []
     def __init__(this, host=None):
-        global _initialize
-        if not _initialize:
-            if not host:
-                print('Amulet need a character as host')
-                errrrrrrrrrrr()
-            _initialize = 1
-            this.host = host
-            this.subclasses = {}
-            for i in this.__class__.__subclasses__():
-                this.subclasses[i.__name__] = i
+        if not host:
+            print('Amulet need a character as host')
+            errrrrrrrrrrr()
+        this.host = host
 
-    
+
+    def get_sub(this):
+        this.subclasses = {}
+        for i in this.__class__.__subclasses__():
+            this.subclasses[i.__name__] = i
+        return this.subclasses
+
+
     def __call__(this, classname1, classname2):
         global _max
         import amulet

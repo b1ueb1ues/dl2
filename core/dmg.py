@@ -151,6 +151,11 @@ class _Dmg_calc(object):
 
         cc  = this.src_dp('cc')
         cd  = this.src_dp('cd')
+        print(true_dmg)
+        print(this.coef)
+        print(cc)
+        print(cd)
+        exit()
         crit_ave = (cd-1) * (cc-1) + 1
         true_dmg *= crit_ave
         
@@ -173,8 +178,7 @@ class _Dmg_calc(object):
                 if j.mod_order == i:
                     true_dmg *= (1+this.killer[i])
 
-        true_dmg *= this.coef
-        return true_dmg
+        return true_dmg * this.coef
 
 
 class Dmg_param(object):

@@ -89,10 +89,28 @@ class Target(object):
             this.Passive('ks_%s'%i, 1, 'ks', i)()
 
 
-    def recount(this, dmg):
+    def recount(this, hostname, dmgname, dmg, odmg):
+        if hostname not in this.skada:
+            this.skada[hostname] = {
+                    'dmg':{},
+                    'odmg':{}
+                    }
+        hostdmg = this.skada[hostname]['dmg']
+        hostodmg = this.skada[hostname]['odmg']
+        if dmgname in hostdmg:
+            hostdmg[dmgname] += dmg
+        else:
+            hostdmg[dmgname] = 0
+
+        if odmg:
+            if dmgname in hostodmg:
+                hostodmg[dmgname] += odmg
+            else:
+                hostodmg[dmgname] = 0
+
         if this.logdmg:
-            this.logdmg('%s, %s'%(dmg.hostname, dmg.name), dmg.dmg,
-                    'hp: %d-%d'%(this.hp, dmg.dmg) )
+            this.logdmg('%s, %s'%(hostname, dmgname), dmg,
+                    'hp: %d-%d'%(this.hp, dmg) )
 
 
     def dt(this, dmg):
@@ -108,7 +126,6 @@ class Target(object):
 
 
     def dt_odbk(this, dmg): 
-        this.recount(dmg)
         true_dmg = dmg.dmg
         if this.odbk == 0 :
             this.hp -= true_dmg
@@ -116,6 +133,7 @@ class Target(object):
             if this.logod:
                 this.logod('%s, od+'%dmg.hostname, true_dmg * dmg.to_od,
                         'od: %d/%d'%(this.od, this.base_od) )
+            this.recount(dmg.hostname, dmg.name, true_dmg, 0)
         elif this.odbk == 1:
             this.hp -= true_dmg
             this.bk -= true_dmg * dmg.to_bk
@@ -124,6 +142,7 @@ class Target(object):
                         'bk: %d/%d'%(this.bk, this.base_bk) )
         else:
             this.hp -= true_dmg
+            this.recount(dmg.hostname, dmg.name, true_dmg, 0)
 
         if this.hp < 0 :
             this.die()

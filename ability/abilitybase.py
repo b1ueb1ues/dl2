@@ -1,21 +1,29 @@
+import __init__
 
-_initialize = 0
 class Ability(object):
     def __init__(this, host):
-        global _initialize
-        if not _initialize:
-            _initialize = 1
-            this.host = host
-            this.subclasses = {}
-            for i in this.__class__.__subclasses__():
-                this.subclasses[i.__name__] = i
+        if not host:
+            print('ability need a character as host')
+            errrrrrrrrrrr()
+        this.host = host
+
+        this.host = host
 
     
     def __call__(this, name, classname, *args, **kwargs):
-        ability = this.subclasses[classname]
-        ability._static = this
-        ability.host = this.host
-        return ability(name, *args, **kwargs)
+        import ability
+        abilities = vars(ability)
+        abilities[classname]._static = this
+        abilities[classname].host = this.host
+        this.a = abilities[classname](name, *args, **kwargs)
+        return this.a
+    
+
+    def get_sub(this):
+        this.subclasses = {}
+        for i in this.__class__.__subclasses__():
+            this.subclasses[i.__name__] = i
+        return this.subclasses
 
 
     def init(this):

@@ -1,19 +1,20 @@
 
-_initialize = 0
+
 class Weapon(object):
     a = []
     s3 = None
     def __init__(this, host=None):
-        global _initialize
-        if not _initialize:
-            if not host:
-                print('Amulet need a character as host')
-                errrrrrrrrrrr()
-            _initialize = 1
-            this.host = host
-            this.subclasses = {}
-            for i in this.__class__.__subclasses__():
-                this.subclasses[i.__name__] = i
+        if not host:
+            print('Amulet need a character as host')
+            errrrrrrrrrrr()
+        this.host = host
+
+
+    def get_sub(this):
+        this.subclasses = {}
+        for i in this.__class__.__subclasses__():
+            this.subclasses[i.__name__] = i
+        return this.subclasses
 
     
     def __call__(this, wt, name):
@@ -21,8 +22,7 @@ class Weapon(object):
         import weapon
         weapons = vars(weapon.type_[wt])
         weapons[name]._static = this
-        weapons[name].host = this.host
-        this.w = weapons[name]()
+        this.w = weapons[name](this.host)
         return this.w
 
 

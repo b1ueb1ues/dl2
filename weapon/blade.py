@@ -6,10 +6,10 @@ class c534_flame(Weapon):
     wt = 'blade'
     atk = 572
     s3 = {
-        "hit"           : [(0,'h1'), (0,'h1'), (0,'h1')]
+        "hit"           : [(0.28,'h1'), (0.65,'h1'), (1.1,'h1')]
         ,"attr.h1.coef" : 3.54
         ,"sp"           : 8030
-        ,"recovery"     : 2.65
+        ,"recovery"     : 2.57
     }
 
 c534_wind = c534_flame

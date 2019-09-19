@@ -2,40 +2,29 @@ import __init__
 from core.ctx import *
 from core.characterbase import *
 from target.dummy import *
-from mod.skillshift import *
 
 
-class Mikoto(Character):
+class Elisanne(Character):
     def config(this, conf):
-        conf.name    = 'Mikoto'
-        conf.star    = 5
-        conf.ele     = 'flame'
-        conf.wt      = 'blade'
-        conf.atk     = 520
-        conf.a1      = ('cc', 0.10, 'hp70')
-        conf.a3      = ('cc', 0.08)
-        conf.slot.w  = 'c534_flame'
-        #conf.slot.w  = 'v534_flame_zephyr'
-        #conf.slot.d  = 'Cerb'
-        #conf.slot.d  = 'Arctos'
-        conf.slot.d  = 'Sakuya'
-        conf.slot.a1 = 'RR'
-        conf.slot.a2 = 'BN'
+        conf.name    = 'Elisanne'
+        conf.star    = 4
+        conf.ele     = 'water'
+        conf.wt      = 'lance'
+        conf.atk     = 460
+        conf.a1      = ('bt', 0.25)
+        conf.slot.w  = 'c534_water'
+        conf.slot.d  = 'DJ'
+        conf.slot.a1 = 'BB'
+        conf.slot.a2 = 'JotS'
 
-        conf.s1.recovery = 1.62  # 1.83 2.8
-        conf.s1.sp = 4500
-        conf.s1.hit = [
-                (0.18, 'h1'), 
-                (0.43, 'h1'), 
-                ]
-        conf.s1.attr.h1.coef = 5.32
-        conf.s1.attr.h2.coef = 3.54
-        conf.s1.attr.h3.coef = 2.13
-        conf.s1.attr.h4.coef = 4.25
+        conf.s1.recovery = 1
+        conf.s1.sp = 3817
+        conf.s1.buff = ('s1', 0.20, 15)
 
-        conf.s2.recovery = 1
-        conf.s2.sp = 4500
-        conf.s2.buff = ('self', 0.2, 10, 'spd')
+        conf.s2.recovery = 1.9
+        conf.s2.hit = [(0, 'h1')]
+        conf.s2.attr.h1.coef = 7.54
+
 
     def s1_proc(this):
         this.target.Debuff('s1',0.1)(10)

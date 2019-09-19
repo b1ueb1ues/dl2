@@ -99,6 +99,7 @@ class _Skill(object):
                 label.name = this.name
             label.proc = this.collid
             this.dmg[i] = this.host.Dmg(label)
+        return this
 
 
     def charge(this, sp):
@@ -141,7 +142,15 @@ class _Skill(object):
 
 
     def buff(this, t):
-        buffarg = this.conf.buff
+        if type(this.conf.buff) == tuple:
+            buffarg = this.conf.buff
+            this.onebuff(buffarg)
+        elif type(this.conf.buff) == list:
+            for i in this.conf.buff:
+                this.onebuff(i)
+
+
+    def onebuff(this, buffarg):
         wide = buffarg[0]
         value = buffarg[1]
         time = buffarg[2]
@@ -198,6 +207,9 @@ class _Skill(object):
 
 
     def _active(this, t):
+        if this.ac.status != 1:
+            return
+
         if this.log:
             this.log('%s, %s'%(this.host.name, this.name),'cutin')
 
@@ -253,7 +265,6 @@ class Conf_cmb(Config):
         this.hit     = c.hit
         this.attr    = c.attr
         this.proc    = c.proc
-        this.startup = c.startup
         
         this.init()
 
@@ -290,11 +301,13 @@ class _Combo(object):
             label = this.attr[i]
             label.name = this.name
             label.proc = this.collid
+            label.type = 'x'
             this.dmg[i] = this.host.Dmg(label)
         this.e_x.name = this.name
         this.e_x.type = this.type
         this.e_x.idx = this.idx
         this.e_x.last = this.hit_count
+        return this
 
 
     def tap(this):
@@ -412,11 +425,14 @@ class _Fs(object):
             label = this.attr[i]
             label.name = this.name
             label.proc = this.collid
+            label.type = 'fs'
             this.dmg[i] = this.host.Dmg(label)
         this.e_fs.type = this.type
         this.e_fs.name = this.name
         this.e_fs.idx = 0
         this.e_fs.last = this.hit_count
+        this.t_startup = Timer(this._active)
+        return this
 
 
     def hold(this):
@@ -458,12 +474,15 @@ class _Fs(object):
 
     def active(this):
         if this.startup:
-            Timer(this._active)(this.startup)
+            this.t_startup(this.startup)
         else:
             this._active(0)
 
 
     def _active(this, t):
+        if this.ac.status != 1:
+            return
+
         if this.log:
             this.log('%s, %s'%(this.host.name, this.name),'release')
 
@@ -473,6 +492,7 @@ class _Fs(object):
             this.hit_prev = -1
             timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
+
 
 class Dodge(object):
     def __init__(this, host):
@@ -486,28 +506,18 @@ class Dodge(object):
         return r
 
 
-class Conf_cmb(Config):
+class Conf_dodge(Config):
     def default(this, conf):
-        conf.type      = 'x'
-        conf.idx       = 1 # 1~5
-        conf.sp        = 0
+        conf.type      = 'dodge'
         conf.startup   = 0
-        conf.recovery  = 2
+        conf.recovery  = 0.7
        #conf.on_start  = None
        #conf.on_end    = None
-        conf.proc      = None
-        conf.hit       = []
-        conf.attr      = {}
         conf.cancel_by = ['s']
 
 
     def sync(this, c):
         this.type    = c.type
-        this.idx     = c.idx
-        this.sp      = c.sp
-        this.hit     = c.hit
-        this.attr    = c.attr
-        this.proc    = c.proc
         this.startup = c.startup
         
         this.init()
@@ -517,21 +527,15 @@ class _Dodge(object):
     def __init__(this, name, host, conf=None):
         this.name = name
         this.host = host
-        this.sp = 0
-        this.firsthit = 1
-        this.hit_count = 0
-        this.hit_prev= -1
-        this.hit_next = 0
         this.e_x = Event('cancel')
 
-        this.conf = Conf_cmb(this, conf)
+        this.conf = Conf_dodge(this, conf)
 
         this.ac = host.Action(this.name, this.conf)
 
-        this.log = Logger('x')
+        this.log = Logger('dodge')
         this.src = this.host.name+', '
         this.speed = host.speed # function
-        this.charge = host.charge
 
 
     def __call__(this):
@@ -539,17 +543,11 @@ class _Dodge(object):
 
 
     def init(this):
-        this.hit_count = len(this.hit)
-        this.dmg = {}
-        for i in this.attr:
-            label = this.attr[i]
-            label.name = this.name
-            label.proc = this.collid
-            this.dmg[i] = this.host.Dmg(label)
         this.e_x.name = this.name
         this.e_x.type = this.type
-        this.e_x.idx = this.idx
-        this.e_x.last = this.hit_count
+        this.e_x.idx = 0
+        this.e_x.last = 0
+        return this
 
 
     def tap(this):
@@ -557,46 +555,47 @@ class _Dodge(object):
             this.log(this.src+this.name, 'tap')
 
         if this.ac():
-            this.active()
-            this._static.x_prev = this.name
+            if this.log:
+                this.log('start')
             return 1
         else:
+            if this.log:
+                this.log('failed')
             return 0
 
 
-    def _do(this, t):
-        if this.ac.status != 1:
-            return
+
+class Fs_group(object):
+    def __init__(this, host, wtconf):
+        this.host = host
+        this.a_fs = [0,1,2,3,4,5,6]
+        this.a_fs[0] = host.Fs('fs', host, wtconf.fs).init()
+        for i in range(1, 6):
+            fsname = 'x%dfs'%i
+            if fsname in wtconf:
+                tmp = Conf(wtconf.fs)
+                tmp(wtconf[fsname])
+                wtconf[fsname](tmp)
+                this.a_fs[i] = host.Fs('fs', host, wtconf[fsname]).init()
+            else:
+                this.a_fs[i] = host.Fs('fs', host, wtconf.fs).init()
+        if 'dfs' in wtconf:
+            tmp = Conf(wtconf.fs)
+            tmp(wtconf.dfs)
+            wtconf.dfs(tmp)
+            this.a_fs[6] = host.Fs('fs', host, wtconf.dfs).init()
 
 
-        hitlabel = this.hit[this.hit_next][1]
-        this.dmg[hitlabel]()
+    def __call__(this):
+        doing = this.host.Action.doing.conf
+        if doing.type == 'x':
+            this.a_fs[doing.idx]()
+        elif doing.type == 'dodge':
+            this.a_fs[6]()
+        else:
+            this.a_fs[0]()
+    
 
-        this.hit_prev = this.hit_next
-        this.hit_next += 1
-
-        if this.hit_next < this.hit_count :
-            timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
-            timing /= this.speed()
-            Timer(this._do)(timing)
-
-        this.e_x.hit = this.hit_next
-        this.e_x()
-
-
-    def collid(this):
-        if this.firsthit:
-            this.firsthit = 0
-            this.charge('x', this.sp)
-            if this.proc:
-                this.proc()
-
-
-    def active(this):
-        if this.hit_count :
-            this.firsthit = 1
-            this.hit_prev= -1
-            this.hit_next = 0
-            timing = this.hit[this.hit_next][0] / this.speed()
-            Timer(this._do)(timing)
+    def init():
+        return this
 
