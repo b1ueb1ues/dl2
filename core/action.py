@@ -20,8 +20,7 @@ class Action(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Action._static = this
-        return _Action(*args, **kwargs)
+        return _Action(this, *args, **kwargs)
 
 
 class Conf_Action(Config):
@@ -44,8 +43,9 @@ class Conf_Action(Config):
 
 
 class _Action(object):   
-    def __init__(this, name, conf=None):  
+    def __init__(this, static, name, conf=None):  
         ## can't change name after this
+        this._static = static
         this.name = name
         this.hostname = this._static.host.name
         this.src = this.hostname + ', '
@@ -57,6 +57,7 @@ class _Action(object):
 
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
+        this.e_idle.host = this._static.host
 
         this.conf = Conf_Action(this, conf)
         this.log = Logger('act')

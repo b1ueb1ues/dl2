@@ -119,7 +119,7 @@ class Target(object):
 
 
     def dt_no_od(this, dmg):
-        this.recount(dmg)
+        this.recount(dmg.hostname, dmg.name, true_dmg, 0)
         this.hp -= dmg.dmg
         if this.hp < 0 :
             this.die()
@@ -140,6 +140,7 @@ class Target(object):
             if this.logbk:
                 this.logbk('%s, od-'%dmg.hostname, true_dmg * dmg.to_bk,
                         'bk: %d/%d'%(this.bk, this.base_bk) )
+            this.recount(dmg.hostname, dmg.name, true_dmg, true_dmg * dmg.to_bk)
         else:
             this.hp -= true_dmg
             this.recount(dmg.hostname, dmg.name, true_dmg, 0)

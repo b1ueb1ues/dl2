@@ -71,9 +71,7 @@ class Dmg_calc(object):
 
 
     def __call__(this, *args, **kwargs):
-        class __Dmg_calc(_Dmg_calc):
-            _static = this
-        return __Dmg_calc(*args, **kwargs)
+        return _Dmg_calc(this, *args, **kwargs)
 
 
 class Conf_dc(Config):
@@ -102,7 +100,8 @@ class Conf_dc(Config):
 
 
 class _Dmg_calc(object):
-    def __init__(this, conf):  # conf hitattr
+    def __init__(this, static, conf):  # conf hitattr
+        this._static = static
         this.src = this._static.src
         this.dst = this._static.dst
         this.src_dp = this.src.Dp.get
@@ -151,11 +150,6 @@ class _Dmg_calc(object):
 
         cc  = this.src_dp('cc')
         cd  = this.src_dp('cd')
-        print(true_dmg)
-        print(this.coef)
-        print(cc)
-        print(cd)
-        exit()
         crit_ave = (cd-1) * (cc-1) + 1
         true_dmg *= crit_ave
         
@@ -178,7 +172,7 @@ class _Dmg_calc(object):
                 if j.mod_order == i:
                     true_dmg *= (1+this.killer[i])
 
-        return true_dmg * this.coef
+        return int(true_dmg * this.coef)
 
 
 class Dmg_param(object):
@@ -195,9 +189,7 @@ class Dmg_param(object):
 
 
     def add(this, *args, **kwargs):
-        class __Dmg_param(_Dmg_param):
-            _static = this
-        return __Dmg_param(*args, **kwargs)
+        return _Dmg_param(this, *args, **kwargs)
 
     __call__ = add
 
@@ -225,15 +217,15 @@ class Dmg_param(object):
 
 
 class _Dmg_param(object):
-    def __init__(this, name, mtype, morder, value):
+    def __init__(this, static, name, mtype, morder, value):
         # mod_type = atk, def, dmg, x, fs, s, buff ...
         # mod_order = p: passive, b: buff, ex: co-ability
+        this._static = static
         this.mod_name = name
         this.mod_type = mtype
         this.mod_order = morder
         this.mod_value = value
         this.__active = 0
-        static = this._static
         if this.mod_type not in this._static.type_mods:
             this.mods = []
             static.type_mods[this.mod_type] = this.mods

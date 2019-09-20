@@ -206,6 +206,19 @@ class Conf(lobject):
             errrrrrrrrrrrrrrrrrrrr()
 
 
+    @staticmethod
+    def reset(this):
+        clean = []
+        for i in vars(this):
+            clean.append(i)
+        for i in clean:
+            del(vars(this)[i])
+        this.__sync = {}
+        this.__parentname = None
+        this.__name = None
+        this.__idx = 0
+
+
     def __add__(this, a):
         if type(a) != Conf:
             print('Conf can only add Conf')
@@ -258,7 +271,7 @@ class Conf(lobject):
             this.__sync[i](this)
 
 
-class Config(Conf):
+class Config(object):
     def default(this, conf):
         pass
     def config(this, conf):
@@ -274,18 +287,30 @@ class Config(Conf):
             cls.sync(host, conf)
         if conf:
             tmp(conf)
+            Conf.reset(conf)
             conf(tmp)
             conf(sync)
-            #conf()
             return conf
         else:
             tmp(sync)
-            #tmp()
             return tmp
 
 
 
 if __name__ == '__main__':
+    a = Conf()
+    a.b.c = 'b.c'
+    a.a = 'a'
+    print(a)
+
+    b = Conf()
+    b.b.d = 'b.d'
+
+    a(b)
+    print(a)
+
+
+    exit()
     def foo(e):
         print('foo')
         print(e)
@@ -293,6 +318,7 @@ if __name__ == '__main__':
     a = Conf()
     for i in a:
         print(i, a[i])
+
     exit()
     print(a)
     exit()

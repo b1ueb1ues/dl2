@@ -5,13 +5,13 @@ from core.ctx import *
 
 class Plunder_Pals(Amulet): #Plunder Pals or Hitting the Books
     atk = 54
-    a = [('sd', 25)]
+    a = [('sd', 0.25)]
 PP = Plunder_Pals
 
 
 class Resounding_Rendition(Amulet):
     atk = 64
-    a = [('sd', 30),
+    a = [('sd', 0.30),
          ('cc', 0.08,'hp70')]
 RR = Resounding_Rendition
 
@@ -25,7 +25,7 @@ CE = Crystalian_Envoy
 class Bonds_Between_Worlds(Amulet):
     atk = 54
     a = [('atk', 0.13,'hp70'),
-         ('prep', 25)]
+         ('prep', 0.25)]
 Bonds = Bonds_Between_Worlds
 BBW = Bonds_Between_Worlds
 

@@ -8,7 +8,7 @@ _g_verbose = []
 
 def Logger(t):
     global _g_verbose
-    if t in _g_verbose:
+    if t in _g_verbose or 'all' in _g_verbose:
         def log(name, amount=None, misc=''):
             global _g_log
             _g_log.append([now(), t, name, amount, misc])

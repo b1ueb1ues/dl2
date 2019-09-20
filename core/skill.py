@@ -43,7 +43,7 @@ class Sp(object):
 class Conf_skl(Config):
     def default(this, conf):
         conf.type     = 's'
-        conf.sp       = 0
+        conf.sp       = -1
         conf.startup  = 0.1 # ui lag
         conf.recovery = 2
         conf.on_start = None

@@ -9,8 +9,7 @@ class Passive(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Passive._static = this
-        return _Passive(*args, **kwargs)
+        return _Passive(this, *args, **kwargs)
 
 
     def sync(this, c):
@@ -18,7 +17,8 @@ class Passive(object):
 
 
 class _Passive():
-    def __init__(this, name, value, mtype='atk', morder=None):
+    def __init__(this, static, name, value, mtype='atk', morder=None):
+        this._static = static
         this.name = name
         this._value = value
         this.mod_type = mtype # atk def_ cc cd buff sp x fs s dmg killer ks
@@ -94,8 +94,7 @@ class Buff(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Buff._static = this
-        return _Buff(*args, **kwargs)
+        return _Buff(this, *args, **kwargs)
 
 
     def l_buff(this, e):
@@ -108,7 +107,8 @@ class Buff(object):
 
 class _Buff(object):
     bufftype = 'buff'
-    def __init__(this, name, value, mtype='atk', morder=None, group=None):
+    def __init__(this, static, name, value, mtype='atk', morder=None, group=None):
+        this._static = static
         if morder == None:
             if mtype in ['atk','s','hp']:
                 morder = 'b'
@@ -280,8 +280,7 @@ class Selfbuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Selfbuff._static = this.Buff
-        return _Selfbuff(*args, **kwargs)
+        return _Selfbuff(this.Buff, *args, **kwargs)
 
 
 
@@ -301,14 +300,13 @@ class Debuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Debuff._static = this.Buff
-        return _Debuff(*args, **kwargs)
+        return _Debuff(this.Buff, *args, **kwargs)
 
 
 class _Debuff(_Buff):
     bufftype = 'debuff'
-    def __init__(this, name, value, mtype='def', morder=None, group=None):
-        super().__init__(name, 0-value, mtype, morder, group)
+    def __init__(this, static, name, value, mtype='def', morder=None, group=None):
+        super().__init__(static, name, 0-value, mtype, morder, group)
         #this.dp.set(0.0-value)
         
 
@@ -328,14 +326,14 @@ class Teambuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Teambuff._static = this
-        return _Teambuff(*args, **kwargs)
+        return _Teambuff(this, *args, **kwargs)
 
 
 class _Teambuff():
     bufftype = 'teambuff'
-    def __init__(this, name, value,
+    def __init__(this, static, name, value,
             mtype='atk', morder=None, group=None):
+        this._static = static
         e = this._static.e
         e.name = name
         e.value = value
@@ -368,14 +366,14 @@ class Zonebuff(object):
 
 
     def __call__(this, *args, **kwargs):
-        _Zonebuff._static = this
-        return _Zonebuff(*args, **kwargs)
+        return _Zonebuff(this, *args, **kwargs)
 
 
 class _Zonebuff():
     bufftype = 'buffzone'
-    def __init__(this, name, value,
+    def __init__(this, static, name, value,
             mtype='atk', morder=None, group=None):
+        this._static = static
         e = this._static.e
         e.name = name
         e.value = value

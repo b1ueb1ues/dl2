@@ -65,7 +65,11 @@ class Character(object):
         this.init = this.character_init
 
 
-    def config(this, conf):
+    def config(this, conf):  # rewrite by child
+        pass
+
+
+    def init(this): # rewrite by child
         pass
 
 
@@ -97,6 +101,7 @@ class Character(object):
         this.child_init()
 
         this.e_idle = Event('idle')
+        this.e_idle.host = this
         this.e_idle()
 
 
@@ -126,7 +131,7 @@ class Character(object):
             if i == 'blade':
                 this.Passive('ex_blade',  0.10, 'atk', 'ex')()
             elif i == 'wand':
-                this.Passive('ex_wand',   0.15, 'sd',  'ex')()
+                this.Passive('ex_wand',   0.15, 's',  'ex')()
             elif i == 'dagger':
                 this.Passive('ex_dagger', 0.10, 'cc',  'p')()
             elif i == 'bow':
@@ -136,6 +141,9 @@ class Character(object):
         this.atk = this.base_atk * forte.c(this.ele, this.wt)
         this.atk += this.d.atk * forte.d(this.ele)
         this.atk += this.w.atk + this.a.atk
+        this.atk = int(this.atk)
+        log_('info','%s, base_atk'%(this.name),this.atk)
+        
 
 
     def listeners(this):
@@ -251,6 +259,8 @@ class Character(object):
 
 
     def l_idle(this, e):
+        if e.host != this:
+            return
         this.x()
 
 
@@ -265,23 +275,25 @@ class Character(object):
             x = e.idx*10+e.hit
         if x == 5:
             this.fsf()
-        if this.s1.sp.cur >= this.s1.sp.max:
-            this.think_s1()
-        if this.s2.sp.cur >= this.s2.sp.max:
-            this.think_s2()
-        if this.s3.sp.cur >= this.s3.sp.max:
-            this.think_s3()
+        if this.s1.sp.cur >= this.s1.sp.max and this.s1.sp.max > 0:
+            if this.think_s1():
+                return 
+        if this.s2.sp.cur >= this.s2.sp.max and this.s2.sp.max > 0:
+            if this.think_s2():
+                return 
+        if this.s3.sp.cur >= this.s3.sp.max and this.s3.sp.max > 0:
+            if this.think_s3():
+                return 
 
     def think_s(this):
         pass
 
     def think_s1(this):
-        if this.stance == 0:
-            this.s1()
+        return this.s1()
     def think_s2(this):
-        this.s2()
+        return this.s2()
     def think_s3(this):
-        this.s3()
+        return this.s3()
 
     def think_fs(this):
         pass

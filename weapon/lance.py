@@ -18,7 +18,7 @@ c534_shadow = c534_flame
 class c534_water(Weapon):
     ele = ['water','wind']
     wt = 'lance'
-    att = 523
+    atk = 523
 
 c534_wind = c534_water
 

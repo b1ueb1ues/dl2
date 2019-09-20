@@ -9,7 +9,7 @@ from weapon.weaponbase import *
 from weapon import blade
 #from weapon import bow
 #from weapon import dagger
-#from weapon import lance
+from weapon import lance
 #from weapon import staff
 #from weapon import sword
 #from weapon import wand
@@ -20,7 +20,7 @@ type_ = {
     ,'blade'  : blade
 #    ,'bow'    : bow
 #    ,'dagger' : dagger
-#    ,'lance'  : lance
+    ,'lance'  : lance
 #    ,'staff'  : staff
 #    ,'sword'  : sword
 #    ,'wand'   : wand
