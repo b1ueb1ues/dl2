@@ -73,17 +73,15 @@ class Mydict(_collections_abc.MutableMapping):
     def __getattr__(this, k):
         return this.__data[k]
 
-    #def __getattr__(this, k):
-    #    if k in this.__data:
-    #        return this.__data[k]
-    #    else:
-    #        this.__data[k] = this.__class__()
-    #        return this.__data[k]
 
     def __setattr__(this, k, v):
         super().__setattr__(k, v)
         if k != '_Mydict__data':
             this.__data[k]=v
+
+    @classmethod
+    def data(cls, this):
+        return this.__data
 
 
 class Conf(Mydict):
@@ -92,14 +90,60 @@ class Conf(Mydict):
         if not template :
             return 
         this.__from_shallow_dict(template)
+        object.__setattr__(this, '_Conf__sync', {})
+        object.__setattr__(this, '_Conf__idx', 0)
 
 
-    def __from_shallow_dict(this,dic):
+    def __from_shallow_dict(this, dic):
         if type(dic) != dict:
             print('cannot from something not dict')
             raise
         for k,v in dic.items():
             this.__rsetitem(k, v)
+
+
+    def __to_dict(this, r, pre, data):
+        for i in data:
+            if type(data[i]) == this.__class__:
+                this.__to_dict(r, pre+i+'.', data[i])
+            else:
+                r[pre+i] = data[i]
+
+
+    def __str__(this):
+        r = ""
+        d = {}
+        this.__to_dict(d, '', this)
+        for k, v in d.items():
+            r += "%s=%s\n"%(k, v)
+        return r
+
+
+    def __do_sync(this):
+        for i in this.__sync:
+            this.__sync[i](this)
+
+
+    def __call__(this, p=None):
+        if not p :
+            this.__do_sync()
+        elif type(p).__name__ == 'instancemethod':
+            this.__sync[this.__idx] = p
+            this.__idx += 1
+            p(this)
+            return this.__idx-1
+        elif type(p).__name__ == 'function':
+            this.__sync[this.__idx] = p
+            this.__idx += 1
+            p(this)
+            return this.__idx-1
+        elif type(p).__name__ == 'method':
+            this.__sync[this.__idx] = p
+            this.__idx += 1
+            p(this)
+            return this.__idx-1
+
+
 
 
     def __rsetitem(this, k, v):
@@ -114,16 +158,32 @@ class Conf(Mydict):
             this[k] = v
         else:
             print('can\' set item')
-            errrrrrrrrrrr()
+            raise
 
 
+class Config():
+    def default(this, conf):
+        conf.a1 = 1
+        conf.a2 = 2
 
+
+    def __init__(this, conf):
+        pass
+
+if __name__ == '__main__':
+    d = {
+            'test':1
+            ,'test2.test3':3
+            }
+    a = Conf(d)
+
+    def foo(c):
+        print('<foo>')
+        print(c)
+        print('</foo>')
+
+    a(foo)
+    a()
+    print(a)
     
-d = {'test.a':1}
-
-c = Conf(d)
-c['a'] = 'a'
-c.b = Conf()
-c.b.c = 'c'
-print(c)
 
