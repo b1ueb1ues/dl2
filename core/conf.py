@@ -16,9 +16,9 @@ class Conf():
             p = k[:l]
             c = k[l+1:]
             if p not in d:
-                d[p] = {'__sync':{}, '__name':p, '__parent':d}
+                d[p] = {'__sync':{}}
             elif type(d[p]) != dict:
-                d[p] = {'__sync':{}, '__name':p, '__parent':d}
+                d[p] = {'__sync':{}}
             Conf.__rsetitem(d[p], c, v)
 
     @staticmethod
@@ -32,14 +32,11 @@ class Conf():
     @staticmethod
     def __to_dict(d, pre, get):
         for k, v in get.items():
-            if k == '__sync':
-                continue
-            elif k == '__name':
-                continue
-            elif k == '__parent':
-                continue
             if type(v) == dict:
-                Conf.__to_dict(d, pre+k+'.', v)
+                if '__sync' in v: # class conf
+                    Conf.__to_dict(d, pre+k+'.', v)
+                elif k!= '__sync':
+                    d[pre+k] = v
             else:
                 d[pre+k] = v
 
@@ -108,16 +105,15 @@ class Config(object):
     default = {}
     sync = None
         
-    def __init__(this, host, conf):
+    def __init__(this, host, conf=None):
         this.host = host
         tmp = Conf()
         tmp.update(this.default)
-        tmp.update(conf)
+        if conf:
+            tmp.update(conf)
         if this.sync:
             tmp.get['__sync'][this.__sync] = 1
             this.__sync(tmp.get)
-        if conf['__parent']:
-            conf['__parent'][conf['__name']] = tmp.get
         this.conf = tmp
 
     def __call__(this):
@@ -158,8 +154,9 @@ if __name__ == '__main__':
                 ,'attr.h1.coef':3
                 }
 
-    Conf_c(0, root.get['conf1'])
+    root.get = Conf_c(0, root.get['conf1'])()
     print(root)
+    print(root.get)
 
 
 

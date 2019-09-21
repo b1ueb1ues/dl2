@@ -41,41 +41,59 @@ class Sp(object):
 
 
 class Conf_skl(Config):
-    def default(this, conf):
-        conf.type     = 's'
-        conf.sp       = -1
-        conf.startup  = 0.1 # ui lag
-        conf.recovery = 2
-        conf.on_start = None
-        conf.on_end   = None
-        conf.proc     = None
-        conf.hit      = []
-        conf.attr     = {}
+    default = {
+         'type'     : 's'
+        ,'sp'       : -1
+        ,'startup'  : 0.1 # ui lag  # only for action
+        ,'recovery' : 2             # both for action
+        ,'on_start' : None 
+        ,'on_end'   : None          # only for action
+        ,'proc'     : None
+        ,'hit'      : []
+        ,'attr'     : {}
+        }
 
 
     def sync(this, c):
-        this.sp.max   = c.sp
-        this.hit      = c.hit
-        this.attr     = c.attr
-        this.proc     = c.proc
-        this.startup  = c.startup
-        this.before   = c.before
-        this.on_start = c.on_start
+        this.sp.max   = c['sp']
+        this.proc     = c['proc']
+        this.startup  = c['startup']
+        this.before   = c['before']
+        this.on_start = c['on_start']
+
+        dirty = 0
+        if this.attr != c['attr']:
+            dirty = 1
+            this.attr = c['attr']
+        if this.hit != c['hit']:
+            dirty = 1
+            this.hit      = c['hit']
+            this.hit_count = len(this.hit)
+        if dirty:
+            this.dmg = {}
+            for i in this.attr:
+                label = this.attr[i]
+                if i[0] == '_':
+                    label['name'] = this.name + i
+                else:
+                    label['name'] = this.name
+                label['proc'] = this.collid
+                this.dmg[i] = this.host.Dmg(label)
         
-        this.init()
 
 
 class _Skill(object):
     def __init__(this, name, host, conf=None):
         this.name = name
         this.host = host
-        this.sp = Sp(0)
+        this.sp = {'max':-1, 'cur':0}
         this.firsthit = 1
         this.hit_prev = -1
         this.hit_next = 0
         this.hit_count = 0
 
-        this.conf = Conf_skl(this, conf)
+        this.hit = None
+        this.attr = None
 
         this.ac = host.Action(this.name, this.conf)
 
@@ -83,28 +101,14 @@ class _Skill(object):
         this.src = host.name+', '
         this.speed = host.speed # function
 
+        this.conf = Conf_skl(this, conf)()
 
     def __call__(this):
         return this.tap()
 
-
-    def init(this):
-        this.hit_count = len(this.hit)
-        this.dmg = {}
-        for i in this.attr:
-            label = this.attr[i]
-            if i[0] == '_':
-                label.name = this.name + i
-            else:
-                label.name = this.name
-            label.proc = this.collid
-            this.dmg[i] = this.host.Dmg(label)
-        return this
-
-
     def charge(this, sp):
-        if this.sp.max > 0:
-            this.sp.cur += sp   
+        if this.sp['max'] > 0:
+            this.sp['cur'] += sp   
         #if this.charged > this.sp:  # should be 
             #this.charged = this.sp
 
@@ -118,7 +122,7 @@ class _Skill(object):
             if this.log:
                 this.log(this.src+this.name, 'failed','silence')
             return 0
-        elif this.sp.cur < this.sp.max:
+        elif this.sp['cur'] < this.sp['max']:
             if this.log:
                 this.log(this.src+this.name, 'failed','no sp')
             return 0
@@ -213,7 +217,7 @@ class _Skill(object):
         if this.log:
             this.log('%s, %s'%(this.host.name, this.name),'cutin')
 
-        this.sp.cur = 0
+        this.sp['cur'] = 0
         this._static.s_prev = this.name
         # Even if animation is shorter than 2s
         # you can't cast next skill before 2s, after which ui shows
@@ -244,29 +248,44 @@ class Combo(object):
 
 
 class Conf_cmb(Config):
-    def default(this, conf):
-        conf.type      = 'x'
-        conf.idx       = 1 # 1~5
-        conf.sp        = 0
-        conf.startup   = 0
-        conf.recovery  = 2
-       #conf.on_start  = None
-       #conf.on_end    = None
-        conf.proc      = None
-        conf.hit       = []
-        conf.attr      = {}
-        conf.cancel_by = ['s','fs','dodge']
+    default = {
+         'type'     : 'x'
+        ,'idx'      : 1 # 1~5
+        ,'sp'       : 0
+        ,'startup'  : 0
+        ,'recovery' : 2
+       #,'on_start' : None
+       #,'on_end'   : None
+        ,'proc'     : None
+        ,'hit'      : []
+        ,'attr'     : {}
+        ,'cancel_by': ['s','fs','dodge']
+        }
 
 
     def sync(this, c):
         this.type    = c.type
         this.idx     = c.idx
         this.sp      = c.sp
-        this.hit     = c.hit
         this.attr    = c.attr
         this.proc    = c.proc
         
-        this.init()
+        dirty = 0
+        if this.hit != c.hit:
+            dirty = 1
+            this.hit     = c.hit
+            this.hit_count = len(this.hit)
+        this.dmg = {}
+        for i in this.attr:
+            label = this.attr[i]
+            label.name = this.name
+            label.proc = this.collid
+            label.type = 'x'
+            this.dmg[i] = this.host.Dmg(label)
+        this.e_x.name = this.name
+        this.e_x.type = this.type
+        this.e_x.idx = this.idx
+        this.e_x.last = this.hit_count
 
 
 class _Combo(object):
@@ -294,20 +313,6 @@ class _Combo(object):
         return this.tap()
 
 
-    def init(this):
-        this.hit_count = len(this.hit)
-        this.dmg = {}
-        for i in this.attr:
-            label = this.attr[i]
-            label.name = this.name
-            label.proc = this.collid
-            label.type = 'x'
-            this.dmg[i] = this.host.Dmg(label)
-        this.e_x.name = this.name
-        this.e_x.type = this.type
-        this.e_x.idx = this.idx
-        this.e_x.last = this.hit_count
-        return this
 
 
     def tap(this):

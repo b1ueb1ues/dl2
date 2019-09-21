@@ -3,7 +3,7 @@ from core.ctx import *
 
 
 class Action(object):
-    def __init__(this, host):
+    def __init__(this, host, dp=None):
         this.host = host
 
         class Nop(object):
@@ -16,7 +16,12 @@ class Action(object):
         this.prev = this.nop
         this.doing = this.nop
 
-        this.speed = this.host.speed
+        if dp:
+            this.speed_cache = dp.cache
+            this.speed_get = dp.get_
+        else:
+            this.speed_cache = {'spd':1}
+            this.speed_get = 1
 
 
     def __call__(this, *args, **kwargs):
@@ -25,7 +30,7 @@ class Action(object):
 
 class Conf_Action(Config):
     default = {
-            'type'      : this.name
+             'type'      : ''
             ,'startup'   : 0
             ,'recovery'  : 2
             ,'cancel_by' : []
@@ -33,27 +38,17 @@ class Conf_Action(Config):
             ,'on_end'    : None
             }
 
-    def sync(this, conf):
-        pass
-        this.atype     = conf['type']
-        this.startup   = conf['startup']
-        this.recovery  = conf['recovery']
-        this.cancel_by = conf['cancel_by']
-        this.on_cancel = conf['on_cancel']
-        this.on_end    = conf['on_end']
-
 
 class _Action(object):   
     def __init__(this, static, name, conf=None):  
         ## can't change name after this
         this._static = static
         this.name = name
-        this.conf = Conf_Action(this, conf)
+        this.src = this._static.host.name + ', '
+        this.conf = Conf_Action(this, conf)()
 
-        this.hostname = this._static.host.name
-        this.src = this.hostname + ', '
-
-        this.speed = this._static.speed
+        this.speed_cache = static.speed_cache
+        this.speed_get = static.speed_get
 
         this.action_start = 0
         this.status = 0 # -1: idle/end 0:wait 1:doing 2cancel
@@ -61,16 +56,7 @@ class _Action(object):
         this.t_recovery = Timer(this._cb_act_end)
         this.e_idle = Event('idle')
         this.e_idle.host = this._static.host
-
         this.log = Logger('act')
-
-
-    def __call__(this):
-        return this.start()
-    
-
-    def get_recovery(this):
-        return this.conf.get['recovery'] / this.speed()
 
 
     def _cb_act_end(this, e):
@@ -82,8 +68,8 @@ class _Action(object):
         this.status = -1
         this._static.prev = this # turn this from doing to prev
 
-        if this.on_end:
-            this.on_end()
+        if this.conf['on_end']:
+            this.conf['on_end']()
         #this._static.host.x(0)
         this.e_idle()
 
@@ -105,10 +91,11 @@ class _Action(object):
 
             # doing != this
             if doing.status == 1: # try to cancel an action
-                if this.conf.get['type'] in doing.cancel_by : # can cancel action
+                dconf = doing.conf
+                if this.conf['type'] in dconf['cancel_by'] : # can cancel action
                     doing.t_recovery.off()
-                    if doing.on_cancel:
-                        doing.on_cancel()
+                    if dconf['on_cancel']:
+                        dconf['on_cancel']
                     if this.log:
                         this.log(this.src+'cancel', doing.name,
                                 'by '+this.name \
@@ -122,9 +109,15 @@ class _Action(object):
         this.status = 1
         this.action_start = now()
         this._static.doing = this # setdoing
-        this.t_recovery(this.conf.get['startup'] + this.get_recovery())
+
+        if this.speed_cache['spd']>=0 :
+            recovery = this.conf['recovery'] / this.speed_cache['spd']
+        else:
+            recovery = this.conf['recovery'] / this.speed_get('spd')
+        this.t_recovery(this.conf['startup'] + recovery)
         return 1
 
+    __call__ = start
 
     def __str__(this):
         return this.name
@@ -137,21 +130,22 @@ if __name__ == '__main__' :
 
     class C1(object):
         name = 'c1'
+        def speed(this):
+            return 1
         def __init__(this):
             this.Action = Action(this)
             this.a = this.Action('foo')
-            this.a.conf.cancel_by=['s']
-            this.a.conf()
+            this.a.conf['cancel_by']=['s']
             this.b = this.Action('bar', Conf({'type':'x'}) )
             this.c = this.Action('baz')
-            this.c.conf.type = 's'
-            this.c.conf()
+            this.c.conf['type'] = 's'
 
     class C2(object):
         name = 'c2'
         def __init__(this):
             this.action = Action(this)
             this.a = this.action('test')
+            this.a.conf['recovery'] = 1
 
 
     c = C1()

@@ -10,20 +10,24 @@ from weapon import *
 from dragon import *
 
 
+
 class Conf_chara(Config):
     default = {
-            'name': 'characterbase'
-            ,'star': 5
-            ,'ele': 'flame'
-            ,'wt': 'blade'
-            ,'atk': 520
-            ,'a1': None
-            ,'a3': None
+            'name'        : 'characterbase'
+            ,'star'       : 5
+            ,'ele'        : 'flame'
+            ,'wt'         : 'blade'
+            ,'atk'        : 520
+            ,'a1'         : None
+            ,'a3'         : None
 
-            ,'ex': ['blade', 'wand']
-            #,'ex': ['blade']
-            ,'rotation': 0
-            ,'acl': 0
+            ,'ex'         : ['blade', 'wand']
+            #,'ex'        : ['blade']
+            ,'rotation'   : 0
+            ,'acl'        : 0
+
+            ,'param_type' : ['atk','def','dmg','cc','cd','spd'
+                             'killer','ks','x','fs','s']
             }
 
     def sync(this, c):
@@ -44,14 +48,15 @@ class Conf_chara(Config):
 
 
 class Character(object):
-    conf = {} # rewrite by child
+    conf = {}       # rewrite by child
     def init(this): # rewrite by child
         pass
 
     def __init__(this, rootconf=None):
-        this.conf = Conf_chara(this, this.conf)()
+        this.conf_w = Conf_chara(this, this.conf)
+        this.conf = this.conf_w()
         if rootconf:
-            rootconf.get[this.name] = this.conf.get
+            rootconf[this.name] = this.conf
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
         this.e_hit = Event('hit')
@@ -136,7 +141,7 @@ class Character(object):
         
 
     def classinit(this):
-        this.Dp = Dmg_param(this.conf)
+        this.Dp = Dmg_param(host)
         this.mod = this.Dp.get
 
         this.Passive = Passive(this.Dp)
@@ -289,7 +294,7 @@ class Character(object):
 
 if __name__ == '__main__':
     root = Conf()
-    c = Character(root)
+    c = Character(root.get)
     print(c.name)
     print(root)
     

@@ -1,19 +1,15 @@
 import test
 from core import benchmark
 
-
-class w():
-    def __init__(this):
-        this.get = {}
-
-bar = 0
-
-a = w()
-a.get['a'] = 0
+r = 0
+a = {}
+a['a'] = 1
 def foo():
     global a
-    for i in range(100000000):
-        a.get['a'] += 1
+    global r
+    if a['a']:
+        r+=1
 
 
-benchmark.run(foo)
+benchmark.run(foo, 10000000)
+print(r)
