@@ -24,22 +24,23 @@ class Action(object):
 
 
 class Conf_Action(Config):
-    def default(this, conf):
-        conf.type      = this.name
-        conf.startup   = 0
-        conf.recovery  = 2
-        conf.cancel_by = []
-        conf.on_cancel = None
-        conf.on_end    = None
-
+    default = {
+            'type'      : this.name
+            ,'startup'   : 0
+            ,'recovery'  : 2
+            ,'cancel_by' : []
+            ,'on_cancel' : None
+            ,'on_end'    : None
+            }
 
     def sync(this, conf):
-        this.atype     = conf.type
-        this.startup   = conf.startup
-        this.recovery  = conf.recovery
-        this.cancel_by = conf.cancel_by
-        this.on_cancel = conf.on_cancel
-        this.on_end    = conf.on_end
+        pass
+        this.atype     = conf['type']
+        this.startup   = conf['startup']
+        this.recovery  = conf['recovery']
+        this.cancel_by = conf['cancel_by']
+        this.on_cancel = conf['on_cancel']
+        this.on_end    = conf['on_end']
 
 
 class _Action(object):   
@@ -47,6 +48,8 @@ class _Action(object):
         ## can't change name after this
         this._static = static
         this.name = name
+        this.conf = Conf_Action(this, conf)
+
         this.hostname = this._static.host.name
         this.src = this.hostname + ', '
 
@@ -59,7 +62,6 @@ class _Action(object):
         this.e_idle = Event('idle')
         this.e_idle.host = this._static.host
 
-        this.conf = Conf_Action(this, conf)
         this.log = Logger('act')
 
 
@@ -68,7 +70,7 @@ class _Action(object):
     
 
     def get_recovery(this):
-        return this.recovery / this.speed()
+        return this.conf.get['recovery'] / this.speed()
 
 
     def _cb_act_end(this, e):
@@ -103,7 +105,7 @@ class _Action(object):
 
             # doing != this
             if doing.status == 1: # try to cancel an action
-                if this.atype in doing.cancel_by : # can cancel action
+                if this.conf.get['type'] in doing.cancel_by : # can cancel action
                     doing.t_recovery.off()
                     if doing.on_cancel:
                         doing.on_cancel()
@@ -120,7 +122,7 @@ class _Action(object):
         this.status = 1
         this.action_start = now()
         this._static.doing = this # setdoing
-        this.t_recovery(this.startup + this.get_recovery())
+        this.t_recovery(this.conf.get['startup'] + this.get_recovery())
         return 1
 
 

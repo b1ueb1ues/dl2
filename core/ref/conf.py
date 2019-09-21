@@ -62,9 +62,10 @@ class lobject(object):
 class Conf(lobject):
     __parentname = None
     __name = None
-    __sync = None
+    __idx = 0
 
     def __init__(this, template={}):
+        this.__sync = {}
         if type(template) == dict:
             this.__fromdict(template)
         if type(template) == this.__class__:
@@ -80,12 +81,6 @@ class Conf(lobject):
                 ret[k] = v.__todict()
             elif type(v) == dict:
                 ret[k] = ('___realdict',v)
-            elif type(v).__name__ == 'method':
-                continue
-            elif type(v).__name__ == 'instancemethod':
-                continue
-            elif type(v).__name__ == 'function':
-                continue
             else:
                 ret[k] = v
         return ret
@@ -98,12 +93,6 @@ class Conf(lobject):
                 ret[k] = v.__todict_withname()
             elif type(v) == dict:
                 ret[k] = ('___realdict',v)
-            elif type(v).__name__ == 'method':
-                continue
-            elif type(v).__name__ == 'instancemethod':
-                continue
-            elif type(v).__name__ == 'function':
-                continue
             else:
                 ret[k] = v
         return ret
@@ -111,7 +100,7 @@ class Conf(lobject):
 
     def __todict_all(this):
         ret = {}
-        for k,v in this.__dict__.items():
+        for k,v in vars(this).items():
             if type(v) == this.__class__:
                 ret[k] = v.__todict_all()
             elif type(v) == dict:
@@ -188,46 +177,8 @@ class Conf(lobject):
 
     @staticmethod
     def showsync(this):
-        ret = ''
-        ret2 = ''
-        tmp = this.__new__(this.__class__)
-        tmp.__init__(this)
-        this = tmp
-        if not this.__parentname and not this.__name:
-            for k,i in this.__dict__.items():
-                if type(i) == Conf:
-                    i.__name = k
-                    tmp = str(i)
-                    ret2 += tmp
-                    if tmp == '':
-                        ret2+= k+'=Conf()\n'
-                elif k =='_Conf__sync' :
-                    ret += '%s=%s\n'%(str(k),repr(i))
-        elif not this.__parentname and this.__name:
-            for k,i in this.__dict__.items():
-                if type(i) == Conf:
-                    i.__name = k
-                    i.__parentname = '%s'%(this.__name)
-                    tmp = str(i)
-                    ret2 += tmp
-                    if tmp == '':
-                        ret2+= this.__name+'.'+k+'=Conf()\n'
-                elif k =='_Conf__sync' :
-                    ret += '%s.%s=%s\n'%(this.__name, k, repr(i))
-        else :
-            for k,i in this.__dict__.items():
-                if type(i) == Conf:
-                    i.__name = k
-                    i.__parentname = '%s.%s'%(this.__parentname, this.__name)
-                    tmp = str(i)
-                    ret2 += tmp
-                    if tmp == '':
-                        ret2 += this.__parentname+'.'+this.__name \
-                            +'.'+k+'=Conf()\n'
-                elif k =='_Conf__sync' :
-                    ret += '%s.%s.%s=%s\n'%(this.__parentname,
-                            this.__name, k, repr(i))
-        return ret+ret2
+        for i in this.__sync:
+            print(this.__sync[i])
 
 
     @staticmethod
@@ -255,6 +206,19 @@ class Conf(lobject):
             errrrrrrrrrrrrrrrrrrrr()
 
 
+    @staticmethod
+    def reset(this):
+        clean = []
+        for i in vars(this):
+            clean.append(i)
+        for i in clean:
+            del(vars(this)[i])
+        this.__sync = {}
+        this.__parentname = None
+        this.__name = None
+        this.__idx = 0
+
+
     def __add__(this, a):
         if type(a) != Conf:
             print('Conf can only add Conf')
@@ -272,77 +236,95 @@ class Conf(lobject):
         return merge
 
 
-    def __setitem__(this,i,v):
-        super(Conf, this).__setitem__(i,v)
-        if i[:7] != '_Conf__':
-            if this.__sync:
-                #print('do')
-                this.__dosync(i, v)
-            else:
-                if type(v).__name__ == 'instancemethod':
-                    object.__setattr__(this, '_Conf__sync', 1)
-                    this.__one_sync(v, 0, v)
-                elif type(v).__name__ == 'function':
-                    object.__setattr__(this, '_Conf__sync', 1)
-                    this.__one_sync(v, 0, v)
-                elif type(v).__name__ == 'method':
-                    object.__setattr__(this, '_Conf__sync', 1)
-                    this.__one_sync(v, 0, v)
-
-
-    def __setattr__(this,i,v):
-        super(Conf, this).__setattr__(i,v)
-        if i[:7] != '_Conf__':
-            if this.__sync:
-                this.__dosync(i, v)
-            else:
-                if type(v).__name__ == 'instancemethod':
-                    object.__setattr__(this, '_Conf__sync', 1)
-                    this.__one_sync(v, 0, v)
-                elif type(v).__name__ == 'function':
-                    object.__setattr__(this, '_Conf__sync', 1)
-                    this.__one_sync(v, 0, v)
-                elif type(v).__name__ == 'method':
-                    object.__setattr__(this, '_Conf__sync', 1)
-                    this.__one_sync(v, 0, v)
-
-
+    # call a dict/conf = update
+    # call a function = add a sync
+    # call None = sync
     def __call__(this, a=None):
         if type(a) == this.__class__:
             Conf.update(this, a)
         elif type(a) == dict:
             Conf.update(this, a)
+        elif type(a).__name__ == 'instancemethod':
+            this.__sync[this.__idx] = a
+            this.__idx += 1
+            a(this)
+            return this.__idx-1
+        elif type(a).__name__ == 'function':
+            this.__sync[this.__idx] = a
+            this.__idx += 1
+            a(this)
+            return this.__idx-1
+        elif type(a).__name__ == 'method':
+            this.__sync[this.__idx] = a
+            this.__idx += 1
+            a(this)
+            return this.__idx-1
         elif a==None:
-            this.__dosync(0, 0)
+            this.__dosync()
         else:
             print('update conf with none dict/conf')
             errrrrrrrrrrrrrrrrrrr()
 
 
-    def __one_sync(this, fn, i, v):
-        return fn(this, (i, v))
+    def __dosync(this):
+        for i in this.__sync :
+            this.__sync[i](this)
 
 
-    # all method in conf will be sync funtion, 
-    # so use [function] to contain a function in config
-    def __dosync(this, i, v):
-        func = []
-        for j,k in this.__dict__.items():
-            if type(k).__name__ == 'instancemethod':
-                func.append(k)
-            elif type(k).__name__ == 'function':
-                func.append(k)
-            elif type(k).__name__ == 'method':
-                func.append(k)
-        for f in func:
-            this.__one_sync(f, i, v)
+class Config(object):
+    def default(this, conf):
+        pass
+    def config(this, conf):
+        pass
+    def sync(this, conf):
+        pass
+
+    def __new__(cls, host, conf=None):
+        tmp = Conf()
+        cls.default(host, tmp)
+        cls.config(host, tmp)
+        def sync(conf):
+            cls.sync(host, conf)
+        if conf:
+            tmp(conf)
+            Conf.reset(conf)
+            conf(tmp)
+            conf(sync)
+            return conf
+        else:
+            tmp(sync)
+            return tmp
+
 
 
 if __name__ == '__main__':
     a = Conf()
+    a.b.c = 'b.c'
+    a.a = 'a'
+    print(a)
+
+    b = Conf()
+    b.b.d = 'b.d'
+
+    a(b)
+    print(a)
+
+
+    exit()
+    def foo(e):
+        print('foo')
+        print(e)
+        pass
+    a = Conf()
+    for i in a:
+        print(i, a[i])
+
+    exit()
+    print(a)
+    exit()
     a.b = 'b'
     a.c.d = 'c.d'
-    print(a)
+    a(foo)
     if 'd' in a :
         print('if')
     else:
@@ -352,3 +334,27 @@ if __name__ == '__main__':
         print('if')
     else:
         print('else')
+
+    a = Conf()
+    a.b = 'b'
+    a.c = 'c'
+
+    class C(Config):
+        def sync(this, conf):
+            this.sync = conf.default
+
+        def default(this, conf):
+            conf.default = this.d
+
+    class A():
+        def __init__(this, conf):
+            this.d = 'default'
+            this.conf = C(this, conf)
+
+    c = Conf()
+    c.a = 'a'
+    a = A(c)
+    c.b = 'b'
+    c()
+    print(c)
+    print(a.sync)

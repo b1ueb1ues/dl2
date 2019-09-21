@@ -11,48 +11,47 @@ from dragon import *
 
 
 class Conf_chara(Config):
-    def default(this, conf):
-        conf.name = 'characterbase'
-        conf.star = 5
-        conf.ele = 'flame'
-        conf.wt = 'blade'
-        conf.atk = 500
-        conf.a1 = None
-        conf.a3 = None
+    default = {
+            'name': 'characterbase'
+            ,'star': 5
+            ,'ele': 'flame'
+            ,'wt': 'blade'
+            ,'atk': 520
+            ,'a1': None
+            ,'a3': None
 
-        conf.dodge.recovery = 0.7
-
-        conf.ex = ['blade', 'wand']
-        #conf.ex = ['blade']
-        conf.rotation = 0
-        conf.acl = 0
-
+            ,'ex': ['blade', 'wand']
+            #,'ex': ['blade']
+            ,'rotation': 0
+            ,'acl': 0
+            }
 
     def sync(this, c):
-        this.name     = c.name
-        this.base_atk = c.atk
-        this.wt       = c.wt
-        this.ele      = c.ele
-        this.star     = c.star
-        this.ex       = c.ex
-        if c.wt in ['sword', 'blade', 'dagger', 'axe', 'lance']:
+        this.name     = c['name']
+        this.base_atk = c['atk']
+        this.wt       = c['wt']
+        this.ele      = c['ele']
+        this.star     = c['star']
+        this.ex       = c['ex']
+        if c['wt'] in ['sword', 'blade', 'dagger', 'axe', 'lance']:
             this.base_def = 10
         else:
             this.base_def = 8
-        if c.wt in ['axe'] :
+        if c['wt'] in ['axe'] :
             this.base_crit = 0.04
         else:
             this.base_crit = 0.02
 
 
-    def config(this, c):
-        this.config(c)
-
-
 class Character(object):
-    def __init__(this, conf=None):
-        this.atk = 2000
-        this.conf = Conf_chara(this, conf)
+    conf = {} # rewrite by child
+    def init(this): # rewrite by child
+        pass
+
+    def __init__(this, rootconf=None):
+        this.conf = Conf_chara(this, this.conf)()
+        if rootconf:
+            rootconf.get[this.name] = this.conf.get
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
         this.e_hit = Event('hit')
@@ -65,18 +64,9 @@ class Character(object):
         this.init = this.character_init
 
 
-    def config(this, conf):  # rewrite by child
-        pass
-
-
-    def init(this): # rewrite by child
-        pass
-
-
     # after settle down all config
     def character_init(this):
         this.classinit()
-        this.listeners()
         this.setup()
 
         this.s1 = this.Skill('s1', this, this.conf.s1).init()
@@ -145,15 +135,6 @@ class Character(object):
         log_('info','%s, base_atk'%(this.name),this.atk)
         
 
-
-    def listeners(this):
-        if this.conf.rotation :
-            Event('idle')(this.l_rotation)
-        else:
-            Event('idle')(this.l_idle)
-            Event('cancel')(this.think_cancel)
-
-
     def classinit(this):
         this.Dp = Dmg_param(this.conf)
         this.mod = this.Dp.get
@@ -175,6 +156,12 @@ class Character(object):
         this.Dragon = Dragon(this)
         this.Weapon = Weapon(this)
         this.Amulet = Amulet(this)
+
+        if this.conf.rotation :
+            Event('idle')(this.l_rotation)
+        else:
+            Event('idle')(this.l_idle)
+            Event('cancel')(this.think_cancel)
 
     
     def speed(this):
@@ -300,40 +287,9 @@ class Character(object):
 
 
 
-
 if __name__ == '__main__':
-    from dummy import *
-    import benchmark
-    logset('act')
-    logset('buff')
-    logset('dmg')
-    logset('sp')
-    logset('s')
-    logset('x')
-    logset('fs')
-    #logset('od')
-    #logset('bk')
-    logset('debug')
-    logset('dbg')
-    #logset([])
-
-    def foo():
-        Ctx()
-        t = Dummy()
-        t.conf.od = 100
-        t.conf.bk = 100
-        t.conf()
-        t.init()
-
-        c = Character()
-        c.conf.name = 'c'
-        c.conf()
-        c.tar(t)
-        c.init()
-        Timer.run(180)
-
-    foo()
-    #benchmark.run(foo, 2000)
-
-    logcat()
-
+    root = Conf()
+    c = Character(root)
+    print(c.name)
+    print(root)
+    

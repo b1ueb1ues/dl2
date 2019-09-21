@@ -21,3 +21,5 @@ class Ctx(object):
         Log.init(this.log)
 
 ctx = Ctx()
+
+dprint = print

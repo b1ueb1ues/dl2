@@ -1,3 +1,5 @@
+from core.ctx import *
+from core import benchmark
 
 
 class Conf():
@@ -16,9 +18,9 @@ class Conf():
             p = k[:l]
             c = k[l+1:]
             if p not in d:
-                d[p] = {'__sync':{}, '__name':p, '__parent':d}
+                d[p] = {'__sync':{}}
             elif type(d[p]) != dict:
-                d[p] = {'__sync':{}, '__name':p, '__parent':d}
+                d[p] = {'__sync':{}}
             Conf.__rsetitem(d[p], c, v)
 
     @staticmethod
@@ -33,10 +35,6 @@ class Conf():
     def __to_dict(d, pre, get):
         for k, v in get.items():
             if k == '__sync':
-                continue
-            elif k == '__name':
-                continue
-            elif k == '__parent':
                 continue
             if type(v) == dict:
                 Conf.__to_dict(d, pre+k+'.', v)
@@ -90,14 +88,11 @@ class Conf():
             elif t == 'Conf':
                 this.update(a)
             elif t == 'instancemethod':
-                this.get['__sync'][a] = 1
-                a(this.get)
+                this.__set_sync(a)
             elif t == 'function':
-                this.get['__sync'][a] = 1
-                a(this.get)
+                this.__set_sync(a)
             elif t == 'method':
-                this.get['__sync'][a] = 1
-                a(this.get)
+                this.__set_sync(a)
             else:
                 print('update conf with none dict/conf')
                 raise
@@ -106,22 +101,18 @@ class Conf():
 
 class Config(object):
     default = {}
-    sync = None
         
-    def __init__(this, host, conf):
+    def sync(this, conf):
+        pass
+
+    def __init__(this, host, conf, key):
         this.host = host
         tmp = Conf()
         tmp.update(this.default)
-        tmp.update(conf)
-        if this.sync:
-            tmp.get['__sync'][this.__sync] = 1
-            this.__sync(tmp.get)
-        if conf['__parent']:
-            conf['__parent'][conf['__name']] = tmp.get
-        this.conf = tmp
-
-    def __call__(this):
-        return this.conf.get
+        tmp.update(conf[key])
+        tmp.get['__sync'][this.__sync] = 1
+        this.__sync(tmp.get)
+        conf[key] = tmp.get
 
     def __sync(this, conf):
         this.__class__.sync(this.host, conf)
@@ -139,12 +130,9 @@ if __name__ == '__main__':
     c = Conf()(a)
     c(b)
 
-    r = {
-            'conf1.test2':22
-            ,'conf2.2':2
-            }
-    root = Conf()(r)
-
+    root = Conf()
+    root.get['conf1'] = {'test2':22}
+    root.get['conf2'] = {'2':2}
     class Conf_c(Config):
         default = {
                 'test1':1
@@ -157,9 +145,7 @@ if __name__ == '__main__':
                 'test1':11
                 ,'attr.h1.coef':3
                 }
-
-    Conf_c(0, root.get['conf1'])
-    print(root)
-
+    Conf_c(0, root.get, 'conf1')
+    print(root.get)
 
 
