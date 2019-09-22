@@ -3,7 +3,7 @@ from core.ctx import *
 
 
 class Action(object):
-    def __init__(this, host, dp=None):
+    def __init__(this, host, Dp=None):
         this.host = host
 
         class Nop(object):
@@ -16,9 +16,9 @@ class Action(object):
         this.prev = this.nop
         this.doing = this.nop
 
-        if dp:
-            this.speed_cache = dp.cache
-            this.speed_get = dp.get_
+        if Dp:
+            this.speed_cache = Dp.cache
+            this.speed_get = Dp.get_
         else:
             this.speed_cache = {'spd':1}
             this.speed_get = 1

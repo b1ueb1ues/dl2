@@ -26,7 +26,7 @@ class Conf_chara(Config):
             ,'rotation'   : 0
             ,'acl'        : 0
 
-            ,'param_type' : ['atk','def','dmg','cc','cd','spd'
+            ,'param_type' : ['atk','def','dmg','cc','cd','sp','spd',
                              'killer','ks','x','fs','s']
             }
 

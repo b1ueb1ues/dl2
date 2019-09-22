@@ -63,14 +63,14 @@ class Conf_skl(Config):
 
         dirty = 0
         if this.attr != c['attr']:
-            dirty = 1
             this.attr = c['attr']
-        if this.hit != c['hit']:
             dirty = 1
-            this.hit      = c['hit']
-            this.hit_count = len(this.hit)
+        if this.hit != c['hit']:
+            this.hit = c['hit']
+            dirty = 1
         if dirty:
             this.dmg = {}
+            this.hit_count = len(this.hit)
             for i in this.attr:
                 label = this.attr[i]
                 if i[0] == '_':
@@ -78,6 +78,7 @@ class Conf_skl(Config):
                 else:
                     label['name'] = this.name
                 label['proc'] = this.collid
+                label['type'] = 's'
                 this.dmg[i] = this.host.Dmg(label)
         
 
@@ -95,11 +96,12 @@ class _Skill(object):
         this.hit = None
         this.attr = None
 
-        this.ac = host.Action(this.name, this.conf)
+        this.speed_cache = host.Dp.cache
+        this.speed_get = host.Dp.get_
+        this.ac = host.Action(this.name, this.conf, host.Dp)
 
         this.log = Logger('s')
         this.src = host.name+', '
-        this.speed = host.speed # function
 
         this.conf = Conf_skl(this, conf)()
 
@@ -139,7 +141,12 @@ class _Skill(object):
             if this.log:
                 this.log(this.src+this.name, 'cast')
             if this.ac():
-                this.active()
+                #this.active() {
+                this.firsthit = 1
+                this.hit_prev = -1
+                this.hit_next = 0
+                Timer(this._active)(this.startup)
+                #this.active() }
                 return 1
             else:
                 return 0
@@ -185,7 +192,13 @@ class _Skill(object):
 
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
-            timing /= this.speed()
+            #timing /= this.speed() {
+            if this.speed_cache['spd']>=0 :
+                timing /= this.speed_cache['spd']
+            else:
+                timing /= this.speed_get('spd')
+            #timing /= this.speed() }
+
             Timer(this._do)(timing)
 
 
@@ -202,15 +215,16 @@ class _Skill(object):
             if this.proc:
                 this.proc()
 
-
-    def active(this):
-        this.firsthit = 1
-        this.hit_prev = -1
-        this.hit_next = 0
-        Timer(this._active)(this.startup)
+# inlined
+#    def active(this):
+#        this.firsthit = 1
+#        this.hit_prev = -1
+#        this.hit_next = 0
+#        Timer(this._active)(this.startup)
 
 
     def _active(this, t):
+        static = this._static
         if this.ac.status != 1:
             return
 
@@ -218,20 +232,34 @@ class _Skill(object):
             this.log('%s, %s'%(this.host.name, this.name),'cutin')
 
         this.sp['cur'] = 0
-        this._static.s_prev = this.name
+        static.s_prev = this.name
         # Even if animation is shorter than 2s
         # you can't cast next skill before 2s, after which ui shows
-        this._static.silence_start()
+        #this._static.silence_start() {
+        static.silence = 1
+        static.t_silence_end(static.silence_duration)
+        #this._static.silence_start() }
+
 
         if this.on_start :
             this.on_start()
 
         if this.hit_next < this.hit_count :
-            timing = this.hit[this.hit_next][0] / this.speed()
+            #timing = this.hit[this.hit_next][0] / this.speed() {
+            if this.speed_cache['spd'] >= 0
+                timing = this.hit[this.hit_next][0] / this.speed_cache['spd']
+            else:
+                timing = this.hit[this.hit_next][0] / this.speed_get('spd')
+            # } timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
 
         if 'buff' in this.conf:
-            timing = 0.15/this.speed()
+            # timing = 0.15/this.speed() {
+            if this.speed_cache['spd'] >= 0
+                timing = 0.15/this.speed_cache['spd']
+            else:
+                timing = 0.15/this.speed_get('spd')
+            # } timing = 0.15/this.speed()
             Timer(this.buff)(timing)
 
 
@@ -272,16 +300,20 @@ class Conf_cmb(Config):
         
         dirty = 0
         if this.hit != c.hit:
-            dirty = 1
             this.hit     = c.hit
-            this.hit_count = len(this.hit)
-        this.dmg = {}
-        for i in this.attr:
-            label = this.attr[i]
-            label.name = this.name
-            label.proc = this.collid
-            label.type = 'x'
-            this.dmg[i] = this.host.Dmg(label)
+            dirty = 1
+        if this.attr != c.attr:
+            this.attr = c.attr
+            dirty = 1
+        if dirty:
+            this.dmg = {}
+            for i in this.attr:
+                this.hit_count = len(this.hit)
+                label = this.attr[i]
+                label['name'] = this.name
+                label['proc'] = this.collid
+                label['type'] = 'x'
+                this.dmg[i] = this.host.Dmg(label)
         this.e_x.name = this.name
         this.e_x.type = this.type
         this.e_x.idx = this.idx
@@ -301,17 +333,13 @@ class _Combo(object):
 
         this.conf = Conf_cmb(this, conf)
 
-        this.ac = host.Action(this.name, this.conf)
+        this.speed_cache = host.Dp.cache
+        this.speed_get = host.Dp.get_
+        this.ac = host.Action(this.name, this.conf, host.Dp)
 
         this.log = Logger('x')
         this.src = this.host.name+', '
-        this.speed = host.speed # function
         this.charge = host.charge
-
-
-    def __call__(this):
-        return this.tap()
-
 
 
 
@@ -320,17 +348,30 @@ class _Combo(object):
             this.log(this.src+this.name, 'tap')
 
         if this.ac():
-            this.active()
+            #this.active {
+            if this.hit_count :
+                this.firsthit = 1
+                this.hit_prev= -1
+                this.hit_next = 0
+                # timing = this.hit[this.hit_next][0] / this.speed() {
+                if this.speed_cache['spd']>=0 :
+                    timing = this.hit[0][0]/this.speed_cache['spd']
+                else:
+                    timing = this.hit[0][0]/this.speed_get['spd']
+                # } timing = this.hit[this.hit_next][0] / this.speed()
+                Timer(this._do)(timing)
+            #this.active }
             this._static.x_prev = this.name
             return 1
         else:
             return 0
 
+    __call__ = tap
+
 
     def _do(this, t):
         if this.ac.status != 1:
             return
-
 
         hitlabel = this.hit[this.hit_next][1]
         this.dmg[hitlabel]()
@@ -340,7 +381,13 @@ class _Combo(object):
 
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
-            timing /= this.speed()
+            # timing /= this.speed() {
+            if this.speed_cache['spd']>=0 :
+                timing /= this.speed_cache['spd']
+            else:
+                timing /= this.speed_get('spd')
+            # timing /= this.speed() }
+
             Timer(this._do)(timing)
 
         this.e_x.hit = this.hit_next
@@ -354,14 +401,15 @@ class _Combo(object):
             if this.proc:
                 this.proc()
 
+#  inlined
+#    def active(this):
+#        if this.hit_count :
+#            this.firsthit = 1
+#            this.hit_prev= -1
+#            this.hit_next = 0
+#            timing = this.hit[this.hit_next][0] / this.speed()
+#            Timer(this._do)(timing)
 
-    def active(this):
-        if this.hit_count :
-            this.firsthit = 1
-            this.hit_prev= -1
-            this.hit_next = 0
-            timing = this.hit[this.hit_next][0] / this.speed()
-            Timer(this._do)(timing)
 
 
 class Fs(object):
@@ -411,11 +459,12 @@ class _Fs(object):
 
         this.conf = Conf_fs(this, conf)
 
-        this.ac = host.Action(this.name, this.conf)
+        this.speed_cache = host.Dp.cache
+        this.speed_get = host.Dp.get_
+        this.ac = host.Action(this.name, this.conf, host.Dp)
 
         this.log = Logger('fs')
         this.src = host.name+', '
-        this.speed = host.speed
         this.charge = host.charge
 
 
@@ -462,7 +511,13 @@ class _Fs(object):
 
         if this.hit_next < this.hit_count :
             timing = this.hit[this.hit_next][0] - this.hit[this.hit_prev][0]
-            timing /= this.speed()
+            # timing /= this.speed() {
+            if this.speed_cache['spd']>=0 :
+                timing /= this.speed_cache['spd']
+            else:
+                timing /= this.speed_get('spd')
+            # } timing /= this.speed()
+
             Timer(this._do)(timing)
 
         this.e_fs.hit = this.hit_next
@@ -495,7 +550,12 @@ class _Fs(object):
             this.firsthit = 1
             this.hit_next = 0
             this.hit_prev = -1
-            timing = this.hit[this.hit_next][0] / this.speed()
+            # timing = this.hit[this.hit_next][0] / this.speed() {
+            if this.speed_cache['spd']>=0 :
+                timing = this.hit[this.hit_next][0] / this.speed_cache['spd']
+            else:
+                timing = this.hit[this.hit_next][0] / this.speed_get('spd')
+            # } timing = this.hit[this.hit_next][0] / this.speed()
             Timer(this._do)(timing)
 
 
@@ -536,11 +596,10 @@ class _Dodge(object):
 
         this.conf = Conf_dodge(this, conf)
 
-        this.ac = host.Action(this.name, this.conf)
+        this.ac = host.Action(this.name, this.conf, host.Dp)
 
         this.log = Logger('dodge')
         this.src = this.host.name+', '
-        this.speed = host.speed # function
 
 
     def __call__(this):
