@@ -13,8 +13,9 @@ class Dmg(object):
 
 class Dmg_calc(object):
     def __init__(this, src, dst): # src character , dst target
-        this.dst_ele = ''
-        this.src_ele = ''
+        this.dst_ele = dst.conf['ele']
+        this.src_ele = src.conf['ele']
+        this.set_ele()
 
         this.src = src
         this.dst = dst
@@ -103,10 +104,15 @@ class _Dmg_calc(object):
         this._static = static
         this.src = this._static.src
         this.dst = this._static.dst
-        this.src_get = this.src.Dp.get_
-        this.dst_get = this.dst.Dp.get_
+
+        this.src_get = this.src.Dp.get
+        this.src_get_ = this.src.Dp.get_
         this.src_cache = this.src.Dp.cache
+
+        this.dst_get = this.dst.Dp.get
+        this.dst_get_ = this.dst.Dp.get_
         this.dst_cache = this.dst.Dp.cache
+
         this.dst_ks = this.dst.Dp.type_mods['ks']
         this.src_killer = this.src.Dp.type_mods['killer']
 
@@ -143,14 +149,38 @@ class _Dmg_calc(object):
 
 
     def calc(this):
-        atk  = this.src.atk * this.src_dp('atk')
-        def_ = this.dst.def_ * this.dst_dp('def')
-        true_dmg = atk / def_ * this._static.base_coef
-        true_dmg *= this.src_dp('dmg')
-        true_dmg *= this.src_dp(this.type)
+        if this.src_cache['atk'] >= 0:
+            atk  = this.src.atk * this.src_cache['atk']
+        else:
+            atk  = this.src.atk * this.src_get_('atk')
 
-        cc  = this.src_dp('cc')
-        cd  = this.src_dp('cd')
+        if this.dst_cache['def'] >= 0:
+            def_ = this.dst.def_ * this.dst_cache['def']
+        else:
+            def_ = this.dst.def_ * this.dst_get_('def')
+
+        true_dmg = atk / def_ * this._static.base_coef
+
+        if this.src_cache['dmg'] >= 0:
+            true_dmg *= this.src_cache['dmg']
+        else:
+            true_dmg *= this.src_get_('dmg')
+
+        if this.src_cache[this.type] >= 0:
+            true_dmg *= this.src_cache[this.type]
+        else:
+            true_dmg *= this.src_get_(this.type)
+
+        if this.src_cache['cc'] >= 0:
+            cc  = this.src_cache['cc']
+        else:
+            cc  = this.src_get_('cc')
+
+        if this.src_cache['cd'] >= 0:
+            cd  = this.src_cache['cd']
+        else:
+            cd  = this.src_get_('cd')
+
         crit_ave = (cd-1) * (cc-1) + 1
         true_dmg *= crit_ave
         
@@ -180,9 +210,10 @@ class Dmg_param(object):
     def __init__(this, host):
         this.host = host
         this.type_mods = {}
+        this.cache = {}  # type: cache_value(-1:dirty)
         for i in host.conf['param_type']:
             this.type_mods[i] = []
-        this.cache = {}  # type: cache_value(-1:dirty)
+            this.cache[i] = -1
 
 
     def add(this, *args, **kwargs):

@@ -7,7 +7,7 @@ class Action(object):
         this.host = host
 
         class Nop(object):
-            conf = Conf()
+            conf = {'type':''}
             name = '__idle__'
             status = -1
 

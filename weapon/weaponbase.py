@@ -30,7 +30,7 @@ class Weapon(object):
         if this.host.ele in this.ele:
             this.atk *= 1.5
             if this.s3 :
-                this.host.conf.s3(this.s3)
+                this.host.conf['s3'] = this.s3
 
             idx = 0
             for i in this.a:

@@ -17,9 +17,7 @@ class Skill(object):
 
 
     def __call__(this, *args, **kwargs):
-        r = _Skill(*args, **kwargs)
-        r._static = this
-        return r
+        return _Skill(this, *args, **kwargs)
 
 
     def silence_end(this, t):
@@ -55,11 +53,10 @@ class Conf_skl(Config):
 
 
     def sync(this, c):
-        this.sp.max   = c['sp']
-        this.proc     = c['proc']
-        this.startup  = c['startup']
-        this.before   = c['before']
-        this.on_start = c['on_start']
+        this.sp['max'] = c['sp']
+        this.proc      = c['proc']
+        this.startup   = c['startup']
+        this.on_start  = c['on_start']
 
         dirty = 0
         if this.attr != c['attr']:
@@ -84,7 +81,8 @@ class Conf_skl(Config):
 
 
 class _Skill(object):
-    def __init__(this, name, host, conf=None):
+    def __init__(this, static, name, host, conf=None):
+        this._static = static
         this.name = name
         this.host = host
         this.sp = {'max':-1, 'cur':0}
@@ -98,12 +96,12 @@ class _Skill(object):
 
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
-        this.ac = host.Action(this.name, this.conf, host.Dp)
 
         this.log = Logger('s')
         this.src = host.name+', '
 
-        this.conf = Conf_skl(this, conf)()
+        this.conf = Conf_skl(this, conf).conf.get
+        this.ac = host.Action(this.name, this.conf)
 
     def __call__(this):
         return this.tap()
@@ -116,7 +114,7 @@ class _Skill(object):
 
 
     def check(this):
-        if this.sp.max <= 0:
+        if this.sp['max'] <= 0:
             if this.log:
                 this.log(this.src+this.name, 'failed','no skill')
             return 0
@@ -153,11 +151,11 @@ class _Skill(object):
 
 
     def buff(this, t):
-        if type(this.conf.buff) == tuple:
-            buffarg = this.conf.buff
+        if type(this.conf['buff']) == tuple:
+            buffarg = this.conf['buff']
             this.onebuff(buffarg)
-        elif type(this.conf.buff) == list:
-            for i in this.conf.buff:
+        elif type(this.conf['buff']) == list:
+            for i in this.conf['buff']:
                 this.onebuff(i)
 
 
@@ -292,18 +290,18 @@ class Conf_cmb(Config):
 
 
     def sync(this, c):
-        this.type    = c.type
-        this.idx     = c.idx
-        this.sp      = c.sp
-        this.attr    = c.attr
-        this.proc    = c.proc
+        this.type    = c['type']
+        this.idx     = c['idx']
+        this.sp      = c['sp']
+        this.attr    = c['attr']
+        this.proc    = c['proc']
         
         dirty = 0
-        if this.hit != c.hit:
-            this.hit     = c.hit
+        if this.hit != c['hit']:
+            this.hit = c['hit']
             dirty = 1
-        if this.attr != c.attr:
-            this.attr = c.attr
+        if this.attr != c['attr']:
+            this.attr = c['attr']
             dirty = 1
         if dirty:
             this.dmg = {}
@@ -314,7 +312,6 @@ class Conf_cmb(Config):
                 label['proc'] = this.collid
                 label['type'] = 'x'
                 this.dmg[i] = this.host.Dmg(label)
-        this.e_x.name = this.name
         this.e_x.type = this.type
         this.e_x.idx = this.idx
         this.e_x.last = this.hit_count
@@ -330,12 +327,15 @@ class _Combo(object):
         this.hit_prev= -1
         this.hit_next = 0
         this.e_x = Event('cancel')
+        this.e_x.name = this.name
 
-        this.conf = Conf_cmb(this, conf)
+        this.hit = None
+        this.attr = None
+        this.conf = Conf_cmb(this, conf).conf.get
 
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
-        this.ac = host.Action(this.name, this.conf, host.Dp)
+        this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('x')
         this.src = this.host.name+', '
@@ -417,38 +417,54 @@ class Fs(object):
         this.host = host
 
     def __call__(this, *args, **kwargs):
-        r = _Fs(*args, **kwargs)
-        r._static = this
-        return r
+        return _Fs(this, *args, **kwargs)
 
 
 class Conf_fs(Config):
-    def default(this, conf):
-        conf.type      = 'fs'
-        conf.sp        = 0
-        conf.startup   = 0 # charge time, which didn't affect by speed
-        conf.recovery  = 2
-       #conf.on_start  = None
-       #conf.on_end    = None
-        conf.proc      = None
-        conf.hit       = []
-        conf.attr      = {}
-        conf.cancel_by = ['s','dodge']
-
+    default = {
+         'type'      : 'fs'
+        ,'sp'        : 0
+        ,'startup'   : 0 # charge time, which didn't affect by speed
+        ,'recovery'  : 2
+       #,'on_start' : None
+       #,'on_end'   : None
+        ,'proc'      : None
+        ,'hit'       : []
+        ,'attr'      : {}
+        ,'cancel_by' : ['s','dodge']
+        }
 
     def sync(this, c):
-        this.type    = c.type
-        this.sp      = c.sp
-        this.hit     = c.hit
-        this.attr    = c.attr
-        this.proc    = c.proc
-        this.startup = c.startup
+        this.type    = c['type']
+        this.sp      = c['sp']
+        this.attr    = c['attr']
+        this.proc    = c['proc']
+        this.startup = c['startup']
         
-        this.init()
+        if this.hit != c['hit']:
+            this.hit = c['hit']
+            dirty = 1
+        if this.attr != c['attr']:
+            this.attr = c['attr']
+            dirty = 1
+        if dirty:
+            this.hit_count = len(this.hit)
+            this.dmg = {}
+            for i in this.attr:
+                label = this.attr[i]
+                label['name'] = this.name
+                label['proc'] = this.collid
+                label['type'] = 'fs'
+                this.dmg[i] = this.host.Dmg(label)
+        this.e_fs.type = this.type
+        this.e_fs.name = this.name
+        this.e_fs.idx = 0
+        this.e_fs.last = this.hit_count
 
 
 class _Fs(object):
-    def __init__(this, name, host, conf=None):
+    def __init__(this, static, name, host, conf=None):
+        this._static = static
         this.name = name
         this.host = host
         this.sp = 0
@@ -457,36 +473,22 @@ class _Fs(object):
         this.hit_next = 0
         this.e_fs = Event('cancel')
 
-        this.conf = Conf_fs(this, conf)
+        this.hit = None
+        this.attr = None
+        this.conf = Conf_fs(this, conf).conf.get
 
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
-        this.ac = host.Action(this.name, this.conf, host.Dp)
+        this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('fs')
         this.src = host.name+', '
         this.charge = host.charge
+        this.t_startup = Timer(this._active)
 
 
     def __call__(this):
         return this.hold()
-
-
-    def init(this):
-        this.hit_count = len(this.hit)
-        this.dmg = {}
-        for i in this.attr:
-            label = this.attr[i]
-            label.name = this.name
-            label.proc = this.collid
-            label.type = 'fs'
-            this.dmg[i] = this.host.Dmg(label)
-        this.e_fs.type = this.type
-        this.e_fs.name = this.name
-        this.e_fs.idx = 0
-        this.e_fs.last = this.hit_count
-        this.t_startup = Timer(this._active)
-        return this
 
 
     def hold(this):
@@ -572,20 +574,23 @@ class Dodge(object):
 
 
 class Conf_dodge(Config):
-    def default(this, conf):
-        conf.type      = 'dodge'
-        conf.startup   = 0
-        conf.recovery  = 0.7
-       #conf.on_start  = None
-       #conf.on_end    = None
-        conf.cancel_by = ['s']
+    default = {
+         'type'      : 'dodge'
+        ,'startup'   : 0
+        ,'recovery'  : 0.7
+       #,'on_start'  : None
+       #,'on_end'    : None
+        ,'cancel_by' : ['s']
+        }
 
 
     def sync(this, c):
-        this.type    = c.type
-        this.startup = c.startup
+        this.type    = c['type']
+        this.startup = c['startup']
         
-        this.init()
+        this.e_x.type = this.type
+        this.e_x.idx = 0
+        this.e_x.last = 0
 
 
 class _Dodge(object):
@@ -593,10 +598,11 @@ class _Dodge(object):
         this.name = name
         this.host = host
         this.e_x = Event('cancel')
+        this.e_x.name = this.name
 
-        this.conf = Conf_dodge(this, conf)
+        this.conf = Conf_dodge(this, conf).conf.get
 
-        this.ac = host.Action(this.name, this.conf, host.Dp)
+        this.ac = host.Action(this.name, this.conf)
 
         this.log = Logger('dodge')
         this.src = this.host.name+', '
@@ -604,14 +610,6 @@ class _Dodge(object):
 
     def __call__(this):
         return this.tap()
-
-
-    def init(this):
-        this.e_x.name = this.name
-        this.e_x.type = this.type
-        this.e_x.idx = 0
-        this.e_x.last = 0
-        return this
 
 
     def tap(this):
@@ -633,21 +631,27 @@ class Fs_group(object):
     def __init__(this, host, wtconf):
         this.host = host
         this.a_fs = [0,1,2,3,4,5,6]
-        this.a_fs[0] = host.Fs('fs', host, wtconf.fs).init()
+        this.a_fs[0] = host.Fs('fs', host, wtconf['fs'])
+        wtconf['fs'] = this.a_fs[0].conf
+        c_ofs = Conf(wtconf['fs'])
         for i in range(1, 6):
             fsname = 'x%dfs'%i
             if fsname in wtconf:
-                tmp = Conf(wtconf.fs)
-                tmp(wtconf[fsname])
-                wtconf[fsname](tmp)
-                this.a_fs[i] = host.Fs('fs', host, wtconf[fsname]).init()
+                c_tmp = Conf()
+                c_tmp .update(c_ofs)
+                c_fsn = Conf(wtconf[fsname])
+                c_tmp.update(c_fsn)
+                wtconf[fsname] = c_tmp.get
+                this.a_fs[i] = host.Fs('fs', host, wtconf[fsname])
             else:
-                this.a_fs[i] = host.Fs('fs', host, wtconf.fs).init()
+                this.a_fs[i] = host.Fs('fs', host, wtconf['fs'])
         if 'dfs' in wtconf:
-            tmp = Conf(wtconf.fs)
-            tmp(wtconf.dfs)
-            wtconf.dfs(tmp)
-            this.a_fs[6] = host.Fs('fs', host, wtconf.dfs).init()
+            c_tmp = Conf()
+            c_tmp.update(c_ofs)
+            c_fsn = Conf(wtconf['dfs'])
+            c_tmp.update(c_fsn)
+            wtconf[fsname] = c_tmp.get
+            this.a_fs[6] = host.Fs('fs', host, wtconf['dfs'])
 
 
     def __call__(this):
@@ -658,8 +662,3 @@ class Fs_group(object):
             this.a_fs[6]()
         else:
             this.a_fs[0]()
-    
-
-    def init():
-        return this
-

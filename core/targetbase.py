@@ -3,43 +3,46 @@ from core.ctx import *
 
 
 class Conf_tar(Config):
-    def default(this, conf):
-        conf.def_    = 10
-        conf.od_def  = 1
-        conf.bk_def  = 0.6
-        conf.bk_time = 10
+    default = {
+         'def_'    : 10
+        ,'od_def'  : 1
+        ,'bk_def'  : 0.6
+        ,'bk_time' : 10
 
-        conf.name    = 'target'
-        conf.ele     = 'on'
-        conf.hp      = 1000000
-        conf.od      = 200000
-        conf.bk      = 200000
+        ,'name'    : 'target'
+        ,'ele'     : 'on'
+        ,'hp'      : 1000000
+        ,'od'      : 200000
+        ,'bk'      : 200000
 
-        conf.ks      = []
+        ,'ks'      : []
+        ,'param_type':['def','ks']
+        }
 
 
     def sync(this, c):
-        this.name = c.name
-        this.base_def = c.def_
+        this.name     = c['name']
+        this.base_def = c['def_']
 
-        this.base_hp = c.hp
-        this.base_od = c.od
-        this.base_bk = c.bk
+        this.base_hp  = c['hp']
+        this.base_od  = c['od']
+        this.base_bk  = c['bk']
 
-        this.od_def = c.od_def
-        this.bk_def = c.bk_def
-        this.bk_time = c.bk_time
+        this.od_def   = c['od_def']
+        this.bk_def   = c['bk_def']
+        this.bk_time  = c['bk_time']
+
+        this.ks = c['ks']
 
         if this.base_def <= 0:
             print('base_def:%d <= 0'%this.base_def)
-            errrrrrrrrrrr()
+            raise
         if this.base_od > 0:
             this.dt = this.dt_odbk
         else:
             this.od = -1
             this.dt = this.dt_no_od
 
-        this.ks = c.ks
 
     def config(this, c):
         this.config(c)
@@ -51,7 +54,8 @@ class Target(object):
         this.od = 0
         this.bk = -1
 
-        this.conf = Conf_tar(this, conf)
+        this.confw = Conf_tar(this, conf).conf
+        this.conf = this.confw.get
 
         this.skada = {}
         #Event('dmg')(this.l_dmg)
@@ -65,7 +69,7 @@ class Target(object):
     def classinit(this):
         conf = Conf()
         conf.src = this.conf
-        this.Dp = Dmg_param(this.conf)
+        this.Dp = Dmg_param(this)
         this.Buff = Buff(this.Dp)
         this.Passive = Passive(this.Dp)
         this.Selfbuff = Selfbuff(this.Buff)
@@ -115,7 +119,7 @@ class Target(object):
 
     def dt(this, dmg):
         print('targetbase dt not init')
-        errrrrrrrrrrrrrrrrrrrr()
+        raise
 
 
     def dt_no_od(this, dmg):

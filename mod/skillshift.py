@@ -8,20 +8,20 @@ class Skillshift(object):
         skillname = 's%d'%skillidx
         this.level = 0
 
-        this.o_on_end = host.conf[skillname].on_end
-        host.conf[skillname].on_end = this.shift
-        host.conf[skillname]()
+        this.o_on_end = host.conf[skillname]['on_end']
+        host.conf[skillname]['on_end'] = this.shift
+        Conf.commit(host.conf[skillname])
 
-        conf22 = Conf(host.conf[skillname])
-        conf22(conf2)
-        conf2(conf22)
+        conf22 = Conf()
+        conf22.update(Conf(host.conf[skillname]))
+        conf22.update(Conf(conf2))
 
-        conf33 = Conf(host.conf[skillname])
-        conf33(conf3)
-        conf3(conf33)
+        conf33 = Conf()
+        conf33.update(Conf(host.conf[skillname]))
+        conf33.update(Conf(conf3))
 
-        this.s_level2 = host.Skill('%s_2'%skillname, host, conf2)
-        this.s_level3 = host.Skill('%s_3'%skillname, host, conf3)
+        this.s_level2 = host.Skill('%s_2'%skillname, host, conf22.get)
+        this.s_level3 = host.Skill('%s_3'%skillname, host, conf33.get)
         this.s_level2.sp = host.s1.sp
         this.s_level3.sp = host.s1.sp
         this.log = Logger('s')

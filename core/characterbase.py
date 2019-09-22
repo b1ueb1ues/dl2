@@ -26,11 +26,12 @@ class Conf_chara(Config):
             ,'rotation'   : 0
             ,'acl'        : 0
 
-            ,'param_type' : ['atk', 'def', 'dmg', 'cc', 'cd',
+            ,'param_type' : ['atk', 'dmg', 'cc', 'cd',
                              'sp', 'spd', 'buff', 
-                             'killer','ks',
+                             'killer', # 'def', 'ks'
                              'x','fs','s']
             }
+    
 
     def sync(this, c):
         this.name     = c['name']
@@ -76,24 +77,33 @@ class Character(object):
         this.classinit()
         this.setup()
 
-        this.s1 = this.Skill('s1', this, this.conf.s1)
-        this.s2 = this.Skill('s2', this, this.conf.s2)
-        this.s3 = this.Skill('s3', this, this.conf.s3)
+        this.s1 = this.Skill('s1', this, this.conf['s1'])
+        this.s2 = this.Skill('s2', this, this.conf['s2'])
+        this.s3 = this.Skill('s3', this, this.conf['s3'])
+        this.conf['s1'] = this.s1.conf
+        this.conf['s2'] = this.s2.conf
+        this.conf['s3'] = this.s3.conf
 
         import config.weapon
-        wtconf = Conf( config.weapon.wtconf[this.conf.wt] )
-        this.x1 = this.Combo('x1', this, wtconf.x1)
-        this.x2 = this.Combo('x2', this, wtconf.x2)
-        this.x3 = this.Combo('x3', this, wtconf.x3)
-        this.x4 = this.Combo('x4', this, wtconf.x4)
-        this.x5 = this.Combo('x5', this, wtconf.x5)
+        wtconf = Conf()(config.weapon.wtconf[this.conf['wt']]).get
+        this.x1 = this.Combo('x1', this, wtconf['x1'])
+        this.x2 = this.Combo('x2', this, wtconf['x2'])
+        this.x3 = this.Combo('x3', this, wtconf['x3'])
+        this.x4 = this.Combo('x4', this, wtconf['x4'])
+        this.x5 = this.Combo('x5', this, wtconf['x5'])
+        this.conf['x1'] = this.x1.conf
+        this.conf['x2'] = this.x2.conf
+        this.conf['x3'] = this.x3.conf
+        this.conf['x4'] = this.x4.conf
+        this.conf['x5'] = this.x5.conf
 
         this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
         this.a_s = [this.s1, this.s2, this.s3]
 
         this.fs = Fs_group(this, wtconf)
         if 'fsf' in wtconf:
-            this.fsf = this.Fs('fsf', this, wtconf.fsf).init()
+            this.fsf = this.Fs('fsf', this, wtconf['fsf'])
+            wtconf['fsf'] = this.fsf.conf
 
         this.child_init()
 
@@ -106,14 +116,14 @@ class Character(object):
         this.Passive('base_crit_chance', this.base_crit, 'cc')()
         this.Passive('base_crit_damage', 0.7, 'cd')()
 
-        if this.conf.a1:
-            this.a1 = this.Ability('chara_a1', *this.conf.a1)()
-        if this.conf.a3:
-            this.a3 = this.Ability('chara_a3', *this.conf.a3)()
+        if this.conf['a1']:
+            this.a1 = this.Ability('chara_a1', *this.conf['a1'])()
+        if this.conf['a3']:
+            this.a3 = this.Ability('chara_a3', *this.conf['a3'])()
 
-        this.d = this.Dragon(this.conf.slot.d)
-        this.w = this.Weapon(this.conf.wt, this.conf.slot.w)
-        this.a = this.Amulet(this.conf.slot.a1, this.conf.slot.a2)
+        this.d = this.Dragon(this.conf['slot']['d'])
+        this.w = this.Weapon(this.conf['wt'], this.conf['slot']['w'] )
+        this.a = this.Amulet(this.conf['slot']['a1'], this.conf['slot']['a2'])
 
         this.d.init()
         this.w.init()
@@ -154,7 +164,7 @@ class Character(object):
         this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
 
-        this.Action = Action(this)
+        this.Action = Action(this, this.Dp)
         this.Skill = Skill(this)
         this.Combo = Combo(this)
         this.Fs = Fs(this)
@@ -164,7 +174,7 @@ class Character(object):
         this.Weapon = Weapon(this)
         this.Amulet = Amulet(this)
 
-        if this.conf.rotation :
+        if this.conf['rotation'] :
             Event('idle')(this.l_rotation)
         else:
             Event('idle')(this.l_idle)
@@ -190,9 +200,9 @@ class Character(object):
         if this.logsp :
             this.logsp('%s, %s'%(this.name, name), sp,
                     '%d/%d, %d/%d, %d/%d'%( \
-                    this.s1.sp.cur, this.s1.sp.max,
-                    this.s2.sp.cur, this.s2.sp.max,
-                    this.s3.sp.cur, this.s3.sp.max)
+                    this.s1.sp['cur'], this.s1.sp['max'],
+                    this.s2.sp['cur'], this.s2.sp['max'],
+                    this.s3.sp['cur'], this.s3.sp['max'])
                     )
 
 
@@ -206,24 +216,24 @@ class Character(object):
         else:
             charge = 0
 
-        this.s1.charge( floatsingle.ceiling(this.conf.s1.sp * charge) )
-        this.s2.charge( floatsingle.ceiling(this.conf.s2.sp * charge) )
-        this.s3.charge( floatsingle.ceiling(this.conf.s3.sp * charge) )
+        this.s1.charge( floatsingle.ceiling(this.conf['s1']['sp'] * charge) )
+        this.s2.charge( floatsingle.ceiling(this.conf['s2']['sp'] * charge) )
+        this.s3.charge( floatsingle.ceiling(this.conf['s3']['sp'] * charge) )
         if this.logsp:
             this.logsp('%s, %s'%(this.name, name), '%d%%'%(charge*100),
                     '%d/%d, %d/%d, %d/%d'%( \
-                    this.s1.sp.cur, this.s1.sp.max,
-                    this.s2.sp.cur, this.s2.sp.max,
-                    this.s3.sp.cur, this.s3.sp.max)
+                    this.s1.sp['cur'], this.s1.sp['max'],
+                    this.s2.sp['cur'], this.s2.sp['max'],
+                    this.s3.sp['cur'], this.s3.sp['max'])
                     )
         #this.think_pin('prep')
 
 
     def x(this):
         doing = this.Action.doing.conf
-        if doing.type == 'x' :
-            this.a_x[doing.idx]()
-        elif doing.type == 'fs' :
+        if doing['type'] == 'x' :
+            this.a_x[doing['idx']]()
+        elif doing['type'] == 'fs' :
             this.a_x[0]()
         else:
             if this.logx:
@@ -269,13 +279,13 @@ class Character(object):
             x = e.idx*10+e.hit
         if x == 5:
             this.fsf()
-        if this.s1.sp.cur >= this.s1.sp.max and this.s1.sp.max > 0:
+        if this.s1.sp['cur'] >= this.s1.sp['max'] and this.s1.sp['max'] > 0:
             if this.think_s1():
                 return 
-        if this.s2.sp.cur >= this.s2.sp.max and this.s2.sp.max > 0:
+        if this.s2.sp['cur'] >= this.s2.sp['max'] and this.s2.sp['max'] > 0:
             if this.think_s2():
                 return 
-        if this.s3.sp.cur >= this.s3.sp.max and this.s3.sp.max > 0:
+        if this.s3.sp['cur'] >= this.s3.sp['max'] and this.s3.sp['max'] > 0:
             if this.think_s3():
                 return 
 

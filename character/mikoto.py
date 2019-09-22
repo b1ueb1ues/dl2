@@ -6,36 +6,35 @@ from mod.skillshift import *
 
 
 class Mikoto(Character):
-    def config(this, conf):
-        conf.name    = 'Mikoto'
-        conf.star    = 5
-        conf.ele     = 'flame'
-        conf.wt      = 'blade'
-        conf.atk     = 520
-        conf.a1      = ('cc', 0.10, 'hp70')
-        conf.a3      = ('cc', 0.08)
-        conf.slot.w  = 'c534_flame'
-        #conf.slot.w  = 'v534_flame_zephyr'
-        #conf.slot.d  = 'Cerb'
-        #conf.slot.d  = 'Arctos'
-        conf.slot.d  = 'Sakuya'
-        conf.slot.a1 = 'RR'
-        conf.slot.a2 = 'BN'
+    conf = {
+         'name'    : 'Mikoto'
+        ,'star'    : 5
+        ,'ele'     : 'flame'
+        ,'wt'      : 'blade'
+        ,'atk'     : 520
+        ,'a1'      : ('cc', 0.10,'hp70')
+        ,'a3'      : ('cc', 0.08)
+        ,'slot.w'  : 'c534_flame'
+       #,'slot.w'  : 'v534_flame_zephyr'
+       #,'slot.d'  : 'Cerb'
+       #,'slot.d'  : 'Arctos'
+        ,'slot.d'  : 'Sakuya'
+        ,'slot.a1' : 'RR'
+        ,'slot.a2' : 'BN'
 
-        conf.s1.recovery = 1.62  # 1.83 2.8
-        conf.s1.sp = 4500
-        conf.s1.hit = [
-                (0.18, 'h1'), 
-                (0.43, 'h1'), 
-                ]
-        conf.s1.attr.h1.coef = 5.32
-        conf.s1.attr.h2.coef = 3.54
-        conf.s1.attr.h3.coef = 2.13
-        conf.s1.attr.h4.coef = 4.25
+        ,'s1.recovery'     : 1.62  # 1.83 2.8
+        ,'s1.sp'           : 4500
+        ,'s1.hit'          : [(0.18,'h1'),
+                              (0.43,'h1')]
+        ,'s1.attr.h1.coef' : 5.32
+        ,'s1.attr.h2.coef' : 3.54
+        ,'s1.attr.h3.coef' : 2.13
+        ,'s1.attr.h4.coef' : 4.25
 
-        conf.s2.recovery = 1
-        conf.s2.sp = 4500
-        conf.s2.buff = ('self', 0.2, 10, 'spd')
+        ,'s2.recovery'     : 1
+        ,'s2.sp'           : 4500
+        ,'s2.buff'         : ('self', 0.2, 10,'spd')
+        }
 
     def s1_proc(this):
         this.target.Debuff('s1',0.1)(10)
@@ -43,16 +42,17 @@ class Mikoto(Character):
 
     def init(this):
         this.stance = 0
-        this.conf.s1.on_end = this.s1_end
+        conf = {
+                 's1.on_end'    : this.s1_end
+                ,'s12.recovery' : 1.83
+                ,'s12.hit'      : [(0.23,'h2'), (0.42,'h2'), (0.65,'h2')]
+                ,'s13.recovery' : 2.8
+                ,'s13.hit'      : [(0.22,'h3'), (0.42,'h3'),
+                                     (0.65,'h3'), (1.15,'h4')]
+                }
+        Conf(this.conf).update(conf)
 
-        this.conf.s12.recovery = 1.83
-        this.conf.s12.hit = [(0.23,'h2'), (0.42,'h2'), (0.65,'h2')]
-
-        this.conf.s13.recovery = 2.8
-        this.conf.s13.hit = [(0.22,'h3'), (0.42,'h3'),
-                             (0.65,'h3'), (1.15,'h4')]
-
-        this.ss = Skillshift(this, 1, this.conf.s12, this.conf.s13)
+        this.ss = Skillshift(this, 1, this.conf['s12'], this.conf['s13'])
         
 
     def s1_end(this):

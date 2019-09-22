@@ -30,6 +30,6 @@ def foo():
 foo()
 
 logset([])
-benchmark.run(foo)
+benchmark.run(foo, 1000)
 
 logcat()
