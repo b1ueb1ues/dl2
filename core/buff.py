@@ -5,15 +5,11 @@ from core.ctx import *
 class Passive(object):
     def __init__(this, Dp):
         this.Dp = Dp
-        Dp.conf(this.sync)
+        this.hostname = Dp.host.name
 
 
     def __call__(this, *args, **kwargs):
         return _Passive(this, *args, **kwargs)
-
-
-    def sync(this, c):
-        this.hostname = c.name
 
 
 class _Passive():
@@ -85,7 +81,7 @@ class _Passive():
 class Buff(object):
     def __init__(this, Dp):
         this.Dp = Dp
-        Dp.conf(this.sync)
+        this.hostname = Dp.host.name
 
         this.buff_group = {}
 
@@ -99,10 +95,6 @@ class Buff(object):
 
     def l_buff(this, e):
         this(e.name, e.value, e.mtype, e.morder, e.group)(e.duration)
-
-
-    def sync(this, c):
-        this.hostname = c.name
 
 
 class _Buff(object):
@@ -133,6 +125,9 @@ class _Buff(object):
             this._static.buff_group[group_id] = this.group
         else:
             this.group = this._static.buff_group[group_id]
+
+        this.bt_cache = this.Dp.cache
+        this.bt_get = this.Dp.get_
 
         this.log = Logger('buff')
         this.log_dp = Logger('dp')
@@ -287,7 +282,13 @@ class Selfbuff(object):
 class _Selfbuff(_Buff):
     bufftype = 'selfbuff'
     def on(this, duration):
-        duration *= this.Dp.get('buff')
+        # duration *= this.Dp.get('buff') {
+        if this.bt_cache['buff'] >= 0:
+            bt = this.bt_cache['buff']
+        else:
+            bt = this.bt_get('buff')
+        duration *= bt
+        # } duration *= this.Dp.get('buff')
         super().on(duration)
         return this
 
@@ -343,11 +344,19 @@ class _Teambuff():
 
         this.e = e
         this.Dp = this._static.Dp
+        this.bt_cache = this.Dp.cache
+        this.bt_get = this.Dp.get_
         this.log = Logger('buff')
 
 
     def on(this, duration):
-        this.e.duration = duration * this.Dp.get('buff')
+        # this.e.duration = duration * this.Dp.get('buff') {
+        if this.bt_cache['buff'] >= 0:
+            bt = this.bt_cache['buff']
+        else:
+            bt = this.bt_get('buff')
+        this.e.duration = duration * bt
+        # this.e.duration = duration * this.Dp.get('buff') }
         this.e()
         return this
 
@@ -405,9 +414,13 @@ if __name__ == '__main__':
     def test():
         class C():
             def __init__(this):
-                conf = Conf()
-                conf.name = '1p'
-                this.Dp = Dmg_param(conf)
+                this.name = '1p'
+                this.conf_w = Conf()
+                this.conf = this.conf_w.get
+                this.conf['param_type'] = ['atk','def','dmg','cc','cd',
+                                'buff','sp','spd', 'killer','ks',
+                                'x','fs','s'] 
+                this.Dp = Dmg_param(this)
                 this.Buff = Buff(this.Dp)
                 this.Passive = Passive(this.Dp)
                 this.Selfbuff = Selfbuff(this.Buff)
@@ -415,9 +428,13 @@ if __name__ == '__main__':
 
         class C2():
             def __init__(this):
-                conf = Conf()
-                conf.name = '2p'
-                this.Dp = Dmg_param(conf)
+                this.name = '2p'
+                this.conf_w = Conf()
+                this.conf = this.conf_w.get
+                this.conf['param_type'] = ['atk','def','dmg','cc','cd',
+                                'buff','sp','spd', 'killer','ks',
+                                'x','fs','s'] 
+                this.Dp = Dmg_param(this)
                 this.Buff = Buff(this.Dp)
                 this.Passive = Passive(this.Dp)
                 this.Selfbuff = Selfbuff(this.Buff)

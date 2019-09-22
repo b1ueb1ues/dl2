@@ -246,7 +246,7 @@ class _Skill(object):
 
         if this.hit_next < this.hit_count :
             #timing = this.hit[this.hit_next][0] / this.speed() {
-            if this.speed_cache['spd'] >= 0
+            if this.speed_cache['spd'] >= 0 :
                 timing = this.hit[this.hit_next][0] / this.speed_cache['spd']
             else:
                 timing = this.hit[this.hit_next][0] / this.speed_get('spd')
@@ -255,7 +255,7 @@ class _Skill(object):
 
         if 'buff' in this.conf:
             # timing = 0.15/this.speed() {
-            if this.speed_cache['spd'] >= 0
+            if this.speed_cache['spd'] >= 0 :
                 timing = 0.15/this.speed_cache['spd']
             else:
                 timing = 0.15/this.speed_get('spd')

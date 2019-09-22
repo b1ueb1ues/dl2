@@ -26,8 +26,10 @@ class Conf_chara(Config):
             ,'rotation'   : 0
             ,'acl'        : 0
 
-            ,'param_type' : ['atk','def','dmg','cc','cd','sp','spd',
-                             'killer','ks','x','fs','s']
+            ,'param_type' : ['atk', 'def', 'dmg', 'cc', 'cd',
+                             'sp', 'spd', 'buff', 
+                             'killer','ks',
+                             'x','fs','s']
             }
 
     def sync(this, c):
@@ -74,17 +76,17 @@ class Character(object):
         this.classinit()
         this.setup()
 
-        this.s1 = this.Skill('s1', this, this.conf.s1).init()
-        this.s2 = this.Skill('s2', this, this.conf.s2).init()
-        this.s3 = this.Skill('s3', this, this.conf.s3).init()
+        this.s1 = this.Skill('s1', this, this.conf.s1)
+        this.s2 = this.Skill('s2', this, this.conf.s2)
+        this.s3 = this.Skill('s3', this, this.conf.s3)
 
         import config.weapon
         wtconf = Conf( config.weapon.wtconf[this.conf.wt] )
-        this.x1 = this.Combo('x1', this, wtconf.x1).init()
-        this.x2 = this.Combo('x2', this, wtconf.x2).init()
-        this.x3 = this.Combo('x3', this, wtconf.x3).init()
-        this.x4 = this.Combo('x4', this, wtconf.x4).init()
-        this.x5 = this.Combo('x5', this, wtconf.x5).init()
+        this.x1 = this.Combo('x1', this, wtconf.x1)
+        this.x2 = this.Combo('x2', this, wtconf.x2)
+        this.x3 = this.Combo('x3', this, wtconf.x3)
+        this.x4 = this.Combo('x4', this, wtconf.x4)
+        this.x5 = this.Combo('x5', this, wtconf.x5)
 
         this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
         this.a_s = [this.s1, this.s2, this.s3]
@@ -141,7 +143,7 @@ class Character(object):
         
 
     def classinit(this):
-        this.Dp = Dmg_param(host)
+        this.Dp = Dmg_param(this)
         this.mod = this.Dp.get
 
         this.Passive = Passive(this.Dp)
@@ -295,6 +297,7 @@ class Character(object):
 if __name__ == '__main__':
     root = Conf()
     c = Character(root.get)
+    c.init()
     print(c.name)
     print(root)
     
