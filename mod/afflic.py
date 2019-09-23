@@ -2,14 +2,21 @@ import random
 from core.dot import *
 
 class Afflic(object):
-    def __init__(this, name, _Dot):
-        this.name = name
-        this.dst = _Dot.host
-        this.rate = 1
+    def __init__(this, src, dst):
+        this.type = {}
+        this.src = src
+        this.dst = dst
         this.tolerance = 0.05
         this.duration = 12
+        this.iv = 3
         this.log = Logger('afflic')
         this.Dot = _Dot
+
+    def __call__(this, atype, *args, **kwargs):
+        return _Afflic(this, *args, **kwargs)
+
+class _Afflic():
+    def __init__(this, static, 
 
     def init(this):
         this.dot = Dot(this.name, this.coef, this.duration, this.iv)
