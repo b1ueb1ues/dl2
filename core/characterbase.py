@@ -30,6 +30,9 @@ class Conf_chara(Config):
                              'sp', 'spd', 'buff', 
                              'killer', # 'def', 'ks'
                              'x','fs','s']
+            ,'s1' :None
+            ,'s2' :None
+            ,'s3' :None
             }
     
 
@@ -56,8 +59,7 @@ class Character(object):
         pass
 
     def __init__(this, rootconf=None):
-        this.conf_w = Conf_chara(this, this.conf)
-        this.conf = this.conf_w()
+        Conf_chara(this, this.conf)()
         if rootconf:
             rootconf[this.name] = this.conf
         this.hitcount = 0
@@ -77,15 +79,12 @@ class Character(object):
         this.classinit()
         this.setup()
 
-        if 's1' in this.conf:
-            this.s1 = this.Skill('s1', this, this.conf['s1'])
-            this.conf['s1'] = this.s1.conf
-        if 's2' in this.conf:
-            this.s2 = this.Skill('s2', this, this.conf['s2'])
-            this.conf['s2'] = this.s2.conf
-        if 's3' in this.conf:
-            this.s3 = this.Skill('s3', this, this.conf['s3'])
-            this.conf['s3'] = this.s3.conf
+        this.s1 = this.Skill('s1', this, this.conf['s1'])
+        this.conf['s1'] = this.s1.conf
+        this.s2 = this.Skill('s2', this, this.conf['s2'])
+        this.conf['s2'] = this.s2.conf
+        this.s3 = this.Skill('s3', this, this.conf['s3'])
+        this.conf['s3'] = this.s3.conf
 
         import config.weapon
         wtconf = Conf()(config.weapon.wtconf[this.conf['wt']]).get

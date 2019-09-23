@@ -100,7 +100,7 @@ class _Skill(object):
         this.log = Logger('s')
         this.src = host.name+', '
 
-        this.conf = Conf_skl(this, conf).conf.get
+        Conf_skl(this, conf)()
         this.ac = host.Action(this.name, this.conf)
 
     def __call__(this):
@@ -331,7 +331,7 @@ class _Combo(object):
 
         this.hit = None
         this.attr = None
-        this.conf = Conf_cmb(this, conf).conf.get
+        Conf_cmb(this, conf)()
 
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
@@ -475,7 +475,7 @@ class _Fs(object):
 
         this.hit = None
         this.attr = None
-        this.conf = Conf_fs(this, conf).conf.get
+        Conf_fs(this, conf)()
 
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
@@ -600,7 +600,7 @@ class _Dodge(object):
         this.e_x = Event('cancel')
         this.e_x.name = this.name
 
-        this.conf = Conf_dodge(this, conf).conf.get
+        Conf_dodge(this, conf)()
 
         this.ac = host.Action(this.name, this.conf)
 

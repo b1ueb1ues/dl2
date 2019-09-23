@@ -45,7 +45,7 @@ class _Action(object):
         this._static = static
         this.name = name
         this.src = this._static.host.name + ', '
-        this.conf = Conf_Action(this, conf)()
+        Conf_Action(this, conf)()
 
         this.speed_cache = static.speed_cache
         this.speed_get = static.speed_get

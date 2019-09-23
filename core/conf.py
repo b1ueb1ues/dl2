@@ -114,10 +114,11 @@ class Config(object):
         if this.sync:
             tmp.get['__sync'][this.__sync] = 1
             this.__sync(tmp.get)
-        this.conf = tmp
+        this.conf_w = tmp
 
     def __call__(this):
-        return this.conf.get
+        this.host.conf_w = this.conf_w
+        this.host.conf = this.conf_w.get
 
     def __sync(this, conf):
         this.__class__.sync(this.host, conf)

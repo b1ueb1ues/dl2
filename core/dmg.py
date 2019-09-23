@@ -119,7 +119,7 @@ class _Dmg_calc(object):
         this.dmg = Dmg()
         this.dmg.hostname = this._static.hostname
         
-        this.conf = Conf_dc(this, conf)
+        Conf_dc(this, conf)()
 
 
     def __call__(this): 

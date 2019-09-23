@@ -44,18 +44,15 @@ class Conf_tar(Config):
             this.dt = this.dt_no_od
 
 
-    def config(this, c):
-        this.config(c)
-
-
 class Target(object):
-    def __init__(this, conf=None):
+    def __init__(this, conf_root=None):
+        this.conf_root = conf_root
+
         this.odbk = 0 # 0: normal, 1: od, -1: bk
         this.od = 0
         this.bk = -1
 
-        this.confw = Conf_tar(this, conf).conf
-        this.conf = this.confw.get
+        Conf_tar(this, this.conf)()
 
         this.skada = {}
         #Event('dmg')(this.l_dmg)
@@ -67,8 +64,6 @@ class Target(object):
 
 
     def classinit(this):
-        conf = Conf()
-        conf.src = this.conf
         this.Dp = Dmg_param(this)
         this.Buff = Buff(this.Dp)
         this.Passive = Passive(this.Dp)
@@ -76,10 +71,6 @@ class Target(object):
         this.Teambuff = Teambuff(this.Buff)
         this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
-
-
-    def config(this, conf):
-        pass
 
 
     # after all config settle down

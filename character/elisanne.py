@@ -17,10 +17,10 @@ class Elisanne(Character):
         ,'s1.sp'           : 3817
         ,'s1.buff'         : ('s1', 0.20, 15)
 
-   #     ,'s2.sp'           : 5158
-   #     ,'s2.recovery'     : 1.9
-   #     ,'s2.hit'          : [(0,'h1')]
-   #     ,'s2.attr.h1.coef' : 7.54
+        ,'s2.sp'           : 5158
+        ,'s2.recovery'     : 1.9
+        ,'s2.hit'          : [(0,'h1')]
+        ,'s2.attr.h1.coef' : 7.54
 
         ,'slot.w'          : 'c534_water'
         ,'slot.d'          : 'DJ'

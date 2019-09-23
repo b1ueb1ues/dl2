@@ -17,19 +17,20 @@ def foo():
     tar = Hms()
     tar.init()
 
-   # c = Mikoto()
-   # c.tar(tar)
-   # #c.conf.slot.w = 'v534_flame_zephyr'
-   # c.init()
+    c = Mikoto()
+    c.tar(tar)
+    c.conf['slot']['w'] = 'v534_flame_zephyr'
+    c.init()
 
     c2 = Elisanne()
     c2.tar(tar)
     c2.init()
 
     Timer.run()
-#foo()
 
-logset([])
-benchmark.run(foo)
+foo()
+
+#logset([])
+#benchmark.run(foo, 1000)
 
 logcat()
