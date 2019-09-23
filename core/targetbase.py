@@ -71,6 +71,9 @@ class Target(object):
         this.logbk = Logger('bk')
         this.logdmg = Logger('dmg')
 
+        this.Dot = None
+        this.Afflics = None
+
 
     def classinit(this):
         this.Dp = Dmg_param(this)

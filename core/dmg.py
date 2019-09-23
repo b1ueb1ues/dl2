@@ -2,9 +2,10 @@ import __init__
 from core.ctx import *
 
 
-class Dmg(object):
+class _Dmg(object):
     def __init__(this):
         this.name = ''
+        this.hostname = ''
         this.dmg = 0
         this.hit = 1
         this.to_od = 1 # rate
@@ -116,7 +117,7 @@ class _Dmg_calc(object):
         this.dst_ks = this.dst.Dp.type_mods['ks']
         this.src_killer = this.src.Dp.type_mods['killer']
 
-        this.dmg = Dmg()
+        this.dmg = _Dmg()
         this.dmg.hostname = this._static.hostname
         
         Conf_dc(this, conf)()

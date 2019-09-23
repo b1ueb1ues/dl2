@@ -3,7 +3,8 @@ from core.ctx import *
 from core.characterbase import *
 from target.dummy import *
 from mod.skillshift import *
-from mod.afflic import *
+#from mod.afflic import *
+from core.dot import *
 
 
 class Mikoto(Character):
@@ -35,27 +36,24 @@ class Mikoto(Character):
         ,'s1.attr.h3.coef' : 2.13
         ,'s1.attr.h4.coef' : 4.25
 
-        ,'s2.hit'          : [(0.15,'h1')]
-        ,'s2.attr.h1.coef' : 0
         ,'s2.recovery'     : 1
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
+        ,'s2.on_start' : this.s2_proc
+        
 
         }
 
     def s1_proc(this):
-        this.debug()
+        this.target.Dot_burn(this, 's1', 5.32, 15)()
         this.target.Debuff('s1',0.1)(10)
 
     def s2_proc(this):
-        this.debug()
-
-    def debug(this):
-        this.dot_burn('debug',5.32,15,2.99)()
-        #this.afflic()
+        this.target.Dot_burn(this, 's2', 5.32, 15)()
 
     def init(this):
-        this.dot_burn = Dot(this, this.target)
+        Dotbase(this.target)
+        this.target.Dot_burn = this.target.Dot('burn', 2.99)
         #this.afflic = Afflic('burn', this.target.dot_burn)
         #this.afflic.init()
         this.stance = 0
