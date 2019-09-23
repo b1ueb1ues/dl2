@@ -77,12 +77,15 @@ class Character(object):
         this.classinit()
         this.setup()
 
-        this.s1 = this.Skill('s1', this, this.conf['s1'])
-        this.s2 = this.Skill('s2', this, this.conf['s2'])
-        this.s3 = this.Skill('s3', this, this.conf['s3'])
-        this.conf['s1'] = this.s1.conf
-        this.conf['s2'] = this.s2.conf
-        this.conf['s3'] = this.s3.conf
+        if 's1' in this.conf:
+            this.s1 = this.Skill('s1', this, this.conf['s1'])
+            this.conf['s1'] = this.s1.conf
+        if 's2' in this.conf:
+            this.s2 = this.Skill('s2', this, this.conf['s2'])
+            this.conf['s2'] = this.s2.conf
+        if 's3' in this.conf:
+            this.s3 = this.Skill('s3', this, this.conf['s3'])
+            this.conf['s3'] = this.s3.conf
 
         import config.weapon
         wtconf = Conf()(config.weapon.wtconf[this.conf['wt']]).get
