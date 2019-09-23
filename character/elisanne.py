@@ -15,7 +15,7 @@ class Elisanne(Character):
 
         ,'s1.recovery'     : 1
         ,'s1.sp'           : 3817
-        ,'s1.buff'         : ('s1', 0.20, 15)
+        ,'s1.buff'         : ('team', 0.20, 15)
 
         ,'s2.sp'           : 5158
         ,'s2.recovery'     : 1.9

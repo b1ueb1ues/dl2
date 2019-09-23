@@ -102,6 +102,7 @@ class _Skill(object):
 
         Conf_skl(this, conf)()
         this.ac = host.Action(this.name, this.conf)
+        this.conf = this.ac.conf
 
     def __call__(this):
         return this.tap()
@@ -170,7 +171,7 @@ class _Skill(object):
             this.host.Selfbuff(this.name, value, *buffarg)(time)
         elif wide == 'debuff':
             print('cant proc debuff at skill start')
-            errrrrrrrrrr()
+            raise
      #       this.host.target.Debuff(this.name, value, *buffarg)(time)
         elif wide == 'zone':
             this.host.Zonebuff(this.name, value, *buffarg)(time)
@@ -203,6 +204,8 @@ class _Skill(object):
     def collid(this):
         if this.firsthit:
             this.firsthit = 0
+            if this.proc:
+                this.proc()
             if 'debuff' in this.conf:
                 buffarg = this.conf.debuff
                 wide = buffarg[0]
@@ -210,8 +213,6 @@ class _Skill(object):
                 time = buffarg[2]
                 buffarg = buffarg[3:]
                 this.host.target.Debuff(this.name, value, *buffarg)(time)
-            if this.proc:
-                this.proc()
 
 # inlined
 #    def active(this):
@@ -336,6 +337,7 @@ class _Combo(object):
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
         this.ac = host.Action(this.name, this.conf)
+        this.conf = this.ac.conf
 
         this.log = Logger('x')
         this.src = this.host.name+', '
@@ -480,6 +482,7 @@ class _Fs(object):
         this.speed_cache = host.Dp.cache
         this.speed_get = host.Dp.get_
         this.ac = host.Action(this.name, this.conf)
+        this.conf = this.ac.conf
 
         this.log = Logger('fs')
         this.src = host.name+', '
@@ -603,6 +606,7 @@ class _Dodge(object):
         Conf_dodge(this, conf)()
 
         this.ac = host.Action(this.name, this.conf)
+        this.conf = this.ac.conf
 
         this.log = Logger('dodge')
         this.src = this.host.name+', '

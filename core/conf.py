@@ -58,9 +58,13 @@ class Conf():
         a(this.get)
 
     @staticmethod
-    def commit(data):
+    def sync(data):
         for i in data['__sync']:
             i(data)
+
+    def commit(this):
+        for i in this.get['__sync']:
+            i(this.get)
 
     def update(this, a):
         if type(a) == dict:

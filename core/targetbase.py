@@ -17,6 +17,15 @@ class Conf_tar(Config):
 
         ,'ks'      : []
         ,'param_type':['def','ks']
+
+        ,'resist.poison'    : 0
+        ,'resist.burn'      : 0
+        ,'resist.paralysis' : 0
+        ,'resist.blind'     : 0
+        ,'resist.bog'       : 0
+        ,'resist.freeze'    : 0
+        ,'resist.stun'      : 0
+        ,'resist.sleep'     : 0
         }
 
 
@@ -66,10 +75,11 @@ class Target(object):
     def classinit(this):
         this.Dp = Dmg_param(this)
         this.Buff = Buff(this.Dp)
+        this.Buff.listener.off()
         this.Passive = Passive(this.Dp)
-        this.Selfbuff = Selfbuff(this.Buff)
-        this.Teambuff = Teambuff(this.Buff)
-        this.Zonebuff = Zonebuff(this.Buff)
+        #this.Selfbuff = Selfbuff(this.Buff)
+        #this.Teambuff = Teambuff(this.Buff)
+        #this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
 
 
@@ -114,7 +124,7 @@ class Target(object):
 
 
     def dt_no_od(this, dmg):
-        this.recount(dmg.hostname, dmg.name, true_dmg, 0)
+        this.recount(dmg.hostname, dmg.name, dmg.dmg, 0)
         this.hp -= dmg.dmg
         if this.hp < 0 :
             this.die()

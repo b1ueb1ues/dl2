@@ -10,7 +10,7 @@ class Skillshift(object):
 
         this.o_on_end = host.conf[skillname]['on_end']
         host.conf[skillname]['on_end'] = this.shift
-        Conf.commit(host.conf[skillname])
+        Conf.sync(host.conf[skillname])
 
         conf22 = Conf()
         conf22.update(Conf(host.conf[skillname]))

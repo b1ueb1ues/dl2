@@ -81,11 +81,12 @@ class _Passive():
 class Buff(object):
     def __init__(this, Dp):
         this.Dp = Dp
+        this.host = Dp.host
         this.hostname = Dp.host.name
 
         this.buff_group = {}
 
-        Event('buff')(this.l_buff)
+        this.listener = Event('buff')(this.l_buff)
         this.log = Logger('buff')
 
 
@@ -94,7 +95,7 @@ class Buff(object):
 
 
     def l_buff(this, e):
-        this(e.name, e.value, e.mtype, e.morder, e.group)(e.duration)
+        this(e.src+'_'+e.name, e.value, e.mtype, e.morder, e.group)(e.duration)
 
 
 class _Buff(object):
@@ -322,6 +323,7 @@ class _Debuff(_Buff):
 
 class Teambuff(object):
     def __init__(this, Buff):
+        this.hostname = Buff.hostname
         this.Dp = Buff.Dp
         this.e = Event('buff')
 
@@ -335,7 +337,8 @@ class _Teambuff():
     def __init__(this, static, name, value,
             mtype='atk', morder=None, group=None):
         this._static = static
-        e = this._static.e
+        e = static.e
+        e.src = static.hostname
         e.name = name
         e.value = value
         e.mtype = mtype
@@ -370,6 +373,7 @@ class _Teambuff():
 
 class Zonebuff(object):
     def __init__(this, Buff):
+        this.hostname = Buff.hostname
         this.Dp = Buff.Dp
         this.e = Event('buff')
 
@@ -383,7 +387,8 @@ class _Zonebuff():
     def __init__(this, static, name, value,
             mtype='atk', morder=None, group=None):
         this._static = static
-        e = this._static.e
+        e = static.e
+        e.src = static.hostname
         e.name = name
         e.value = value
         e.mtype = mtype

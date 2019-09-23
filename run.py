@@ -9,6 +9,7 @@ from core import benchmark
 
 logset('dmg')
 logset('buff')
+logset('dot')
 #logset('act')
 #logset('x')
 
@@ -19,18 +20,18 @@ def foo():
 
     c = Mikoto()
     c.tar(tar)
-    c.conf['slot']['w'] = 'v534_flame_zephyr'
+    #c.conf['slot']['w'] = 'v534_flame_zephyr'
     c.init()
 
-    c2 = Elisanne()
-    c2.tar(tar)
-    c2.init()
+#    c2 = Elisanne()
+#    c2.tar(tar)
+#    c2.init()
 
     Timer.run()
 
 foo()
 
 #logset([])
-#benchmark.run(foo, 1000)
+#benchmark.run(foo, 200)
 
 logcat()

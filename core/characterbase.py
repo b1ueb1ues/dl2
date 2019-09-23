@@ -54,12 +54,18 @@ class Conf_chara(Config):
 
 
 class Character(object):
-    conf = {}       # rewrite by child
+    # conf = {}       # rewrite by child
+    # or
+    # def conf(this): # rewrite by child
+    #     return {}
     def init(this): # rewrite by child
         pass
 
     def __init__(this, rootconf=None):
-        Conf_chara(this, this.conf)()
+        if type(this.conf) == dict:
+            Conf_chara(this, this.conf)()
+        else:
+            Conf_chara(this, this.conf())()
         if rootconf:
             rootconf[this.name] = this.conf
         this.hitcount = 0
@@ -250,10 +256,11 @@ class Character(object):
     def hit(this, count):
         if this.loghit:
             this.loghit('add', '%d+%d'%(this.hitcount, count) )
-        this.hitcount += count
-        this.t_hitreset(2)
-        this.e_hit.hit = this.hitcount
-        this.e_hit()
+        if count :
+            this.hitcount += count
+            this.t_hitreset(2)
+            this.e_hit.hit = this.hitcount
+            this.e_hit()
 
 
     def hitreset(this, t):
