@@ -31,7 +31,7 @@ def foo():
 
 foo()
 
-logset([])
-benchmark.run(foo, 1000)
+#logset([])
+#benchmark.run(foo, 1000)
 
 logcat()
