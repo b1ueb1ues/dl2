@@ -50,7 +50,7 @@ class Afflics(object):
 class _Afflic_dot():
     def __init__(this, static, atype, src, name, rate, coef, duration=None):
         this._static = static
-        host = this._static.host
+        this.resist = static.host.resist
         if not static.dot_group[atype] :
             static.dot_group[atype] = host.Dot_group(host, atype,
                                         static.iv_default[atype])
@@ -68,9 +68,9 @@ class _Afflic_dot():
             if this.log:
                 this.log('perfect resist')
             return 
-        if random.random() < this.rate-this.resist :
+        if random.random() < this.rate-this.resist[atype] :
             # proc
-            this.resist += this.tolerance
+            this.resist[atype] += 0.05
             this.dot()
         else:
             # resist
