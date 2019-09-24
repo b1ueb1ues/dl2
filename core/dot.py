@@ -3,17 +3,17 @@ from core.ctx import *
 from core import dmg
 
 
-class Dotbase():
+class Dot_group():
     def __init__(this, host):
         this.host = host
-        if not this.host.Dot:
-            this.host.Dot = this
+        if not this.host.Dot_group:
+            this.host.Dot_group = this
 
     def __call__(this, classname, iv):
-        return Dot(this.host, classname, iv)
+        return _Dot_group(this.host, classname, iv)
     
 
-class Dot():
+class _Dot_group():
     def __init__(this, host, classname, iv):
         this.host = host
         this.classname = classname
@@ -84,10 +84,11 @@ class _Dot():
 
 
     def __call__(this):
-        if this.log:
-            this.log(this.label, 'apply',this._static.host.name)
-
         this._dmg.dmg = this.Dc.calc()
+
+        if this.log:
+            this.log(this.label, 'apply',
+                    '%s, %d'%(this._static.host.name, this._dmg.dmg))
 
         this._static.all_stacks.append(this)
         this.t_dot_end(this.duration)

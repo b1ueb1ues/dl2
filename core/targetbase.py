@@ -43,6 +43,8 @@ class Conf_tar(Config):
 
         this.ks = c['ks']
 
+        this.resist = c['resist']
+
         if this.base_def <= 0:
             print('base_def:%d <= 0'%this.base_def)
             raise
@@ -71,8 +73,6 @@ class Target(object):
         this.logbk = Logger('bk')
         this.logdmg = Logger('dmg')
 
-        this.Dot = None
-        this.Afflics = None
 
 
     def classinit(this):
@@ -84,6 +84,8 @@ class Target(object):
         #this.Teambuff = Teambuff(this.Buff)
         #this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
+        this.Dot_group = None
+        #this.Afflics = Afflics(this)
 
 
     # after all config settle down

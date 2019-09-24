@@ -4,18 +4,28 @@ from core.dot import *
 class Afflics(object):
     def __init__(this, host):
         this.host = host
-        if not this.host.Afflics:
-            this.host.Afflics = this
-        this.type = {}
+        if not host.Afflics:
+            host.Afflics = this
+        else:
+            return
+        if not this.host.Dot_group:
+            host.Dot_group = Dotbase(host)
+        else:
+            return
+        this.dot_group = {
+                 'burn'      : None
+                ,'poison'    : None
+                ,'paralysis' : None
+                }
         this.log = Logger('afflic')
         this.iv_default = {
-                 'poison'    : 2.99
-                ,'burn'      : 3.99
+                 'burn'      : 3.99
+                ,'poison'    : 2.99
                 ,'paralysis' : 3.99
                 }
         this.duration_default = {
-                 'poison'    : 15
-                ,'burn'      : 12
+                 'burn'      : 12
+                ,'poison'    : 15
                 ,'paralysis' : 13
                 ,'blind'     : 8
                 ,'bog'       : 8
@@ -24,26 +34,37 @@ class Afflics(object):
                 ,'sleep'     : 6.5
                 }
 
-    def __call__(this, atype, *args, **kwargs):
+
+    def __call__(this, atype, *args, **kwargs): # src, name, coef, duration):
+        if atype == 'burning' :
+            atype = 'burn'
+        if atype = 'para':
+            atype = 'paralysis'
         if atype in ['poison','burn','paralysis']:
-            return _Afflic_dot(this, *args, **kwargs)
+            return _Afflic_dot(this, atype, src, name, rate, coef, duration)
+        elif atype in ['blind','bog']:
+            return _Afflic_scc(this, atype, src, name, rate, duration)
+        elif atype in ['freeze', 'stun','sleep']:
+            return _Afflic_cc(this, atype, src, name, rate, duration)
 
 class _Afflic_dot():
-    def __init__(this, static, atype, duration=None):
-        pass
+    def __init__(this, static, atype, src, name, rate, coef, duration=None):
+        this._static = static
+        host = this._static.host
+        if not static.dot_group[atype] :
+            static.dot_group[atype] = host.Dot_group(host, atype,
+                                        static.iv_default[atype])
+        this.atype = atype
+        this.coef = coef
+        if duration:
+            this.duration = duration
+        else:
+            this.duration = static.duration_default[atype]
 
-    def init(this):
-        this.dot = Dot(this.name, this.coef, this.duration, this.iv)
-        return this
-
-    def get(this):
-        nostackchance = 1.0
-        for i in this.stack:
-            nostackchance *= (1.0-this.stack[i])
-        return 1.0-nostackchance
+        this.dot = static.dot_group[atype](src, name, coef)
 
     def on(this):
-        if this.resist >= 1:
+        if host.resist[this.atype] >= 1:
             if this.log:
                 this.log('perfect resist')
             return 

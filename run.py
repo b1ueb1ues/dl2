@@ -27,7 +27,7 @@ def foo():
 #    c2.tar(tar)
 #    c2.init()
 
-    Timer.run()
+    Timer.run(180)
 
 foo()
 

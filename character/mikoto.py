@@ -52,8 +52,8 @@ class Mikoto(Character):
         this.target.Dot_burn(this, 's2', 5.32, 15)()
 
     def init(this):
-        Dotbase(this.target)
-        this.target.Dot_burn = this.target.Dot('burn', 2.99)
+        Dot_group(this.target)
+        this.target.Dot_burn = this.target.Dot_group('burn', 2.99)
         #this.afflic = Afflic('burn', this.target.dot_burn)
         #this.afflic.init()
         this.stance = 0
