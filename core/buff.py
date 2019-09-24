@@ -226,13 +226,13 @@ class _Buff(object):
             if stack > 1:
                 this.__buff_stack()
         this.dp.off()
-        this.end()
+        this.on_end()
         if this.log_dp:
             this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
                 this._static.Dp.get(this.mod_type))
 
 
-    def end(this):
+    def on_end(this):
         pass
 
 

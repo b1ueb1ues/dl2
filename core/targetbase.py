@@ -16,7 +16,7 @@ class Conf_tar(Config):
         ,'bk'      : 200000
 
         ,'ks'      : []
-        ,'param_type':['def','ks']
+        ,'param_type':['def','ks','dt']
 
         ,'resist.poison'    : 0
         ,'resist.burn'      : 0
@@ -85,7 +85,7 @@ class Target(object):
         #this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
         this.Dot_group = None
-        #this.Afflics = Afflics(this)
+        this.Afflics = None
 
 
     # after all config settle down

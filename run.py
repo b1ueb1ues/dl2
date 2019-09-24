@@ -10,6 +10,8 @@ from core import benchmark
 logset('dmg')
 logset('buff')
 logset('dot')
+logset('afflic')
+logset('s')
 #logset('act')
 #logset('x')
 

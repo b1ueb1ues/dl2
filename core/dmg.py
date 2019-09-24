@@ -167,6 +167,11 @@ class _Dmg_calc(object):
         else:
             true_dmg *= this.src_get_('dmg')
 
+        if this.dst_cache['dt'] >= 0:
+            true_dmg *= this.dst_cache['dt']
+        else:
+            true_dmg *= this.dst_get_('dt')
+
         if this.src_cache[this.type] >= 0:
             true_dmg *= this.src_cache[this.type]
         else:
@@ -211,7 +216,7 @@ class Dmg_param(object):
     def __init__(this, host):
         this.host = host
         this.type_mods = {}
-        this.cache = {}  # type: cache_value(-1:dirty)
+        this.cache = {'':1}  # type: cache_value(-1:dirty)
         for i in host.conf['param_type']:
             this.type_mods[i] = []
             this.cache[i] = -1

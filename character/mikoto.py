@@ -3,8 +3,7 @@ from core.ctx import *
 from core.characterbase import *
 from target.dummy import *
 from mod.skillshift import *
-#from mod.afflic import *
-from core.dot import *
+from mod.afflic import *
 
 
 class Mikoto(Character):
@@ -40,22 +39,31 @@ class Mikoto(Character):
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
         ,'s2.on_start' : this.s2_proc
-        
 
+        ,'s3.proc' : this.s3_proc
         }
 
     def s1_proc(this):
-        this.target.Dot_burn(this, 's1', 5.32, 15)()
-        this.target.Debuff('s1',0.1)(10)
-
+        this.burn()
+        this.debug()
     def s2_proc(this):
-        this.target.Dot_burn(this, 's2', 5.32, 15)()
+        this.bog()
+        this.debug()
+    def s3_proc(this):
+        this.target.Afflics.reset()
+
+    def debug(this):
+        this.blind()
+
 
     def init(this):
-        Dot_group(this.target)
-        this.target.Dot_burn = this.target.Dot_group('burn', 2.99)
-        #this.afflic = Afflic('burn', this.target.dot_burn)
-        #this.afflic.init()
+        #Dot_group(this.target)
+        this.Passive('test_ks',0.2,'killer','burn')()
+        Afflics(this.target)
+        this.blind = this.target.Afflics('blind',this,'some_blind', 0.9)
+        this.burn = this.target.Afflics('burn',this,'some_burn', 1.1, 5.32)
+        this.bog = this.target.Afflics('bog',this,'some_bog', 1.8)
+
         this.stance = 0
         conf = {
                  's12.recovery' : 1.83
@@ -72,12 +80,12 @@ class Mikoto(Character):
     def s1_end(this):
         if this.stance == 0:
             this.stancebuff = this.Selfbuff('s1', 0.10)(20)
-            this.stancebuff.end = this.clean_stance
+            this.stancebuff.on_end = this.clean_stance
             this.stance = 1
         elif this.stance == 1:
             this.stancebuff.off()
             this.stancebuff = this.Selfbuff('s1', 0.15)(15)
-            this.stancebuff.end = this.clean_stance
+            this.stancebuff.on_end = this.clean_stance
             this.stance = 2
         else:
             this.stance = 0
