@@ -13,6 +13,9 @@ class Skill(object):
         this.silence_duration = 2 # 2s ui hide
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = Event('silence_end')
+        this.e_s = Event('acl')
+        this.e_s.host = this
+        this.e_s.type = 'silence'
         this.log = Logger('s')
 
 
@@ -25,6 +28,7 @@ class Skill(object):
             this.log(this.host.name+', silence','end')
         this.silence = 0
         this.e_silence_end()
+        this.e_s()
 
 
     def silence_start(this):
@@ -326,6 +330,7 @@ class Conf_cmb(Config):
                 label['proc'] = this.collid
                 label['type'] = 'x'
                 this.dmg[i] = this.host.Dmg(label)
+        this.e_x.host = this.host
         this.e_x.type = this.type
         this.e_x.idx = this.idx
         this.e_x.last = this.hit_count
@@ -471,6 +476,7 @@ class Conf_fs(Config):
                 label['proc'] = this.collid
                 label['type'] = 'fs'
                 this.dmg[i] = this.host.Dmg(label)
+        this.e_fs.host = this.host
         this.e_fs.type = this.type
         this.e_fs.name = this.name
         this.e_fs.idx = 0

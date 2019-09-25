@@ -3,10 +3,9 @@ from core.ctx import *
 from core.targetbase import *
 
 class Dummy(Target):
-    config = {
+    conf = {
          'name':'dummy'
         ,'ele':'on'
-        ,'hp': 1000000
-        ,'od': 10000
-        ,'bk': 10000
+        ,'hp': 2000000
+        ,'od': 0
     }

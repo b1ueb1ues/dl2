@@ -1,15 +1,26 @@
-import test
+from core.ctx import *
+from target.hms import *
+from character.mikoto import *
+from character.elisanne import *
 from core import benchmark
 
-r = 0
-a = {}
-a['a'] = 1
+
 def foo():
-    global a
-    global r
-    if a['a']:
-        r+=1
+    Ctx()
+    tar = Hms()
+    tar.init()
 
+    c = Mikoto()
+    c.tar(tar)
+    c.init()
 
-benchmark.run(foo, 10000000)
-print(r)
+    c2 = Elisanne()
+    c2.tar(tar)
+    c2.init()
+
+    Timer.run()
+
+logset([])
+benchmark.run(foo, 1000)
+
+logcat()

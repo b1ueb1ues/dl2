@@ -91,6 +91,9 @@ class Character(object):
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
         this.e_hit = Event('hit')
+        this.e_acl = Event('acl')
+        this.e_acl.type = 'charge'
+        this.e_acl.host = this
 
         this.logsp = Logger('sp')
         this.loghit = Logger('hit')
@@ -139,8 +142,9 @@ class Character(object):
         import core.acl
         global default_acl_prepare
         conf_acl = this.conf['acl']
-        if conf_acl == str:
-            this.conf['acl'] = {'cancel':conf_acl, 'rotation':None, 'other':None}
+        if type(conf_acl) == str:
+            conf_acl = {'cancel':conf_acl, 'rotation':None, 'other':None}
+            this.conf['acl'] = conf_acl
 
         if conf_acl['rotation']:
             Event('idle')(this.l_rotation)
@@ -248,6 +252,7 @@ class Character(object):
                     this.s2.sp['cur'], this.s2.sp['max'],
                     this.s3.sp['cur'], this.s3.sp['max'])
                     )
+        this.e_acl()
 
 
     def charge_p(this, name, sp):
@@ -317,10 +322,14 @@ class Character(object):
         pass
 
 
-    def think_other(this):
-        thia.acl_other(this, e)
+    def think_other(this, e):
+        if e.host != this:
+            return
+        this.acl_other(this, e)
 
     def think_cancel(this, e):
+        if e.host != this:
+            return
         this.acl_cancel(this, e)
 
 

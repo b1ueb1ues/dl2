@@ -9,10 +9,11 @@ from core import benchmark
 
 logset('dmg')
 logset('buff')
-logset('dot')
-logset('afflic')
-logset('s')
-logset('sp')
+logset('bk')
+#logset('dot')
+#logset('afflic')
+#logset('s')
+#logset('sp')
 #logset('act')
 #logset('x')
 
@@ -34,7 +35,7 @@ def foo():
     c2.tar(tar)
     c2.init()
 
-    Timer.run(180)
+    Timer.run()
 
 foo()
 

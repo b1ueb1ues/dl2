@@ -16,13 +16,6 @@ class Mikoto(Character):
         ,'atk'     : 520
         ,'a1'      : ('cc', 0.10,'hp70')
         ,'a3'      : ('cc', 0.08)
-        ,'slot.w'  : 'c534_flame'
-       #,'slot.w'  : 'v534_flame_zephyr'
-       #,'slot.d'  : 'Cerb'
-       #,'slot.d'  : 'Arctos'
-        ,'slot.d'  : 'Sakuya'
-        ,'slot.a1' : 'RR'
-        ,'slot.a2' : 'BN'
 
         ,'s1.on_end'       : this.s1_end
         ,'s1.recovery'     : 1.62  # 1.83 2.8
@@ -38,8 +31,22 @@ class Mikoto(Character):
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
 
-        }
+        ,'slot.w'  : 'c534_flame'
+       #,'slot.w'  : 'v534_flame_zephyr'
+       #,'slot.d'  : 'Cerb'
+       #,'slot.d'  : 'Arctos'
+        ,'slot.d'  : 'Sakuya'
+        ,'slot.a1' : 'RR'
+        ,'slot.a2' : 'BN'
 
+        ,'acl': """
+            `s1, x=5
+            `s2, x=5
+            `s3, x=5
+            `fsf, x=5
+        """
+
+        }
 
     def init(this):
 
@@ -94,5 +101,5 @@ if __name__ == '__main__':
     c.tar(tar)
     c.init()
 
-    Timer.run(60)
+    Timer.run(180)
     logcat()
