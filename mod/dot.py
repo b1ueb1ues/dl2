@@ -29,7 +29,7 @@ class _Dot_group():
 
         this.log = Logger('dot')
         this.ks = host.Passive('ks_'+classname, 1, 'ks', classname)
-        this.t_tick = None # set by child
+        this.t_tick = Timer(this.tick_proc)
 
 
     def reset(this):
@@ -105,7 +105,7 @@ class _Dot():
         this._static.all_stacks.append(this)
         this.t_dot_end(this.duration)
         if this._static.stacks == 0:
-            this._static.t_tick = Timer(this._static.tick_proc)(this.iv)
+            this._static.t_tick(this.iv)
             this._static.ks()
         this._static.stacks += 1
         if this.log:

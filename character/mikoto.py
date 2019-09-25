@@ -24,7 +24,6 @@ class Mikoto(Character):
         ,'slot.a1' : 'RR'
         ,'slot.a2' : 'BN'
 
-        ,'s1.proc'       : this.s1_proc
         ,'s1.on_end'       : this.s1_end
         ,'s1.recovery'     : 1.62  # 1.83 2.8
         ,'s1.sp'           : 4500
@@ -38,31 +37,11 @@ class Mikoto(Character):
         ,'s2.recovery'     : 1
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
-        ,'s2.on_start' : this.s2_proc
 
-        ,'s3.proc' : this.s3_proc
         }
-
-    def s1_proc(this):
-        this.burn()
-        this.debug()
-    def s2_proc(this):
-        this.bog()
-        this.debug()
-    def s3_proc(this):
-        this.target.Afflics.reset()
-
-    def debug(this):
-        this.blind()
 
 
     def init(this):
-        #Dot_group(this.target)
-        this.Passive('test_ks',0.2,'killer','burn')()
-        Afflics(this.target)
-        this.blind = this.target.Afflics('blind',this,'some_blind', 0.9)
-        this.burn = this.target.Afflics('burn',this,'some_burn', 1.1, 5.32)
-        this.bog = this.target.Afflics('bog',this,'some_bog', 1.8)
 
         this.stance = 0
         conf = {

@@ -30,9 +30,22 @@ class Conf_chara(Config):
                              'sp', 'spd', 'buff', 
                              'killer', # 'def', 'ks'
                              'x','fs','s']
-            ,'s1' :None
-            ,'s2' :None
-            ,'s3' :None
+            ,'s1' : None
+            ,'s2' : None
+            ,'s3' : None
+
+            ,'acl.cancel' : """
+                `s1, x=5
+                `s2, x=5
+            """
+            ,'acl.other' : """
+                `s3
+            """
+            ,'acl.rotation' : None
+            #,'acl.rotation' : """
+            #    c1fsend
+            #"""
+            
             }
     
 
@@ -52,6 +65,13 @@ class Conf_chara(Config):
         else:
             this.base_crit = 0.02
 
+
+default_acl_prepare = """\
+    #if e.hit == e.last:
+    #    x = e.idx
+    #else:
+    #    x = e.idx*10+e.hit
+"""
 
 class Character(object):
     # conf = {}       # rewrite by child
@@ -78,6 +98,7 @@ class Character(object):
 
         this.child_init = this.init
         this.init = this.character_init
+
 
 
     # after settle down all config
@@ -115,9 +136,34 @@ class Character(object):
 
         this.child_init()
 
+        import core.acl
+        global default_acl_prepare
+        conf_acl = this.conf['acl']
+        if conf_acl == str:
+            this.conf['acl'] = {'cancel':conf_acl, 'rotation':None, 'other':None}
+
+        if conf_acl['rotation']:
+            Event('idle')(this.l_rotation)
+            Event('cancel')(this.l_rotation)
+            Event('acl')(this.l_rotation)
+        elif type(conf_acl['cancel']) == str:
+            Event('idle')(this.l_idle)
+            acl = default_acl_prepare + conf_acl['cancel']
+            acl_fun, acl_str = core.acl.acl_func_str(acl)
+            conf_acl['cancel'] = {'func':acl_fun, 'str':acl_str}
+            this.acl_cancel = acl_fun
+            Event('cancel')(this.think_cancel)
+            if type(conf_acl['other']) == str:
+                acl = conf_acl['other']
+                acl_fun, acl_str = core.acl.acl_func_str(acl)
+                conf_acl['other'] = {'func':acl_fun, 'str':acl_str}
+                this.acl_other = acl_fun
+                Event('acl')(this.think_other)
+
         this.e_idle = Event('idle')
         this.e_idle.host = this
         this.e_idle()
+
 
 
     def setup(this):
@@ -181,16 +227,6 @@ class Character(object):
         this.Dragon = Dragon(this)
         this.Weapon = Weapon(this)
         this.Amulet = Amulet(this)
-
-        if this.conf['rotation'] :
-            Event('idle')(this.l_rotation)
-        else:
-            Event('idle')(this.l_idle)
-            Event('cancel')(this.think_cancel)
-
-    
-    def speed(this):
-        return this.mod('spd')
 
 
     def tar(this, target):
@@ -281,35 +317,11 @@ class Character(object):
         pass
 
 
+    def think_other(this):
+        thia.acl_other(this, e)
+
     def think_cancel(this, e):
-        if e.hit == e.last:
-            x = e.idx
-        else:
-            x = e.idx*10+e.hit
-        if x == 5:
-            this.fsf()
-        if this.s1.sp['cur'] >= this.s1.sp['max'] and this.s1.sp['max'] > 0:
-            if this.think_s1():
-                return 
-        if this.s2.sp['cur'] >= this.s2.sp['max'] and this.s2.sp['max'] > 0:
-            if this.think_s2():
-                return 
-        if this.s3.sp['cur'] >= this.s3.sp['max'] and this.s3.sp['max'] > 0:
-            if this.think_s3():
-                return 
-
-    def think_s(this):
-        pass
-
-    def think_s1(this):
-        return this.s1()
-    def think_s2(this):
-        return this.s2()
-    def think_s3(this):
-        return this.s3()
-
-    def think_fs(this):
-        pass
+        this.acl_cancel(this, e)
 
 
 

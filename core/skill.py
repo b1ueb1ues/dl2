@@ -104,9 +104,6 @@ class _Skill(object):
         this.ac = host.Action(this.name, this.conf)
         this.conf = this.ac.conf
 
-    def __call__(this):
-        return this.tap()
-
     def charge(this, sp):
         if this.sp['max'] > 0:
             this.sp['cur'] += sp   
@@ -132,23 +129,39 @@ class _Skill(object):
 
 
     def tap(this):
-        if this.log:
-            this.log(this.src+this.name, 'tap')
-        if not this.check():
+        #if this.log:
+        #    this.log(this.src+this.name, 'tap')
+        #if not this.check():
+        #    return 0
+        # manual inline {
+        if this.sp['cur'] < this.sp['max']:
+            #if this.log:
+            #    this.log(this.src+this.name, 'failed','no sp')
             return 0
+        elif this.sp['max'] <= 0:
+            if this.log:
+                this.log(this.src+this.name, 'failed','no skill')
+            return 0
+        elif this._static.silence == 1:
+            if this.log:
+                this.log(this.src+this.name, 'failed','silence')
+            return 0
+        # } manual inline
         else:
             if this.log:
                 this.log(this.src+this.name, 'cast')
             if this.ac():
-                #this.active() {
+                # this.active() {
                 this.firsthit = 1
                 this.hit_prev = -1
                 this.hit_next = 0
                 Timer(this._active)(this.startup)
-                #this.active() }
+                # } this.active()
                 return 1
             else:
                 return 0
+
+    __call__ = tap
 
 
     def buff(this, t):

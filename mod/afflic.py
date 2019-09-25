@@ -1,13 +1,20 @@
 import random
 from mod.dot import *
 
+
+class Afflic():
+    def __init__(this, src):
+        this.src = src
+        this.dst = src.target
+        if not this.dst.Afflics:
+            this.dst.Afflics = Afflics(this.dst)
+    def __call__(this, name, atype, *args, **kwargs):
+        return this.dst.Afflics(atype, this.src, name, *args, **kwargs)
+
+
 class Afflics(object):
     def __init__(this, host):
         this.host = host
-        if not host.Afflics:
-            host.Afflics = this
-        else:
-            return
         if not this.host.Dot_group:
             host.Dot_group = Dot_group(host)
         else:
@@ -209,13 +216,23 @@ class _Afflic_cc():
             return 
         if random.random() < this.rate-this.resist[this.atype] :
             # proc
-            if this._static.scc[this.atype]:
-                if this.log:
-                    this.log('faild','active already')
-                return
+            while(1): # make a goto
+                if not this._static.cc:
+                    break
+                elif this.atype in this._static.cc:
+                    if this.log:
+                        this.log('faild','active already')
+                    return
+                else:
+                    for i in this._static.cc:
+                        this._static.cc[i].reset()
+                        if this.log:
+                            this.log('cover %s'%i , 'by %s'%this.atype )
+                    break
 
             if this.log:
-                this.log('proc', '%.2f - %.2f'%(this.rate, this.resist[this.atype]) )
+                this.log('proc', '%.2f - %.2f'%(this.rate,
+                                                this.resist[this.atype]) )
 
             this._static.cc = {this.atype: this}
             this.resist[this.atype] += 0.2

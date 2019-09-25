@@ -12,10 +12,15 @@ logset('buff')
 logset('dot')
 logset('afflic')
 logset('s')
+logset('sp')
 #logset('act')
 #logset('x')
 
+import core.acl
+
 def foo():
+    global c
+    global acl
     Ctx()
     tar = Hms()
     tar.init()
@@ -25,9 +30,9 @@ def foo():
     #c.conf['slot']['w'] = 'v534_flame_zephyr'
     c.init()
 
-#    c2 = Elisanne()
-#    c2.tar(tar)
-#    c2.init()
+    c2 = Elisanne()
+    c2.tar(tar)
+    c2.init()
 
     Timer.run(180)
 

@@ -185,7 +185,7 @@ class _Buff(object):
         if this.log:
             this.log('%s, %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this.get()),
-                    '%s %s start <%ds>'%(this.group_name,
+                    '%s %s start <%ss>'%(this.group_name,
                         this.bufftype, duration))
             if stacks > 1:
                 this.__buff_stack()
@@ -200,7 +200,7 @@ class _Buff(object):
         if this.log :
             this.log('%s, %s'%(this.hostname(), this.name),
                     '%s: %.2f'%(this.mod_type, this.get()),
-                    '%s %s refresh <%ds>'%(this.group_name,
+                    '%s %s refresh <%ss>'%(this.group_name,
                         this.bufftype, duration))
             stacks = len(this.group)
             if stacks > 1:
@@ -251,7 +251,9 @@ class _Buff(object):
     def off(this):
         if this._active == 0:
             return
-        log('buff', this.name, '%s: %.2f'%(this.mod_type, this.get()),
+        if this.log:
+            this.log('%s, %s'%(this.hostname(), this.name),
+                '%s: %.2f'%(this.mod_type, this.get()),
                 '%s %s end <turn off>'%(this.name, this.duration))
         this._active = 0
 

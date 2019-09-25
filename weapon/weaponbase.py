@@ -30,13 +30,11 @@ class Weapon(object):
         if this.host.ele in this.ele:
             this.atk *= 1.5
             if this.s3 :
-                this.s3.update(this.host.conf['s3'])
+                if this.host.conf['s3']:
+                    this.s3.update(this.host.conf['s3'])
                 this.host.conf['s3'] = this.s3
 
             idx = 0
             for i in this.a:
                 idx += 1
                 this.host.Ability('weapon_a%d'%idx, *i)()
-
-
-
