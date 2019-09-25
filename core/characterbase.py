@@ -324,7 +324,7 @@ class Character(object):
 
     def think_other(this, e):
         if e.host != this:
-            return
+            raise
         this.acl_other(this, e)
 
     def think_cancel(this, e):

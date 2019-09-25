@@ -21,6 +21,6 @@ def foo():
     Timer.run()
 
 logset([])
-benchmark.run(foo, 1000)
+benchmark.run(foo, 200)
 
 logcat()
