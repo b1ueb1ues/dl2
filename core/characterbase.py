@@ -38,9 +38,10 @@ class Conf_chara(Config):
                 `s1, x=5
                 `s2, x=5
             """
-            ,'acl.other' : """
-                `s3
-            """
+            ,'acl.other' : None
+            #,'acl.other' : """
+            #    `s3
+            #"""
             ,'acl.rotation' : None
             #,'acl.rotation' : """
             #    c1fsend
@@ -324,7 +325,7 @@ class Character(object):
 
     def think_other(this, e):
         if e.host != this:
-            raise
+            return
         this.acl_other(this, e)
 
     def think_cancel(this, e):

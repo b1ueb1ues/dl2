@@ -7,13 +7,21 @@ _g_line = ""
 
 def acl_func_str(acl):
     s = acl_str(acl)
-    exec(s,globals())
-    return do_action_control_list, s
+    import os
+    dirname = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    fname = dirname + '/core/_acl.py'
+    f = open(fname)
+    from core import _acl
+    return _acl.do_action_control_list, s
 
 def acl_func(acl):
     s = acl_str(acl)
-    exec(s,globals())
-    return do_action_control_list
+
+    dirname = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    fname = dirname + '/core/_acl.py'
+    f = open(fname)
+    from core import _acl
+    return _acl.do_action_control_list, s
 
 def acl_str(acl):
     global _g_line
