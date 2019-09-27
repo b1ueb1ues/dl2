@@ -13,7 +13,7 @@ logset('bk')
 #logset('dot')
 #logset('afflic')
 #logset('s')
-#logset('sp')
+logset('sp')
 #logset('act')
 #logset('x')
 

@@ -39,7 +39,7 @@ class Mikoto(Character):
         ,'slot.a1' : 'RR'
         ,'slot.a2' : 'BN'
 
-        ,'acl': """
+        ,'acl.cancel': """
             `s1, x=5
             `s2, x=5
             `s3, x=5

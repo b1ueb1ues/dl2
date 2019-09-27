@@ -22,16 +22,14 @@ def get_event_trigger(eventname, trigger = []):
 
 
 class Listener(object):
-    def __init__(this, eventname, cb):
-        this.__cb = cb
+    def __init__(this, eventname):
         this.__eventname = eventname
         this.__online = 0
+
+    def __call__(this, cb):
+        this.__cb = cb
         this.on()
-
-
-    def __call__(this, e):
-        this.__cb(e)
-
+        return this
 
     def on(this, cb=None):
         if this.__online :
@@ -44,13 +42,10 @@ class Listener(object):
         else:
             add_event_listener(this.__eventname, this.__cb)
         this.__online = 1
-        return this
-
 
     def pop(this):
         this.off()
         return this.__cb
-
 
     def off(this):
         if not this.__online:
@@ -90,28 +85,11 @@ class Event(object):
         else:
             this._trigger = []
 
-
-    def listener(this, cb, eventname = None):
-        if eventname:
-            if type(eventname) == list or type(eventname) == tuple:
-                for i in eventname:
-                    add_event_listener(i, cb)
-            else:
-                add_event_listener(eventname, cb)
-        else:
-            add_event_listener(this.__name, cb)
-
-
-    def on(this):
+    def __call__(this):
         for i in this._trigger:
             i(this)
 
-
-    def __call__(this, l=None):
-        if l :
-            return Listener(this.__name, l)
-        else:
-            this.on()
+    on = __call__
 
     def __str__(this):
         return this.__name

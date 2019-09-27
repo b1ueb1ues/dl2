@@ -38,10 +38,9 @@ class Conf_chara(Config):
                 `s1, x=5
                 `s2, x=5
             """
-            ,'acl.other' : None
-            #,'acl.other' : """
-            #    `s3
-            #"""
+            ,'acl.other' : """
+                `s3
+            """
             ,'acl.rotation' : None
             #,'acl.rotation' : """
             #    c1fsend
@@ -67,15 +66,18 @@ class Conf_chara(Config):
             this.base_crit = 0.02
 
 
-default_acl_prepare = """\
+default_acl_cancel = """\
     #if e.hit == e.last:
     #    x = e.idx
     #else:
     #    x = e.idx*10+e.hit
 """
+default_acl_other = """\
+    #doing = this.Action.doing.name
+"""
 
 class Character(object):
-    # conf = {}       # rewrite by child
+    #conf = {}       # rewrite by child
     # or
     # def conf(this): # rewrite by child
     #     return {}
@@ -148,22 +150,29 @@ class Character(object):
             this.conf['acl'] = conf_acl
 
         if conf_acl['rotation']:
-            Event('idle')(this.l_rotation)
-            Event('cancel')(this.l_rotation)
-            Event('acl')(this.l_rotation)
-        elif type(conf_acl['cancel']) == str:
-            Event('idle')(this.l_idle)
-            acl = default_acl_prepare + conf_acl['cancel']
-            acl_fun, acl_str = core.acl.acl_func_str(acl)
-            conf_acl['cancel'] = {'func':acl_fun, 'str':acl_str}
-            this.acl_cancel = acl_fun
-            Event('cancel')(this.think_cancel)
+            Listener('idle')(this.l_rotation)
+            Listener('cancel')(this.l_rotation)
+            Listener('acl')(this.l_rotation)
+        else:
+            Listener('idle')(this.l_idle)
+            core.acl.acl_module_init(this)
+            if type(conf_acl['cancel']) == str:
+                acl = default_acl_cancel + conf_acl['cancel']
+                acl_str = core.acl.acl_module_add(acl, 'cancel')
+                conf_acl['cancel'] = {'str':acl_str}
             if type(conf_acl['other']) == str:
-                acl = conf_acl['other']
-                acl_fun, acl_str = core.acl.acl_func_str(acl)
-                conf_acl['other'] = {'func':acl_fun, 'str':acl_str}
-                this.acl_other = acl_fun
-                Event('acl')(this.think_other)
+                acl = default_acl_other + conf_acl['other']
+                acl_str = core.acl.acl_module_add(acl, 'other')
+                conf_acl['other'] = {'str':acl_str}
+            core.acl.acl_module_end()
+            import importlib
+            _acl = importlib.import_module('core._acl.' + this.__class__.__name__)
+            if conf_acl['cancel']:
+                Listener('cancel')(this.think_cancel)
+                this.acl_cancel = _acl.cancel
+            if conf_acl['other']:
+                Listener('acl')(this.think_other)
+                this.acl_other = _acl.other
 
         this.e_idle = Event('idle')
         this.e_idle.host = this

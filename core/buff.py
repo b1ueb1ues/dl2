@@ -86,7 +86,7 @@ class Buff(object):
 
         this.buff_group = {}
 
-        this.listener = Event('buff')(this.l_buff)
+        this.listener = Listener('buff')(this.l_buff)
         this.log = Logger('buff')
 
 

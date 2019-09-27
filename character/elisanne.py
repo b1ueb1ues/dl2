@@ -26,6 +26,10 @@ class Elisanne(Character):
         ,'slot.d'          : 'DJ'
         ,'slot.a1'         : 'BB'
         ,'slot.a2'         : 'JotS'
+        ,'acl.cancel' : """
+            `s2, x=5
+        """
+
         }
 
 
