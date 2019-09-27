@@ -67,10 +67,18 @@ class Conf_chara(Config):
 
 
 default_acl_cancel = """\
-    #if e.hit == e.last:
-    #    x = e.idx
-    #else:
-    #    x = e.idx*10+e.hit
+    #fsc = 0
+    #x = 0
+    #fs = 0
+    #if e.type == 'x':
+    #    if e.hit == e.last:
+    #        x = e.idx
+    #    else:
+    #        x = e.idx*10+e.hit
+    #elif e.type == 'fs':
+    #    if e.hit == e.last:
+    #        fsc = 1
+    #    fs = e.hit
 """
 default_acl_other = """\
     #doing = this.Action.doing.name
@@ -81,6 +89,8 @@ class Character(object):
     # or
     # def conf(this): # rewrite by child
     #     return {}
+    def dconf(this): # rewrite by child
+        return 1
     def init(this): # rewrite by child
         pass
 
@@ -91,6 +101,8 @@ class Character(object):
             Conf_chara(this, this.conf())()
         if rootconf:
             rootconf[this.name] = this.conf
+            this.conf['ex'] = rootconf['ex']
+            this.ex = rootconf['ex']
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
         this.e_hit = Event('hit')
@@ -110,7 +122,6 @@ class Character(object):
     # after settle down all config
     def character_init(this):
         this.classinit()
-        this.setup()
 
         this.s1 = this.Skill('s1', this, this.conf['s1'])
         this.conf['s1'] = this.s1.conf
@@ -140,6 +151,11 @@ class Character(object):
             this.fsf = this.Fs('fsf', this, wtconf['fsf'])
             wtconf['fsf'] = this.fsf.conf
 
+        conf_update = {}
+        this.dconf(conf_update)
+        Conf(this.conf)(conf_update)
+
+        this.setup()
         this.child_init()
 
         import core.acl
@@ -345,8 +361,8 @@ class Character(object):
 
 
 if __name__ == '__main__':
-    root = Conf()
-    c = Character(root.get)
+    root = {'ex':'bow'}
+    c = Character(root)
     c.init()
     print(c.name)
     print(root)

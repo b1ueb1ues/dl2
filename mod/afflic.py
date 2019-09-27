@@ -2,7 +2,7 @@ import random
 from mod.dot import *
 
 
-class Afflic():
+class Afflic(object):
     def __init__(this, src):
         this.src = src
         this.dst = src.target
@@ -17,8 +17,6 @@ class Afflics(object):
         this.host = host
         if not this.host.Dot_group:
             host.Dot_group = Dot_group(host)
-        else:
-            return
         this.dot_group = {
                  'burn'      : None
                 ,'poison'    : None

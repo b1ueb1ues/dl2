@@ -172,3 +172,86 @@ class k(Ability):
     def __call__(this):
         this.passive()
 
+
+class def_c_atk(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+
+    def __call__(this):
+        Listener('def')(c_atk)
+    
+    def c_atk(this, e):
+        if e.host != this.host:
+            return 
+        this.host.Selfbuff('def_chain', this.v)(15)
+
+class def_c_energy(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+
+    def __call__(this):
+        Listener('def')(c_energy)
+    
+    def c_energy(this, e):
+        pass
+
+class lo(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+
+    def __call__(this):
+        Timer(trigger)(3)
+
+    def trigger(this, t):
+        this.host.Selfbuff('lastoffense', this.v)(15)
+
+
+class sts(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+
+    def __call__(this):
+        this.host.Selfbuff('striker', this.v)(-1)
+        this.host.Selfbuff('striker', this.v)(-1)
+        this.host.Selfbuff('striker', this.v)(-1)
+        this.host.Selfbuff('striker', this.v)(-1)
+        this.host.Selfbuff('striker', this.v)(-1)
+
+
+class sls(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+
+    def __call__(this):
+        this.host.Selfbuff('slayer', this.v)(-1)
+        this.host.Selfbuff('slayer', this.v)(-1)
+        this.host.Selfbuff('slayer', this.v)(-1)
+        this.host.Selfbuff('slayer', this.v)(-1)
+        this.host.Selfbuff('slayer', this.v)(-1)
+
+class dc(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+        idx = 0
+        if v == 1:
+            buff = [0.04,0.10,0.20]
+        elif v == 2:
+            buff = [0.05,0.13,0.25]
+        elif v == 3:
+            buff = [0.06,0.15,0.30]
+
+    def __call__(this):
+        Listener('dragon')(d_atk)
+    
+    def d_atk(this, e):
+        if e.host != this.host:
+            return 
+        if this.idx <= 2:
+            this.host.Selfbuff('dragon_claw', this.buff[this.idx])(-1)
+            this.idx+=1

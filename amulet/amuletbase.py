@@ -1,7 +1,7 @@
 import __init__
 
 _max = {
-       'atk'           : 0.20   # attack
+        'atk'          : 0.20   # attack
       , 'fs'           : 0.50   # force strike
       , 'sd'           : 0.40   # skill damage
       , 'cc'           : 0.15   # crit chance

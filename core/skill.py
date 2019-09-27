@@ -619,8 +619,6 @@ class _Dodge(object):
     def __init__(this, name, host, conf=None):
         this.name = name
         this.host = host
-        this.e_x = Event('cancel')
-        this.e_x.name = this.name
 
         Conf_dodge(this, conf)()
 
@@ -679,9 +677,10 @@ class Fs_group(object):
 
     def __call__(this):
         doing = this.host.Action.doing.conf
-        if doing.type == 'x':
-            this.a_fs[doing.idx]()
-        elif doing.type == 'dodge':
+        if doing['type'] == 'x':
+            this.a_fs[doing['idx']]()
+        elif doing['type'] == 'dodge':
             this.a_fs[6]()
         else:
             this.a_fs[0]()
+

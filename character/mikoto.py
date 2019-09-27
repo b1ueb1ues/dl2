@@ -45,7 +45,6 @@ class Mikoto(Character):
             `s3, x=5
             `fsf, x=5
         """
-
         }
 
     def init(this):

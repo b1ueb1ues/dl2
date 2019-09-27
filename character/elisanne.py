@@ -27,25 +27,35 @@ class Elisanne(Character):
         ,'slot.a1'         : 'BB'
         ,'slot.a2'         : 'JotS'
         ,'acl.cancel' : """
-            `s2, x=5
+            `s1
+            `s2, fs=1
+            `fs, x=5
         """
-
         }
+
+    def dconf(this, conf):
+        if 'bow' in this.ex:
+            conf['acl.cancel'] = """
+                `s1
+                `s2
+            """
+
 
 
 if __name__ =='__main__':
     #logset(['buff','dmg','od','bk'])
     logset(['buff','dmg','bk','sp'])
     #logset('x')
-    logset('fs')
+    #logset('fs')
     #logset('act')
-    logset('s')
+    #logset('s')
     #logset(['buff','debug','dmg','hit'])
+    root = {'ex':['bow']}
 
     tar = Dummy()
     tar.init()
 
-    c = Elisanne()
+    c = Elisanne(root)
     c.tar(tar)
     c.init()
 
