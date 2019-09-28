@@ -89,7 +89,7 @@ class Character(object):
     # or
     # def conf(this): # rewrite by child
     #     return {}
-    def dconf(this): # rewrite by child
+    def dconf(this, conf): # rewrite by child
         return 1
     def init(this): # rewrite by child
         pass
