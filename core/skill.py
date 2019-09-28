@@ -168,7 +168,7 @@ class _Skill(object):
     __call__ = tap
 
 
-    def buff(this, t):
+    def proc_buff(this, t):
         if type(this.conf['buff']) == tuple:
             buffarg = this.conf['buff']
             this.onebuff(buffarg)
@@ -276,7 +276,7 @@ class _Skill(object):
             else:
                 timing = 0.15/this.speed_get('spd')
             # } timing = 0.15/this.speed()
-            Timer(this.buff)(timing)
+            Timer(this.proc_buff)(timing)
 
 
 class Combo(object):

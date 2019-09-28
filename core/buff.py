@@ -136,6 +136,13 @@ class _Buff(object):
     def hostname(this):
         return this._static.hostname
 
+    def append(this, length):
+        this.t_buffend.timing += length
+        if this.log :
+            this.log('%s, %s'%(this.hostname(), this.name),
+                    '%s: %.2f'%(this.mod_type, this.get()),
+                    '%s %s append +%ss'%(this.group_name,
+                        this.bufftype, length))
 
     def get(this):
         if this._active:
@@ -147,7 +154,7 @@ class _Buff(object):
     def set(this, v):
         if this._active:
             print('can not set buff when active')
-            errrrrrrrrrrrrr()
+            raise
         this._value = v
         this.dp.set(this._value)
         return this
@@ -317,7 +324,7 @@ class _Debuff(_Buff):
     def set(this, v):
         if this._active:
             print('can not set buff when active')
-            errrrrrrrrrrrrr()
+            raise
         this._value = 0.0-v
         this.dp.set(this._value)
         return this

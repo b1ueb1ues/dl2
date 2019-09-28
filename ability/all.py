@@ -166,11 +166,14 @@ class prep(Ability):
 class k(Ability):
     def __init__(this, name, v, c):
         this.v = v
-        this.passive = this.host.Passive('%s_%s_killer'%(name, c), v, 'killer', c)
-
+        this.passive = this.host.Passive('%s_%s_killer'%(name, c),
+                                            v, 'killer', c)
 
     def __call__(this):
         this.passive()
+killer = k
+
+
 
 
 class def_c_atk(Ability):
@@ -203,7 +206,7 @@ class lo(Ability):
         this.v = v
 
     def __call__(this):
-        Timer(trigger)(3)
+        Timer(this.trigger)(3)
 
     def trigger(this, t):
         this.host.Selfbuff('lastoffense', this.v)(15)

@@ -12,7 +12,7 @@ logset('buff')
 logset('bk')
 #logset('dot')
 #logset('afflic')
-#logset('s')
+logset('s')
 logset('sp')
 #logset('act')
 #logset('x')
@@ -31,9 +31,9 @@ def foo():
     #c.conf['slot']['w'] = 'v534_flame_zephyr'
     c.init()
 
-    c2 = Elisanne()
-    c2.tar(tar)
-    c2.init()
+#    c2 = Elisanne()
+#    c2.tar(tar)
+#    c2.init()
 
     Timer.run()
 

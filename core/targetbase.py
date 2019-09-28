@@ -84,8 +84,9 @@ class Target(object):
         #this.Teambuff = Teambuff(this.Buff)
         #this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
-        this.Dot_group = None
-        this.Afflics = None
+        this.mod = {}
+        #this.Dot_group = None
+        #this.Afflics = None
 
 
     # after all config settle down

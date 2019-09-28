@@ -6,17 +6,30 @@ class Afflic(object):
     def __init__(this, src):
         this.src = src
         this.dst = src.target
-        if not this.dst.Afflics:
-            this.dst.Afflics = Afflics(this.dst)
+        if 'Afflics' not in this.dst.mod:
+            this.dst.mod['Afflics'] = Afflics(this.dst)
+
     def __call__(this, name, atype, *args, **kwargs):
-        return this.dst.Afflics(atype, this.src, name, *args, **kwargs)
+        return this.dst.mod['Afflics'](atype, this.src, name, *args, **kwargs)
+    
+    def __getitem__(this, atype):
+        return _Afflic(this, atype)
+        
+class _Afflic(object):
+    def __init__(this, static, atype):
+        this._static = static
+        this.atype = atype
+
+    def __call__(this, name, *args, **kwargs):
+        return this._static.dst.mod['Afflics'](this.atype, this._static.src,
+                                                name, *args, **kwargs)
 
 
 class Afflics(object):
     def __init__(this, host):
         this.host = host
-        if not this.host.Dot_group:
-            host.Dot_group = Dot_group(host)
+        if 'Dot_group' not in this.host.mod:
+            host.mod['Dot_group'] = Dot_group(host)
         this.dot_group = {
                  'burn'      : None
                 ,'poison'    : None
@@ -85,7 +98,7 @@ class _Afflic_dot():
         this.coef = coef
         host = static.host
         if not static.dot_group[atype] :
-            static.dot_group[atype] = host.Dot_group(atype,
+            static.dot_group[atype] = host.mod['Dot_group'](atype,
                                         static.iv_default[atype])
         this.atype = atype
         this.coef = coef
@@ -104,7 +117,9 @@ class _Afflic_dot():
             return 
         if random.random() < this.rate-this.resist[this.atype] :
             # proc
-            this.log('proc', '%.2f - %.2f'%(this.rate, this.resist[this.atype]) )
+            if this.log:
+                this.log('proc', '%.2f - %.2f'%(this.rate,
+                                                this.resist[this.atype]) )
             this.resist[this.atype] += 0.05
             this.dot(this.src, this.name, this.coef, this.duration)()
         else:

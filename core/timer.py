@@ -104,7 +104,7 @@ class Timer(object):
             this.process = this._process
 
         if timeout :
-            this.timeout = int(timeout)
+            this.timeout = timeout
         else:
             this.timeout = 0
 
@@ -117,7 +117,7 @@ class Timer(object):
     def on(this, timeout = None):
         global _g_now
         if timeout != None:
-            this.timeout = int(timeout)
+            this.timeout = timeout
             this.timing = _g_now + timeout
         else:
             this.timing = _g_now + this.timeout

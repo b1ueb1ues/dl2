@@ -6,8 +6,8 @@ from core import dmg
 class Dot_group():
     def __init__(this, host):
         this.host = host
-        if not this.host.Dot_group:
-            this.host.Dot_group = this
+        if 'Dot_group' not in this.host.mod:
+            this.host.mod['Dot_group'] = this
 
     def __call__(this, classname, iv):
         return _Dot_group(this.host, classname, iv)

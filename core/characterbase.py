@@ -182,7 +182,8 @@ class Character(object):
                 conf_acl['other'] = {'str':acl_str}
             core.acl.acl_module_end()
             import importlib
-            _acl = importlib.import_module('core._acl.' + this.__class__.__name__)
+            _acl = importlib.import_module('core._acl.' \
+                                            +this.__class__.__name__)
             if conf_acl['cancel']:
                 Listener('cancel')(this.think_cancel)
                 this.acl_cancel = _acl.cancel

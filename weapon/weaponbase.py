@@ -1,4 +1,4 @@
-
+from core.ctx import *
 
 class Weapon(object):
     a = []
@@ -6,7 +6,7 @@ class Weapon(object):
     def __init__(this, host=None):
         if not host:
             print('Amulet need a character as host')
-            errrrrrrrrrrr()
+            raise
         this.host = host
 
 
@@ -30,9 +30,9 @@ class Weapon(object):
         if this.host.ele in this.ele:
             this.atk *= 1.5
             if this.s3 :
-                if this.host.conf['s3']:
-                    this.s3.update(this.host.conf['s3'])
-                this.host.conf['s3'] = this.s3
+                c = Conf(this.host.conf['s3'])
+                c.update(this.s3)
+                c.commit()
 
             idx = 0
             for i in this.a:
