@@ -28,7 +28,6 @@ class Dragon(object):
     def init(this):
         if this.host.ele in this.ele:
             this.atk *= 1.5
-
             idx = 0
             for i in this.a:
                 idx += 1

@@ -24,7 +24,7 @@ class Pazuzu(Dragon):
 class Vayu(Dragon):
     ele = 'wind'
     atk = 126
-    aura = [('atk', 0.20),
+    a = [('atk', 0.20),
             ('sd', 0.90)]
 
 

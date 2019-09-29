@@ -42,7 +42,6 @@ class _Dot_group():
             i.t_dot_end.off()
 
     def tick_proc(this, t):
-        dmg_sum = 0
         #stacks = this._static.stacks
         for i in this.all_stacks:
             this.host.dt_no_od(i._dmg)
@@ -80,7 +79,6 @@ class _Dot():
 
 
     def dot_end_proc(this, t):
-        print(this._static.all_stacks)
         idx = this._static.all_stacks.index(this)
         this._static.all_stacks.pop(idx)
         this._static.stacks -= 1

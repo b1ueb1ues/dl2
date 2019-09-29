@@ -14,7 +14,7 @@ class Skill(object):
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = Event('silence_end')
         this.e_s = Event('acl')
-        this.e_s.host = this
+        this.e_s.host = this.host
         this.e_s.type = 'silence'
         this.log = Logger('s')
 
@@ -57,7 +57,7 @@ class Conf_skl(Config):
 
 
     def sync(this, c):
-        this.sp['max'] = c['sp']
+        this.sp.max = c['sp']
         this.proc      = c['proc']
         this.startup   = c['startup']
         this.on_start  = c['on_start']
@@ -89,7 +89,7 @@ class _Skill(object):
         this._static = static
         this.name = name
         this.host = host
-        this.sp = {'max':-1, 'cur':0}
+        this.sp = Sp(-1) #{'max':-1, 'cur':0}
         this.firsthit = 1
         this.hit_prev = -1
         this.hit_next = 0
@@ -109,14 +109,14 @@ class _Skill(object):
         this.conf = this.ac.conf
 
     def charge(this, sp):
-        if this.sp['max'] > 0:
-            this.sp['cur'] += sp   
+        if this.sp.max > 0:
+            this.sp.cur += sp   
         #if this.charged > this.sp:  # should be 
             #this.charged = this.sp
 
 
     def check(this):
-        if this.sp['max'] <= 0:
+        if this.sp.max <= 0:
             if this.log:
                 this.log(this.src+this.name, 'failed','no skill')
             return 0
@@ -124,7 +124,7 @@ class _Skill(object):
             if this.log:
                 this.log(this.src+this.name, 'failed','silence')
             return 0
-        elif this.sp['cur'] < this.sp['max']:
+        elif this.sp.cur < this.sp.max:
             if this.log:
                 this.log(this.src+this.name, 'failed','no sp')
             return 0
@@ -138,11 +138,11 @@ class _Skill(object):
         #if not this.check():
         #    return 0
         # manual inline {
-        if this.sp['cur'] < this.sp['max']:
+        if this.sp.cur < this.sp.max:
             #if this.log:
             #    this.log(this.src+this.name, 'failed','no sp')
             return 0
-        elif this.sp['max'] <= 0:
+        elif this.sp.max <= 0:
             if this.log:
                 this.log(this.src+this.name, 'failed','no skill')
             return 0
@@ -247,7 +247,7 @@ class _Skill(object):
         if this.log:
             this.log('%s, %s'%(this.host.name, this.name),'cutin')
 
-        this.sp['cur'] = 0
+        this.sp.cur = 0
         static.s_prev = this.name
         # Even if animation is shorter than 2s
         # you can't cast next skill before 2s, after which ui shows
@@ -259,6 +259,9 @@ class _Skill(object):
 
         if this.on_start :
             this.on_start()
+
+        if this.hit_count == 0 and this.proc:
+            this.proc()
 
         if this.hit_next < this.hit_count :
             #timing = this.hit[this.hit_next][0] / this.speed() {

@@ -35,12 +35,11 @@ class Conf_chara(Config):
             ,'s3' : None
 
             ,'acl.cancel' : """
-                `s1, x=5
-                `s2, x=5
-            """
-            ,'acl.other' : """
+                `s1
+                `s2
                 `s3
             """
+            ,'acl.other' : None
             ,'acl.rotation' : None
             #,'acl.rotation' : """
             #    c1fsend
@@ -67,6 +66,9 @@ class Conf_chara(Config):
 
 
 default_acl_cancel = """\
+    #s1 = this.s1
+    #s2 = this.s2
+    #s3 = this.s3
     #fsc = 0
     #x = 0
     #fs = 0
@@ -81,6 +83,9 @@ default_acl_cancel = """\
     #    fs = e.hit
 """
 default_acl_other = """\
+    #s1 = this.s1
+    #s2 = this.s2
+    #s3 = this.s3
     #doing = this.Action.doing.name
 """
 
@@ -93,6 +98,8 @@ class Character(object):
         return 1
     def init(this): # rewrite by child
         pass
+    s1_proc = None # rewrite a function by child
+    s2_proc = None # rewrite a function by child
 
     def __init__(this, rootconf=None):
         if type(this.conf) == dict:
@@ -123,6 +130,10 @@ class Character(object):
     def character_init(this):
         this.classinit()
 
+        if 'proc' not in this.conf['s1']:
+            this.conf['s1']['proc'] = this.s1_proc
+        if 'proc' not in this.conf['s2']:
+            this.conf['s2']['proc'] = this.s2_proc
         this.s1 = this.Skill('s1', this, this.conf['s1'])
         this.conf['s1'] = this.s1.conf
         this.s2 = this.Skill('s2', this, this.conf['s2'])
@@ -275,9 +286,9 @@ class Character(object):
         if this.logsp :
             this.logsp('%s, %s'%(this.name, name), sp,
                     '%d/%d, %d/%d, %d/%d'%( \
-                    this.s1.sp['cur'], this.s1.sp['max'],
-                    this.s2.sp['cur'], this.s2.sp['max'],
-                    this.s3.sp['cur'], this.s3.sp['max'])
+                    this.s1.sp.cur, this.s1.sp.max,
+                    this.s2.sp.cur, this.s2.sp.max,
+                    this.s3.sp.cur, this.s3.sp.max)
                     )
         this.e_acl()
 
@@ -298,9 +309,9 @@ class Character(object):
         if this.logsp:
             this.logsp('%s, %s'%(this.name, name), '%d%%'%(charge*100),
                     '%d/%d, %d/%d, %d/%d'%( \
-                    this.s1.sp['cur'], this.s1.sp['max'],
-                    this.s2.sp['cur'], this.s2.sp['max'],
-                    this.s3.sp['cur'], this.s3.sp['max'])
+                    this.s1.sp.cur, this.s1.sp.max,
+                    this.s2.sp.cur, this.s2.sp.max,
+                    this.s3.sp.cur, this.s3.sp.max)
                     )
         #this.think_pin('prep')
 

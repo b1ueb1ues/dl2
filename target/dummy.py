@@ -7,5 +7,8 @@ class Dummy(Target):
          'name':'dummy'
         ,'ele':'on'
         ,'hp': 2000000
-        ,'od': 0
+        ,'od': 100000
+        ,'bk': 100000
+        ,'bk_def':1
+        ,'bk_time':20
     }

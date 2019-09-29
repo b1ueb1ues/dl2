@@ -57,6 +57,7 @@ class _Action(object):
         this.e_idle = Event('idle')
         this.e_idle.host = this._static.host
         this.log = Logger('act')
+        this.log_r = Logger('rotation')
 
 
     def _cb_act_end(this, e):
@@ -109,6 +110,12 @@ class _Action(object):
         this.status = 1
         this.action_start = now()
         this._static.doing = this # setdoing
+        if this.log_r:
+            if this.name[0] == 'x':
+                this.log_r(this.src+this.name)
+            else:
+                #this.log_r(this.src+'---------', this.name)
+                this.log_r(this.src+this._static.prev.name+' -----', this.name)
 
         if this.speed_cache['spd']>=0 :
             recovery = this.conf['recovery'] / this.speed_cache['spd']

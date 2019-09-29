@@ -1,5 +1,6 @@
 import __init__
 from core.ctx import *
+from core.skada import *
 
 
 class Conf_tar(Config):
@@ -65,7 +66,7 @@ class Target(object):
 
         Conf_tar(this, this.conf)()
 
-        this.skada = {}
+        this.skada = Skada.get()
         #Event('dmg')(this.l_dmg)
         #this.e_ks = Event('killer')
         this.logdbg = Logger('debug')
@@ -111,13 +112,13 @@ class Target(object):
         if dmgname in hostdmg:
             hostdmg[dmgname] += dmg
         else:
-            hostdmg[dmgname] = 0
+            hostdmg[dmgname] = dmg
 
         if odmg:
             if dmgname in hostodmg:
                 hostodmg[dmgname] += odmg
             else:
-                hostodmg[dmgname] = 0
+                hostodmg[dmgname] = odmg
 
         if this.logdmg:
             this.logdmg('%s, %s'%(hostname, dmgname), dmg,

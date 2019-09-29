@@ -100,5 +100,5 @@ if __name__ == '__main__':
     c.tar(tar)
     c.init()
 
-    Timer.run(180)
+    Timer.run(120)
     logcat()

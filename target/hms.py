@@ -2,7 +2,7 @@ import __init__
 from core.ctx import *
 from core.targetbase import *
 
-class Hms(Target):
+class hms(Target):
     conf = { 
          'name' : 'hms'
         ,'ele'  : 'wind'
