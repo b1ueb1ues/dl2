@@ -12,7 +12,8 @@ from dragon import *
 
 
 class Conf_chara(Config):
-    default = {
+    def default(this):
+        return {
             'name'        : 'characterbase'
             ,'star'       : 5
             ,'ele'        : 'flame'

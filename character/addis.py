@@ -23,7 +23,7 @@ class Addis(Character):
         ,'s1.attr.h1.coef' : 7.54
         ,'s1.recovery'     : 2.4
         ,'s1.sp'           : 2537
-        ,'s12.proc'        : this.s12_proc
+        ,'s12.proc'        : [this.s12_proc]
 
         ,'s2.sp'           : 4877
         ,'s2.recovery'     : 1
@@ -78,7 +78,7 @@ if __name__ =='__main__':
     root = {}
     #root = {'ex':['bow']}
 
-for i in range(1000):
+for i in range(1):
     Ctx()
     tar = water()
     tar.init()

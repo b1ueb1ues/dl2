@@ -17,7 +17,7 @@ class Mikoto(Character):
         ,'a1'      : ('cc', 0.10,'hp70')
         ,'a3'      : ('cc', 0.08)
 
-        ,'s1.on_end'       : this.s1_end
+        ,'s1.on_end'       : [this.s1_end]
         ,'s1.recovery'     : 1.62  # 1.83 2.8
         ,'s1.sp'           : 4500
         ,'s1.hit'          : [(0.18,'h1'),
@@ -65,12 +65,12 @@ class Mikoto(Character):
     def s1_end(this):
         if this.stance == 0:
             this.stancebuff = this.Selfbuff('s1', 0.10)(20)
-            this.stancebuff.on_end = this.clean_stance
+            this.stancebuff.on_end.append(this.clean_stance)
             this.stance = 1
         elif this.stance == 1:
             this.stancebuff.off()
             this.stancebuff = this.Selfbuff('s1', 0.15)(15)
-            this.stancebuff.on_end = this.clean_stance
+            this.stancebuff.on_end.append(this.clean_stance)
             this.stance = 2
         else:
             this.stance = 0

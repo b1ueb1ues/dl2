@@ -106,13 +106,14 @@ class Conf():
 
 
 class Config(object):
-    default = {}
+    def default(this):
+        return {}
     sync = None
         
     def __init__(this, host, conf=None):
         this.host = host
         tmp = Conf()
-        tmp.update(this.default)
+        tmp.update(this.default())
         if conf:
             tmp.update(conf)
         if this.sync:
@@ -147,14 +148,16 @@ if __name__ == '__main__':
     root = Conf()(r)
 
     class Conf_c(Config):
-        default = {
+        def default(this):
+            return {
                 'test1':1
                 ,'test2':2
                 ,'attr.h1.coef':2
                 ,'attr.h1.to_bk':1
                 ,'attr.h1.killer':{}
                 }
-        conf = {
+        def conf(this): 
+            return {
                 'test1':11
                 ,'attr.h1.coef':3
                 }

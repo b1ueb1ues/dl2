@@ -4,7 +4,8 @@ from core.skada import *
 
 
 class Conf_tar(Config):
-    default = {
+    def default(this):
+        return {
          'def_'    : 10
         ,'od_def'  : 1
         ,'bk_def'  : 0.6

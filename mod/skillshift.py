@@ -7,9 +7,10 @@ class Skillshift(object):
         this.host = host
         skillname = 's%d'%skillidx
         this.level = 0
+        this.hit = 0
 
-        this.o_on_end = host.conf[skillname]['on_end']
-        host.conf[skillname]['on_end'] = this.shift
+        host.conf[skillname]['on_end'].append(this.shift)
+        host.conf[skillname]['proc'].append(this.on_hit)
         Conf.sync(host.conf[skillname])
 
         conf22 = Conf()
@@ -27,9 +28,14 @@ class Skillshift(object):
         this.log = Logger('s')
 
 
+    def on_hit(this):
+        this.hit = 1
+
     def shift(this):
-        if this.o_on_end:
-            this.o_on_end()
+        if this.hit:
+            return
+        else:
+            this.hit = 0
         if this.level == 0:
             this.host.s1 = this.s_level2
             this.level = 1

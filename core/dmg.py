@@ -77,7 +77,8 @@ class Dmg_calc(object):
 
 
 class Conf_dc(Config):
-    default = {
+    def default(this):
+        return {
          'name'    : 'dmg'
         ,'hit'     : 1
         ,'to_od'   : 1

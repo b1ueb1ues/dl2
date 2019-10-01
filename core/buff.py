@@ -133,6 +133,8 @@ class _Buff(object):
         this.log = Logger('buff')
         this.log_dp = Logger('dp')
 
+        this.on_end = []
+
     def hostname(this):
         return this._static.hostname
 
@@ -233,15 +235,11 @@ class _Buff(object):
             if stack > 1:
                 this.__buff_stack()
         this.dp.off()
-        this.on_end()
+        for i in this.on_end:
+            i()
         if this.log_dp:
             this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
                 this._static.Dp.get(this.mod_type))
-
-
-    def on_end(this):
-        pass
-
 
     def on(this, duration):
         this.duration = duration

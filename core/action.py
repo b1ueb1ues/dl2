@@ -29,13 +29,14 @@ class Action(object):
 
 
 class Conf_Action(Config):
-    default = {
+    def default(this):
+        return {
              'type'      : ''
             ,'startup'   : 0
             ,'recovery'  : 2
             ,'cancel_by' : []
-            ,'on_cancel' : None
-            ,'on_end'    : None
+            ,'on_cancel' : []
+            ,'on_end'    : []
             }
 
 
@@ -69,8 +70,8 @@ class _Action(object):
         this.status = -1
         this._static.prev = this # turn this from doing to prev
 
-        if this.conf['on_end']:
-            this.conf['on_end']()
+        for i in this.conf['on_end']:
+            i()
         #this._static.host.x(0)
         this.e_idle()
 
@@ -95,8 +96,8 @@ class _Action(object):
                 dconf = doing.conf
                 if this.conf['type'] in dconf['cancel_by'] : # can cancel action
                     doing.t_recovery.off()
-                    if dconf['on_cancel']:
-                        dconf['on_cancel']
+                    for i in dconf['on_cancel']:
+                        i()
                     if this.log:
                         this.log(this.src+'cancel', doing.name,
                                 'by '+this.name \

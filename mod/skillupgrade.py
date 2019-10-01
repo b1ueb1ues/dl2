@@ -8,8 +8,7 @@ class Skillupgrade(object):
         skillname = 's%d'%skillidx
         this.level = 0
 
-        this.o_on_start = host.conf[skillname]['on_start']
-        host.conf[skillname]['on_start'] = this.pause
+        host.conf[skillname]['on_start'].append(this.pause)
         Conf.sync(host.conf[skillname])
 
         conf22 = Conf()
@@ -21,12 +20,9 @@ class Skillupgrade(object):
         this.log = Logger('s')
 
         this.buff = ssbuff
-        this.o_on_end = ssbuff.on_end
-        ssbuff.on_end = this.on_buff_end
+        ssbuff.on_end.append(this.on_buff_end)
 
     def pause(this):
-        if this.o_on_start:
-            this.o_on_start()
         this.buff.append(this.host.s1.conf['recovery'])
 
     def on_buff_end(this):
@@ -35,12 +31,9 @@ class Skillupgrade(object):
             this.level = 0
             if this.log:
                 this.log('%s, skill -'%(this.host.name))
-        this.o_on_end()
 
     def upgrade(this, duration):
         this.buff.on(duration)
-        if this.o_on_end:
-            this.o_on_end()
         if this.level == 0:
             this.host.s1 = this.s_upgraded
             this.level = 1

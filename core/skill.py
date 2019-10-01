@@ -43,7 +43,8 @@ class Sp(object):
 
 
 class Conf_skl(Config):
-    default = {
+    def default(this):
+        return {
          'type'     : 's'
         ,'sp'       : -1
         ,'startup'  : 0.1 # ui lag  # only for action
@@ -57,7 +58,7 @@ class Conf_skl(Config):
 
 
     def sync(this, c):
-        this.sp.max = c['sp']
+        this.sp.max    = c['sp']
         this.proc      = c['proc']
         this.startup   = c['startup']
         this.on_start  = c['on_start']
@@ -296,7 +297,8 @@ class Combo(object):
 
 
 class Conf_cmb(Config):
-    default = {
+    def default(this):
+        return {
          'type'     : 'x'
         ,'idx'      : 1 # 1~5
         ,'sp'       : 0
@@ -445,7 +447,8 @@ class Fs(object):
 
 
 class Conf_fs(Config):
-    default = {
+    def default(this):
+        return {
          'type'      : 'fs'
         ,'sp'        : 0
         ,'startup'   : 0 # charge time, which didn't affect by speed
@@ -600,7 +603,8 @@ class Dodge(object):
 
 
 class Conf_dodge(Config):
-    default = {
+    def default(this):
+        return {
          'type'      : 'dodge'
         ,'startup'   : 0
         ,'recovery'  : 0.7
