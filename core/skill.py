@@ -48,9 +48,9 @@ class Conf_skl(Config):
         ,'sp'       : -1
         ,'startup'  : 0.1 # ui lag  # only for action
         ,'recovery' : 2             # both for action
-        ,'on_start' : None 
-        ,'on_end'   : None          # only for action
-        ,'proc'     : None
+        ,'on_start' : [] 
+        ,'on_end'   : []          # only for action
+        ,'proc'     : []
         ,'hit'      : []
         ,'attr'     : {}
         }
@@ -78,7 +78,7 @@ class Conf_skl(Config):
                     label['name'] = this.name + i
                 else:
                     label['name'] = this.name
-                label['proc'] = this.collid
+                label['proc'] = [this.collid]
                 label['type'] = 's'
                 this.dmg[i] = this.host.Dmg(label)
         
@@ -218,11 +218,11 @@ class _Skill(object):
             Timer(this._do)(timing)
 
 
-    def collid(this):
+    def collid(this, dmg):
         if this.firsthit:
             this.firsthit = 0
-            if this.proc:
-                this.proc()
+            for i in this.proc:
+                i()
             if 'debuff' in this.conf:
                 buffarg = this.conf.debuff
                 wide = buffarg[0]
@@ -257,11 +257,12 @@ class _Skill(object):
         #this._static.silence_start() }
 
 
-        if this.on_start :
-            this.on_start()
+        for i in this.on_start :
+            i()
 
-        if this.hit_count == 0 and this.proc:
-            this.proc()
+        if this.hit_count == 0 :
+            for i in this.proc:
+                i()
 
         if this.hit_next < this.hit_count :
             #timing = this.hit[this.hit_next][0] / this.speed() {
@@ -303,7 +304,7 @@ class Conf_cmb(Config):
         ,'recovery' : 2
        #,'on_start' : None
        #,'on_end'   : None
-        ,'proc'     : None
+        ,'proc'     : []
         ,'hit'      : []
         ,'attr'     : {}
         ,'cancel_by': ['s','fs','dodge']
@@ -330,7 +331,7 @@ class Conf_cmb(Config):
                 this.hit_count = len(this.hit)
                 label = this.attr[i]
                 label['name'] = this.name
-                label['proc'] = this.collid
+                label['proc'] = [this.collid]
                 label['type'] = 'x'
                 this.dmg[i] = this.host.Dmg(label)
         this.e_x.host = this.host
@@ -417,12 +418,12 @@ class _Combo(object):
         this.e_x()
 
 
-    def collid(this):
+    def collid(this, dmg):
         if this.firsthit:
             this.firsthit = 0
             this.charge('x', this.sp)
-            if this.proc:
-                this.proc()
+            for i in this.proc:
+                i()
 
 #  inlined
 #    def active(this):
@@ -451,7 +452,7 @@ class Conf_fs(Config):
         ,'recovery'  : 2
        #,'on_start' : None
        #,'on_end'   : None
-        ,'proc'      : None
+        ,'proc'      : []
         ,'hit'       : []
         ,'attr'      : {}
         ,'cancel_by' : ['s','dodge']
@@ -476,7 +477,7 @@ class Conf_fs(Config):
             for i in this.attr:
                 label = this.attr[i]
                 label['name'] = this.name
-                label['proc'] = this.collid
+                label['proc'] = [this.collid]
                 label['type'] = 'fs'
                 this.dmg[i] = this.host.Dmg(label)
         this.e_fs.host = this.host
@@ -551,12 +552,12 @@ class _Fs(object):
         this.e_fs()
 
 
-    def collid(this):
+    def collid(this, dmg):
         if this.firsthit:
             this.firsthit = 0
             this.charge('fs', this.sp)
-            if this.proc:
-                this.proc()
+            for i in this.proc:
+                i()
 
 
     def active(this):

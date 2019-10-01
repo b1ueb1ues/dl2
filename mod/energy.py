@@ -2,30 +2,30 @@ from core.ctx import *
 
 
 class Energy():
-  #  def e_dmg_proc(this, name, amount):
-  #      this.dmg_proc_old(name, amount)  # should prevent damage in next dmg_proc
+    def e_dmg_proc(this, name, amount):
+        this.dmg_proc_old(name, amount)  # should prevent damage in next dmg_proc
 
-  #      if not this.energized :
-  #          return
-  #      if this.energized == 1 and name[0] != 's':
-  #          return
+        if not this.energized :
+            return
+        if this.energized == 1 and name[0] != 's':
+            return
 
-  #      if this.energized == 1:
-  #          if this.energy_consume and this.energy_consume[name[:2]]:
-  #              this.energized = name[:2]
-  #          else:
-  #              this.energized = name[:2]
+        if this.energized == 1:
+            if this.energy_consume and this.energy_consume[name[:2]]:
+                this.energized = name[:2]
+            else:
+                this.energized = name[:2]
 
-  #      if this.energized == name[:2] :
-  #          boost = this.get_energy_boost()
-  #          log('dmg','o_%s_energized'%name, amount*boost, 'energy boost')
+        if this.energized == name[:2] :
+            boost = this.get_energy_boost()
+            log('dmg','o_%s_energized'%name, amount*boost, 'energy boost')
 
-  #  def get_energy_boost(this):
-  #      sd = this.a.Dp.get('s')
-  #      this.energy_mod.on()
-  #      sd2 = this.a.Dp.get('s')
-  #      this.energy_mod.off()
-  #      return sd2/sd-1
+    def get_energy_boost(this):
+        sd = this.a.Dp.get('s')
+        this.energy_mod.on()
+        sd2 = this.a.Dp.get('s')
+        this.energy_mod.off()
+        return sd2/sd-1
 
     def __call__(this):
         if this.energized :
@@ -66,25 +66,22 @@ class Energy():
     def e_s1_end(this, e):
         this.add_energy('s1')
         this.s1_end_old(e)
-        if this.energized and this.energized != 1 :
+        if this.energized == -1 :
             this.energized = 0
-            this.energy_mod.off()
             this.energy_buff.off()
 
     def e_s2_end(this, e):
         this.add_energy('s2')
         this.s2_end_old(e)
-        if this.energized and this.energized != 1 :
+        if this.energized == -1 :
             this.energized = 0
-            this.energy_mod.off()
             this.energy_buff.off()
 
     def e_s3_end(this, e):
         this.add_energy('s3')
         this.s3_end_old(e)
-        if this.energized and this.energized != 1 :
+        if this.energized == -1 :
             this.energized = 0
-            this.energy_mod.off()
             this.energy_buff.off()
 
     def l_add_energy(this, e):
@@ -114,9 +111,9 @@ class Energy():
         Conf.sync(a.s2.conf)
         Conf.sync(a.s3.conf)
 
-        this.dmg_proc_old = a.dmg_proc
-        #a.add_energy = this.add_energy
-        a.dmg_proc = this.e_dmg_proc
+        this.dmg_proc_old = a.Dmg.conf['proc']
+        a.Dmg.conf['proc'] = this.e_dmg_proc
+        Conf(a.Dmg.conf).commit()
 
         Listener('add_energy')(this.l_add_energy)
 

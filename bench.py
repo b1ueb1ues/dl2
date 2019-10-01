@@ -7,7 +7,7 @@ from core import benchmark
 
 def foo():
     Ctx()
-    tar = Hms()
+    tar = hms()
     tar.init()
 
     c = Mikoto()

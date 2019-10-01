@@ -23,7 +23,7 @@ def foo():
     global c
     global acl
     Ctx()
-    tar = Hms()
+    tar = hms()
     tar.init()
 
     c = Mikoto()

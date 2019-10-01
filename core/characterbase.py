@@ -130,10 +130,14 @@ class Character(object):
     def character_init(this):
         this.classinit()
 
-        if 'proc' not in this.conf['s1']:
-            this.conf['s1']['proc'] = this.s1_proc
-        if 'proc' not in this.conf['s2']:
-            this.conf['s2']['proc'] = this.s2_proc
+        if this.s1_proc:
+            this.conf['s1']['proc'] = [this.s1_proc]
+        if this.s2_proc:
+            this.conf['s2']['proc'] = [this.s2_proc]
+        #if 'proc' not in this.conf['s1']:
+        #    this.conf['s1']['proc'] = this.s1_proc
+        #if 'proc' not in this.conf['s2']:
+        #    this.conf['s2']['proc'] = this.s2_proc
         this.s1 = this.Skill('s1', this, this.conf['s1'])
         this.conf['s1'] = this.s1.conf
         this.s2 = this.Skill('s2', this, this.conf['s2'])
