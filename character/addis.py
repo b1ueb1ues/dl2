@@ -78,15 +78,17 @@ if __name__ =='__main__':
     root = {}
     #root = {'ex':['bow']}
 
-for i in range(1):
-    Ctx()
-    tar = water()
-    tar.init()
+    logset([])
+    for i in range(200):
+        Ctx()
+        #tar = water()
+        tar = dummy()
+        tar.init()
 
-    c = Addis(root)
-    c.tar(tar)
-    c.init()
+        c = Addis(root)
+        c.tar(tar)
+        c.init()
 
-    Timer.run(1000)
-logcat()
-Skada.sum()
+        Timer.run(120)
+    logcat()
+    Skada.sum()

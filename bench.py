@@ -1,8 +1,10 @@
 from core.ctx import *
 from target.hms import *
 from character.mikoto import *
+from character.natalie import *
 from character.elisanne import *
 from core import benchmark
+from core.skada import *
 
 
 def foo():
@@ -10,7 +12,7 @@ def foo():
     tar = hms()
     tar.init()
 
-    c = Mikoto()
+    c = Natalie()
     c.tar(tar)
     c.init()
 
@@ -18,9 +20,10 @@ def foo():
     c2.tar(tar)
     c2.init()
 
-    Timer.run()
+    Timer.run(120)
 
 logset([])
-benchmark.run(foo, 1000)
+benchmark.run(foo, 200)
 
-logcat()
+#logcat()
+Skada.sum()

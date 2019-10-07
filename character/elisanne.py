@@ -5,7 +5,27 @@ from target.dummy import *
 
 
 class Elisanne(Character):
-    conf = {
+    def dconf(this):
+        conf = {
+         'slot.w'  : 'c534_water'
+        ,'slot.d'  : 'DJ'
+        ,'slot.a1' : 'BB'
+        ,'slot.a2' : 'JotS'
+        ,'acl.cancel' : """
+            `s1
+            `s2, fs=1
+            `fs, x=5
+        """
+        }
+        if 'bow' in this.ex:
+            conf['acl.cancel'] = """
+                `s1
+                `s2
+            """
+        return conf
+
+    def conf(this):
+        return {
          'name'            : 'Elisanne'
         ,'star'            : 4
         ,'ele'             : 'water'
@@ -21,24 +41,8 @@ class Elisanne(Character):
         ,'s2.recovery'     : 1.9
         ,'s2.hit'          : [(0,'h1')]
         ,'s2.attr.h1.coef' : 7.54
-
-        ,'slot.w'          : 'c534_water'
-        ,'slot.d'          : 'DJ'
-        ,'slot.a1'         : 'BB'
-        ,'slot.a2'         : 'JotS'
-        ,'acl.cancel' : """
-            `s1
-            `s2, fs=1
-            `fs, x=5
-        """
         }
 
-    def dconf(this, conf):
-        if 'bow' in this.ex:
-            conf['acl.cancel'] = """
-                `s1
-                `s2
-            """
 
 
 
@@ -52,7 +56,7 @@ if __name__ =='__main__':
     #logset(['buff','debug','dmg','hit'])
     root = {'ex':['bow']}
 
-    tar = Dummy()
+    tar = dummy()
     tar.init()
 
     c = Elisanne(root)

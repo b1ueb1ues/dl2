@@ -5,7 +5,7 @@ from character.mikoto import *
 from character.elisanne import *
 from core import benchmark
 
-#logset('all')
+logset('all')
 
 logset('dmg')
 logset('buff')

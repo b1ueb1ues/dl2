@@ -51,17 +51,26 @@ class Conf_skl(Config):
         ,'recovery' : 2             # both for action
         ,'on_start' : [] 
         ,'on_end'   : []          # only for action
+        ,'on_hit'   : []
         ,'proc'     : []
         ,'hit'      : []
         ,'attr'     : {}
+        ,'no_energy': None
         }
 
 
     def sync(this, c):
         this.sp.max    = c['sp']
-        this.proc      = c['proc']
         this.startup   = c['startup']
         this.on_start  = c['on_start']
+        if type(c['proc']) == list:
+            this.proc = c['proc']
+        else:
+            this.proc = [c['proc']]
+        if type(c['on_hit']) == list:
+            this.on_hit = c['on_hit']
+        else:
+            this.on_hit = [c['on_hit']]
 
         dirty = 0
         if this.attr != c['attr']:
@@ -220,6 +229,8 @@ class _Skill(object):
 
 
     def collid(this, dmg):
+        for i in this.on_hit:
+            i(dmg)
         if this.firsthit:
             this.firsthit = 0
             for i in this.proc:

@@ -1,6 +1,7 @@
 import __init__
 from ability.abilitybase import *
 from core.ctx import *
+import random
 
 class atk(Ability):
     def __init__(this, name, v, c=None):
@@ -258,3 +259,16 @@ class dc(Ability):
         if this.idx <= 2:
             this.host.Selfbuff('dragon_claw', this.buff[this.idx])(-1)
             this.idx+=1
+
+class extra_energy(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+
+    def __call__(this):
+        tmp = this.host.Energy.self
+        def energy_chain(count):
+            if random.random() < this.v :
+                count += 1
+            tmp(count)
+        this.host.Energy.self = energy_chain

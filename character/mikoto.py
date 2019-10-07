@@ -93,7 +93,7 @@ if __name__ == '__main__':
     logset('s')
     #logset(['buff','debug','dmg', 'hit'])
 
-    tar = Dummy()
+    tar = dummy()
     tar.init()
 
     c = Mikoto()

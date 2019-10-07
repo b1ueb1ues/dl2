@@ -8,6 +8,7 @@ from ability import *
 from amulet import *
 from weapon import *
 from dragon import *
+from mod.energy import *
 
 
 
@@ -29,7 +30,7 @@ class Conf_chara(Config):
 
             ,'param_type' : ['atk', 'dmg', 'cc', 'cd',
                              'sp', 'spd', 'buff', 
-                             'killer', # 'def', 'ks'
+                             'killer','energy', # 'def', 'ks'
                              'x','fs','s']
             ,'s1' : None
             ,'s2' : None
@@ -95,12 +96,16 @@ class Character(object):
     # or
     # def conf(this): # rewrite by child
     #     return {}
-    def dconf(this, conf): # rewrite by child
-        return 1
+    def dconf(this): # rewrite by child
+        return {}
     def init(this): # rewrite by child
         pass
     s1_proc = None # rewrite a function by child
     s2_proc = None # rewrite a function by child
+    s3_proc = None # rewrite a function by child
+    s1_end = None # rewrite a function by child
+    s2_end = None # rewrite a function by child
+    s3_end = None # rewrite a function by child
 
     def __init__(this, rootconf=None):
         if type(this.conf) == dict:
@@ -135,16 +140,23 @@ class Character(object):
             this.conf['s1']['proc'] = [this.s1_proc]
         if this.s2_proc:
             this.conf['s2']['proc'] = [this.s2_proc]
-        #if 'proc' not in this.conf['s1']:
-        #    this.conf['s1']['proc'] = this.s1_proc
-        #if 'proc' not in this.conf['s2']:
-        #    this.conf['s2']['proc'] = this.s2_proc
+        if this.s3_proc:
+            this.conf['s3']['proc'] = [this.s3_proc]
+        if this.s1_end:
+            this.conf['s1']['on_end'] = [this.s1_end]
+        if this.s2_end:
+            this.conf['s2']['on_end'] = [this.s2_end]
+        if this.s3_end:
+            this.conf['s3']['on_end'] = [this.s3_end]
+
         this.s1 = this.Skill('s1', this, this.conf['s1'])
         this.conf['s1'] = this.s1.conf
         this.s2 = this.Skill('s2', this, this.conf['s2'])
         this.conf['s2'] = this.s2.conf
         this.s3 = this.Skill('s3', this, this.conf['s3'])
         this.conf['s3'] = this.s3.conf
+
+        this.Energy = Energy(this)
 
         import config.weapon
         wtconf = Conf()(config.weapon.wtconf[this.conf['wt']]).get
@@ -167,8 +179,7 @@ class Character(object):
             this.fsf = this.Fs('fsf', this, wtconf['fsf'])
             wtconf['fsf'] = this.fsf.conf
 
-        conf_update = {}
-        this.dconf(conf_update)
+        conf_update = this.dconf()
         Conf(this.conf)(conf_update)
 
         this.setup()
@@ -274,6 +285,7 @@ class Character(object):
         this.Dragon = Dragon(this)
         this.Weapon = Weapon(this)
         this.Amulet = Amulet(this)
+
 
 
     def tar(this, target):

@@ -2,7 +2,7 @@ import __init__
 from core.ctx import *
 from core.targetbase import *
 
-class Dummy(Target):
+class dummy(Target):
     conf = {
          'name':'dummy'
         ,'ele':'on'
