@@ -38,8 +38,9 @@ def foo():
     d = 120
     Timer.run(d)
     logcat()
-    print('dps',Skada.sum()['Mikoto']['dmg']/d)
-    print('dps',Skada.sum()['Elisanne']['dmg']/d)
+    skada = Skada.sum()
+    print('dps',skada['Mikoto']['dmg']/d)
+    print('dps',skada['Elisanne']['dmg']/d)
     print(Skada._skada)
     Timer.run()
 

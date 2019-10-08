@@ -23,7 +23,7 @@ def acl_module_add(acl, t):
     global f
     if not f:
         return
-    s = "\ndef %s(e):\n"%t
+    s = "\ndef %s(this, e):\n"%t
     s += acl_infunction(acl)
     f.write(s)
     return s

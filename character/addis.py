@@ -79,7 +79,7 @@ if __name__ =='__main__':
     #root = {'ex':['bow']}
 
     logset([])
-    sample = 200
+    sample = 1000
     for i in range(sample):
         Ctx()
         #tar = water()
