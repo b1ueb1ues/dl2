@@ -55,8 +55,7 @@ class _Action(object):
         this.status = 0 # -1: idle/end 0:wait 1:doing 2cancel
 
         this.t_recovery = Timer(this._cb_act_end)
-        this.e_idle = Event('idle')
-        this.e_idle.host = this._static.host
+        this.e_idle = static.host.Event('idle')
         this.log = Logger('act')
         this.log_r = Logger('rotation')
 

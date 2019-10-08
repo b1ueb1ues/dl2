@@ -12,8 +12,8 @@ class Skill(object):
         this.silence = 0
         this.silence_duration = 2 # 2s ui hide
         this.t_silence_end = Timer(this.silence_end)
-        this.e_silence_end = Event('silence_end')
-        this.e_s = Event('acl')
+        this.e_silence_end = host.Event('silence_end')
+        this.e_s = host.Event('acl')
         this.e_s.host = this.host
         this.e_s.type = 'silence'
         this.log = Logger('s')
@@ -362,7 +362,7 @@ class _Combo(object):
         this.hit_count = 0
         this.hit_prev= -1
         this.hit_next = 0
-        this.e_x = Event('cancel')
+        this.e_x = host.Event('cancel')
         this.e_x.name = this.name
 
         this.hit = None
@@ -510,7 +510,7 @@ class _Fs(object):
         this.firsthit = 1
         this.hit_count = 1
         this.hit_next = 0
-        this.e_fs = Event('cancel')
+        this.e_fs = host.Event('cancel')
 
         this.hit = None
         this.attr = None

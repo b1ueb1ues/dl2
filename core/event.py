@@ -98,17 +98,14 @@ class Event(object):
 
 
 if __name__ == '__main__' :
-    def lis(e):
-        print('listener1')
-    def lis2(e):
-        print('listener2')
-    def lis3(e):
-        print('listener3')
 
-    Event('e2')(lis)
-    Event('e2')(lis2)
-    Event('e3')(lis3)
+    def foo():
+        def lis(e):
+            print('listener1')
+        Listener('e1')(lis)
+        Event('e1')()
 
-    Event('e2')()
-    Event('e3')()
+    import dis
+    dis.dis(foo)
+
 

@@ -9,6 +9,7 @@ from amulet import *
 from weapon import *
 from dragon import *
 from mod.energy import *
+from core import eventevent
 
 
 
@@ -106,6 +107,10 @@ class Character(object):
     s1_end = None # rewrite a function by child
     s2_end = None # rewrite a function by child
     s3_end = None # rewrite a function by child
+    class CharacterEvent(Event):
+        pass
+    class CharacterListener(Listener):
+        pass
 
     def __init__(this, rootconf=None):
         if type(this.conf) == dict:
@@ -118,10 +123,13 @@ class Character(object):
             this.ex = rootconf['ex']
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
-        this.e_hit = Event('hit')
-        this.e_acl = Event('acl')
+
+        this.Event.init()
+        this.Listener.init(this.Event)
+
+        this.e_hit = this.Event('hit')
+        this.e_acl = this.Event('acl')
         this.e_acl.type = 'charge'
-        this.e_acl.host = this
 
         this.logsp = Logger('sp')
         this.loghit = Logger('hit')
@@ -129,7 +137,6 @@ class Character(object):
 
         this.child_init = this.init
         this.init = this.character_init
-
 
 
     # after settle down all config
@@ -193,11 +200,11 @@ class Character(object):
             this.conf['acl'] = conf_acl
 
         if conf_acl['rotation']:
-            Listener('idle')(this.l_rotation)
-            Listener('cancel')(this.l_rotation)
-            Listener('acl')(this.l_rotation)
+            this.Listener('idle')(this.l_rotation)
+            this.Listener('cancel')(this.l_rotation)
+            this.Listener('acl')(this.l_rotation)
         else:
-            Listener('idle')(this.l_idle)
+            this.Listener('idle')(this.l_idle)
             core.acl.acl_module_init(this)
             if type(conf_acl['cancel']) == str:
                 acl = default_acl_cancel + conf_acl['cancel']
@@ -212,14 +219,13 @@ class Character(object):
             _acl = importlib.import_module('core._acl.' \
                                             +this.__class__.__name__)
             if conf_acl['cancel']:
-                Listener('cancel')(this.think_cancel)
+                this.Listener('cancel')(this.think_cancel)
                 this.acl_cancel = _acl.cancel
             if conf_acl['other']:
-                Listener('acl')(this.think_other)
+                this.Listener('acl')(this.think_other)
                 this.acl_other = _acl.other
 
-        this.e_idle = Event('idle')
-        this.e_idle.host = this
+        this.e_idle = this.Event('idle')
         this.e_idle()
 
 
@@ -263,6 +269,11 @@ class Character(object):
         this.atk = int(this.atk)
         log_('info','%s, base_atk'%(this.name),this.atk)
         
+
+    class Event(eventevent.Event):
+        pass
+    class Listener(eventevent.Listener):
+        pass
 
     def classinit(this):
         this.Dp = Dmg_param(this)
@@ -368,8 +379,6 @@ class Character(object):
 
 
     def l_idle(this, e):
-        if e.host != this:
-            return
         this.x()
 
 
@@ -378,13 +387,10 @@ class Character(object):
 
 
     def think_other(this, e):
-        if e.host != this:
-            return
         this.acl_other(this, e)
 
+
     def think_cancel(this, e):
-        if e.host != this:
-            return
         this.acl_cancel(this, e)
 
 

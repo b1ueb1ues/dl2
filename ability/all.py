@@ -16,7 +16,7 @@ class atk(Ability):
             this.condi = 'hit>=15'
             this.on = 0
             this.passive = this.host.Passive('%s_atk'%name, 0, 'atk')
-            Event('hit')(this.l_hit)
+            Listener('hit')(this.l_hit)
         else:
             this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
 
