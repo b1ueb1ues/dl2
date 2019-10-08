@@ -68,7 +68,6 @@ class Conf_chara(Config):
             this.base_crit = 0.02
 
 
-    #this = e.this
 default_acl_cancel = """\
     #s1 = this.s1
     #s2 = this.s2
@@ -86,7 +85,7 @@ default_acl_cancel = """\
     #        fsc = 1
     #    fs = e.hit
 """
-    #this = e.this
+
 default_acl_other = """\
     #s1 = this.s1
     #s2 = this.s2
@@ -122,15 +121,8 @@ class Character(object):
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
 
-        class CharacterEvent(eventevent.Event):
-            pass
-        class CharacterListener(eventevent.Listener):
-            pass
-
-        this.Event = CharacterEvent
-        this.Listener = CharacterListener
-        this.Event.init()
-        this.Listener.init(this.Event)
+        this.Event = eventevent.Event(this)
+        this.Listener = eventevent.Listener(this.Event)
         #this.Event.this = this
 
         this.e_hit = this.Event('hit')

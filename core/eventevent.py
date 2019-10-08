@@ -1,16 +1,17 @@
 
-class Event(object):
-    @classmethod
-    def init(cls):
-        cls._event_listeners = {}
 
-    def __init__(this, name):
-        if name :
-            this.name = name
-            this.__name = name
-            this._trigger = this.get_event_trigger(name)
-        else:
-            this._trigger = []
+class Event(object):
+    def __init__(this, host):
+        this.host = host
+        this._event_listeners = {}
+    def __call__(this, name):
+        return _Event(this._event_listeners, name)
+
+class _Event(object):
+    def __init__(this, el, name):
+        this._event_listeners = el
+        this.__name = name
+        this._trigger = this.get_event_trigger(name)
 
     def __call__(this):
         for i in this._trigger:
@@ -21,7 +22,7 @@ class Event(object):
     def __str__(this):
         return this.__name
 
-    def get_event_trigger(this, eventname, trigger = []): 
+    def get_event_trigger(this, eventname): 
         if eventname in this._event_listeners:
             return this._event_listeners[eventname]
         else:
@@ -29,13 +30,16 @@ class Event(object):
             return this._event_listeners[eventname]
 #} class Event
 
-
 class Listener(object):
-    @classmethod
-    def init(cls, event):
-        cls._event_listeners = event._event_listeners
+    def __init__(this, event):
+        this._event_listeners = event._event_listeners
+    def __call__(this, name):
+        return _Listener(this._event_listeners, name)
 
-    def __init__(this, eventname):
+
+class _Listener(object):
+    def __init__(this, el, eventname):
+        this._event_listeners = el
         this.__eventname = eventname
         this.__online = 0
 
@@ -82,7 +86,7 @@ class Listener(object):
         else:
             this._event_listeners[eventname] = [listener]
 
-    def get_event_trigger(this, eventname, trigger = []): 
+    def get_event_trigger(this, eventname): 
         if eventname in this._event_listeners:
             return this._event_listeners[eventname]
         else:
@@ -100,20 +104,16 @@ if __name__ == '__main__' :
     def lis3(e):
         print('listener3')
 
-    Event.init()
-    Listener.init(Event)
-    Listener('e1')(lis)
-    Event('e1')()
-
-    class E(Event):
+    class A():
         pass
-    class L(Listener):
-        pass
-    E.init()
-    L.init(E)
-    L('e1')(lis2)
-    E('e1')()
-    print('-')
-    Listener('e1')(lis3)
-    Event('e1')()
+    this = A()
+    this.Event = Event()
+    this.Listener = Listener(this.Event)
+    this.Listener('e1')(lis)
+    this.Event('e1')()
+    this.E2 = Event()
+    this.L2 = Listener(this.E2)
+    this.L2('e1')(lis2)
+    this.E2('e1')()
+    this.Event('e1')()
 
