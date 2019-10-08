@@ -153,7 +153,8 @@ class Target(object):
             if this.logbk:
                 this.logbk('%s, od-'%dmg.hostname, true_dmg * dmg.to_bk,
                         'bk: %d/%d'%(this.bk, this.base_bk) )
-            this.recount(dmg.hostname, dmg.name, true_dmg, true_dmg * dmg.to_bk)
+            this.recount(dmg.hostname, dmg.name, true_dmg,
+                    int(true_dmg * dmg.to_bk) )
         else:
             this.hp -= true_dmg
             this.recount(dmg.hostname, dmg.name, true_dmg, 0)

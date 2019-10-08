@@ -100,5 +100,8 @@ if __name__ == '__main__':
     c.tar(tar)
     c.init()
 
-    Timer.run(120)
+    d = 120
+    Timer.run(d)
     logcat()
+    print('dps',Skada.sum()['Mikoto']['dmg']/d)
+    print(Skada._skada)

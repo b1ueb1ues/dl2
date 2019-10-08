@@ -73,7 +73,7 @@ class cc(Ability):
             this.condi = 'hit>=15'
             this.on = 0
             this.passive = this.host.Passive('%s_cc'%name, 0, 'cc')
-            Event('hit')(this.l_hit)
+            Listener('hit')(this.l_hit)
         else:
             this.passive = this.host.Passive('%s_cc'%name, v, 'cc')
 

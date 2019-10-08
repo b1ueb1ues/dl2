@@ -69,6 +69,7 @@ class Conf_chara(Config):
 
 
 default_acl_cancel = """\
+    #this = e.this
     #s1 = this.s1
     #s2 = this.s2
     #s3 = this.s3
@@ -86,6 +87,7 @@ default_acl_cancel = """\
     #    fs = e.hit
 """
 default_acl_other = """\
+    #this = e.this
     #s1 = this.s1
     #s2 = this.s2
     #s3 = this.s3
@@ -93,7 +95,7 @@ default_acl_other = """\
 """
 
 class Character(object):
-    #conf = {}       # rewrite by child
+    # conf = {}       # rewrite by child
     # or
     # def conf(this): # rewrite by child
     #     return {}
@@ -107,10 +109,6 @@ class Character(object):
     s1_end = None # rewrite a function by child
     s2_end = None # rewrite a function by child
     s3_end = None # rewrite a function by child
-    class CharacterEvent(Event):
-        pass
-    class CharacterListener(Listener):
-        pass
 
     def __init__(this, rootconf=None):
         if type(this.conf) == dict:
@@ -124,8 +122,16 @@ class Character(object):
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
 
+        class CharacterEvent(eventevent.Event):
+            pass
+        class CharacterListener(eventevent.Listener):
+            pass
+
+        this.Event = CharacterEvent
+        this.Listener = CharacterListener
         this.Event.init()
         this.Listener.init(this.Event)
+        this.Event.this = this
 
         this.e_hit = this.Event('hit')
         this.e_acl = this.Event('acl')
@@ -219,11 +225,13 @@ class Character(object):
             _acl = importlib.import_module('core._acl.' \
                                             +this.__class__.__name__)
             if conf_acl['cancel']:
-                this.Listener('cancel')(this.think_cancel)
+                #this.Listener('cancel')(this.think_cancel)
                 this.acl_cancel = _acl.cancel
+                this.Listener('cancel')(this.acl_cancel)
             if conf_acl['other']:
-                this.Listener('acl')(this.think_other)
+                #this.Listener('acl')(this.think_other)
                 this.acl_other = _acl.other
+                this.Listener('acl')(this.acl_other)
 
         this.e_idle = this.Event('idle')
         this.e_idle()
@@ -269,12 +277,6 @@ class Character(object):
         this.atk = int(this.atk)
         log_('info','%s, base_atk'%(this.name),this.atk)
         
-
-    class Event(eventevent.Event):
-        pass
-    class Listener(eventevent.Listener):
-        pass
-
     def classinit(this):
         this.Dp = Dmg_param(this)
         this.mod = this.Dp.get
@@ -384,15 +386,6 @@ class Character(object):
 
     def l_rotation(this, e):
         pass
-
-
-    def think_other(this, e):
-        this.acl_other(this, e)
-
-
-    def think_cancel(this, e):
-        this.acl_cancel(this, e)
-
 
 
 if __name__ == '__main__':

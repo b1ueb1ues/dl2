@@ -31,15 +31,17 @@ def foo():
     #c.conf['slot']['w'] = 'v534_flame_zephyr'
     c.init()
 
-#    c2 = Elisanne()
-#    c2.tar(tar)
-#    c2.init()
+    c2 = Elisanne()
+    c2.tar(tar)
+    c2.init()
 
+    d = 120
+    Timer.run(d)
+    logcat()
+    print('dps',Skada.sum()['Mikoto']['dmg']/d)
+    print('dps',Skada.sum()['Elisanne']['dmg']/d)
+    print(Skada._skada)
     Timer.run()
 
 foo()
 
-#logset([])
-#benchmark.run(foo, 1000)
-
-logcat()

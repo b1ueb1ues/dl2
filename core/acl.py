@@ -8,22 +8,32 @@ _g_line = ""
 dirname = os.path.dirname(os.path.abspath(__file__))
 dirname += '/_acl/'
 f = 0
+initialized = {}
 
 def acl_module_init(host):
     global f
+    global initialized
     h = host.__class__.__name__
+    if h in initialized:
+        return
     f = open(dirname+h+'.py', 'w')
+    initialized[h] = 1
 
 def acl_module_add(acl, t):
     global f
-    s = "\ndef %s(this, e):\n"%t
+    if not f:
+        return
+    s = "\ndef %s(e):\n"%t
     s += acl_infunction(acl)
     f.write(s)
     return s
 
 def acl_module_end():
     global f
+    if not f:
+        return
     f.close()
+    f = 0
 
 def acl_func_str(acl):
     s = acl_str(acl)

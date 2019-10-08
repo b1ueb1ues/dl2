@@ -79,7 +79,8 @@ if __name__ =='__main__':
     #root = {'ex':['bow']}
 
     logset([])
-    for i in range(200):
+    sample = 200
+    for i in range(sample):
         Ctx()
         #tar = water()
         tar = dummy()
@@ -89,6 +90,9 @@ if __name__ =='__main__':
         c.tar(tar)
         c.init()
 
-        Timer.run(120)
+        d = 120
+        Timer.run(d)
     logcat()
-    Skada.sum()
+    print('dps',Skada.sum()['Addis']['dmg']/d/sample)
+    print(Skada._skada)
+

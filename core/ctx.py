@@ -24,5 +24,6 @@ class Ctx(object):
         Timer.init(this.tl)
         Log.init(this.log)
         ctx = this
+Ctx()
 
 dprint = print

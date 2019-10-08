@@ -20,9 +20,14 @@ class Skada(object):
                 _sum += c[i]
             return _sum
 
+        r = {}
         for i in this._skada:
-            print(i,'dmg:', dmg(this._skada[i]['dmg']) )
-            print(i,'odmg:', dmg(this._skada[i]['odmg']) )
+            d = dmg(this._skada[i]['dmg'])
+            od = dmg(this._skada[i]['odmg'])
+            r[i] = {'dmg':d, 'odmg':od}
+            print(i,'dmg:', d )
+            print(i,'odmg:', od )
+        return r
 
 
 
