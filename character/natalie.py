@@ -98,6 +98,6 @@ if __name__ == '__main__':
     d = 120
     Timer.run(d)
     logcat()
-    print('dps',Skada.sum()['Mikoto']['dmg']/d)
+    print('dps',Skada.sum()['Natalie']['dmg']/d)
     print(Skada._skada)
 
