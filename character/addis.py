@@ -9,6 +9,26 @@ from mod.skillupgrade import *
 
 
 class Addis(Character):
+    def dconf(this):
+        return {
+         'slot.w'          : 'c534_wind'
+        ,'slot.d'          : 'Vayu'
+        ,'slot.a1'         : 'RR'
+        ,'slot.a2'         : 'BN'
+        ,'acl.cancel' : """
+            #bs = this.Bleed.stacks()
+            `s2, s1.sp.cur >= s1.sp.max-260 and bs != 3
+            `s1, s2.sp.cur < s2.sp.max and bs != 3
+            `s3, not this.ss.get() and x=5
+            `fs, this.ss.get() and x=4 and s1.sp.cur>=s1.sp.max-200
+            `fsf, x=5
+        """
+        ,'acl.other' :"""
+            #bs = this.Bleed.stacks()
+            `s1, e.type=='silence' and s2.sp.cur < s2.sp.max and bs != 3
+        """
+        }
+
     def conf(this):
         return {
          'name'            : 'Addis'
@@ -27,23 +47,6 @@ class Addis(Character):
 
         ,'s2.sp'           : 4877
         ,'s2.recovery'     : 1
-
-        ,'slot.w'          : 'c534_wind'
-        ,'slot.d'          : 'Vayu'
-        ,'slot.a1'         : 'RR'
-        ,'slot.a2'         : 'BN'
-        ,'acl.cancel' : """
-            #bs = this.Bleed.stacks()
-            `s2, s1.sp.cur >= s1.sp.max-260 and bs != 3
-            `s1, s2.sp.cur < s2.sp.max and bs != 3
-            `s3, not this.ss.get() and x=5
-            `fs, this.ss.get() and x=4 and s1.sp.cur>=s1.sp.max-200
-            `fsf, x=5
-        """
-        ,'acl.other' :"""
-            #bs = this.Bleed.stacks()
-            `s1, e.type=='silence' and s2.sp.cur < s2.sp.max and bs != 3
-        """
         }
 
     def init(this):

@@ -23,7 +23,7 @@ def foo():
     Timer.run(120)
 
 logset([])
-benchmark.run(foo, 200)
+benchmark.run(foo, 1000)
 
 #logcat()
 Skada.sum()

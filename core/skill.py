@@ -88,7 +88,7 @@ class Conf_skl(Config):
                     label['name'] = this.name + i
                 else:
                     label['name'] = this.name
-                label['proc'] = [this.collid]
+                #label['proc'] = [this.collid]
                 label['type'] = 's'
                 this.dmg[i] = this.host.Dmg(label)
         
@@ -211,6 +211,8 @@ class _Skill(object):
             return
 
         hitlabel = this.hit[this.hit_next][1]
+        if this.firsthit:
+            this.dmg[hitlabel].proc = this.collid
         this.dmg[hitlabel]()
 
         this.hit_prev = this.hit_next
@@ -344,7 +346,7 @@ class Conf_cmb(Config):
                 this.hit_count = len(this.hit)
                 label = this.attr[i]
                 label['name'] = this.name
-                label['proc'] = [this.collid]
+                #label['proc'] = [this.collid]
                 label['type'] = 'x'
                 this.dmg[i] = this.host.Dmg(label)
         this.e_x.host = this.host
@@ -411,6 +413,8 @@ class _Combo(object):
             return
 
         hitlabel = this.hit[this.hit_next][1]
+        if this.firsthit:
+            this.dmg[hitlabel].proc = this.collid
         this.dmg[hitlabel]()
 
         this.hit_prev = this.hit_next
@@ -491,7 +495,7 @@ class Conf_fs(Config):
             for i in this.attr:
                 label = this.attr[i]
                 label['name'] = this.name
-                label['proc'] = [this.collid]
+                #label['proc'] = [this.collid]
                 label['type'] = 'fs'
                 this.dmg[i] = this.host.Dmg(label)
         this.e_fs.host = this.host
@@ -546,6 +550,8 @@ class _Fs(object):
             return
 
         hitlabel = this.hit[this.hit_next][1]
+        if this.firsthit:
+            this.dmg[hitlabel].proc = this.collid
         this.dmg[hitlabel]()
 
         this.hit_prev = this.hit_next

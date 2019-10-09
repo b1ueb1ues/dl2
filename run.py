@@ -3,6 +3,7 @@ from target.dummy import *
 from target.hms import *
 from character.mikoto import *
 from character.elisanne import *
+from character.faketeam import *
 from core import benchmark
 
 logset('all')
@@ -23,7 +24,7 @@ def foo():
     global c
     global acl
     Ctx()
-    tar = hms()
+    tar = dummy()
     tar.init()
 
     c = Mikoto()
@@ -35,14 +36,19 @@ def foo():
     c2.tar(tar)
     c2.init()
 
+    c3 = Faketeam()
+    c3.tar(tar)
+    c3.init()
+
     d = 120
-    Timer.run(d)
+    r = Timer.run(d)
     logcat()
     skada = Skada.sum()
-    print('dps',skada['Mikoto']['dmg']/d)
-    print('dps',skada['Elisanne']['dmg']/d)
-    print(Skada._skada)
-    Timer.run()
+    print('dps',skada['Mikoto']['dmg']/now())
+    print('dps',skada['Elisanne']['dmg']/now())
+    print('dps',skada['Faketeam']['dmg']/now())
+    for i in Skada._skada:
+        print(i, Skada._skada[i])
 
 foo()
 

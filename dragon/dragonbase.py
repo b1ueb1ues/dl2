@@ -19,6 +19,7 @@ class Dragon(object):
     def __call__(this, name):
         import dragon
         dragons = vars(dragon)
+        dragons.update( this.get_sub() )
         dragons[name]._static = this
         this.d = dragons[name](this.host)
 

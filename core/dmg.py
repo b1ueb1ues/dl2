@@ -87,7 +87,7 @@ class Conf_dc(Config):
         ,'type'    : ''
         ,'killer'  : {}
         ,'missile' : None
-        ,'proc'    : []
+        ,'proc'    : None
         }
 
     def sync(this, c):
@@ -120,6 +120,9 @@ class _Dmg_calc(object):
 
         this.dmg = _Dmg()
         this.dmg.hostname = this._static.hostname
+
+        this.e_damage = this.src.Event('dmg')
+        this.e_damage.dmg = this.dmg
         
         Conf_dc(this, conf)()
 
@@ -131,23 +134,26 @@ class _Dmg_calc(object):
                 if i == 0 :
                     this.src.hit(this.dmg.hit)
                     this.dst.dt(this.dmg)
-                    for i in this.proc:
-                        i(this.dmg)
+                    if this.proc:
+                        this.proc(this.dmg)
+                    this.e_damage()
                 else:
                     Timer(this.cb_dmg_make)(i)
         else:
             this.src.hit(this.dmg.hit)
             this.dst.dt(this.dmg)
-            for i in this.proc:
-                i(this.dmg)
+            if this.proc:
+                this.proc(this.dmg)
+            this.e_damage()
 
 
     def cb_dmg_make(this, t):
         this.dmg.dmg = this.calc()
         this.src.hit(this.dmg.hit)
         this.dst.dt(this.dmg)
-        for i in this.proc:
-            i(this.dmg)
+        if this.proc:
+            this.proc(this.dmg)
+        this.e_damage()
 
 
     def calc(this):

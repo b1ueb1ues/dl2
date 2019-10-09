@@ -21,6 +21,7 @@ class Weapon(object):
         global _max
         import weapon
         weapons = vars(weapon.type_[wt])
+        weapons.update( this.get_sub() )
         weapons[name]._static = this
         this.w = weapons[name](this.host)
         return this.w
