@@ -74,6 +74,7 @@ class Target(object):
         this.logod = Logger('od')
         this.logbk = Logger('bk')
         this.logdmg = Logger('dmg')
+        this.od_count = 0
 
 
 
@@ -180,9 +181,15 @@ class Target(object):
         this.od_ks()
         if this.logod:
             this.logod('start')
+        this.od_start = now()
         ##
         # TODO: clean afflic
         #
+
+    def clean_afflic(this):
+        if 'Afflics' not in this.mod:
+            return
+        this.mod['Afflics'].reset()
 
     def break_(this):
         this.odbk = -1
@@ -197,6 +204,7 @@ class Target(object):
             this.logod('end')
         if this.logbk:
             this.logbk('start')
+        this.od_count += now() - this.od_start
 
 
     def normal(this):

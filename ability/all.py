@@ -201,6 +201,12 @@ class def_c_energy(Ability):
     def c_energy(this, e):
         pass
 
+class skill_link(Ability):
+    def __init__(this, name, v, btype):
+        pass
+    def __call__(this):
+        pass
+
 class lo(Ability):
     def __init__(this, name, v):
         this.name = name

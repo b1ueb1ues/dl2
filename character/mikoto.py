@@ -7,6 +7,24 @@ from mod.afflic import *
 
 
 class Mikoto(Character):
+    def dconf(this):
+        return {
+         'slot.w'  : 'c534_flame'
+       #,'slot.w'  : 'v534_flame_zephyr'
+       #,'slot.d'  : 'Cerb'
+       #,'slot.d'  : 'Arctos'
+        ,'slot.d'  : 'Sakuya'
+        ,'slot.a1' : 'RR'
+        ,'slot.a2' : 'BN'
+
+        ,'acl.cancel': """
+            `s1, x=5
+            `s2, x=5
+            `s3, x=5
+            `fsf, x=5
+        """
+        }
+
     def conf(this):
         return {
          'name'    : 'Mikoto'
@@ -30,21 +48,6 @@ class Mikoto(Character):
         ,'s2.recovery'     : 1
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
-
-        ,'slot.w'  : 'c534_flame'
-       #,'slot.w'  : 'v534_flame_zephyr'
-       #,'slot.d'  : 'Cerb'
-       #,'slot.d'  : 'Arctos'
-        ,'slot.d'  : 'Sakuya'
-        ,'slot.a1' : 'RR'
-        ,'slot.a2' : 'BN'
-
-        ,'acl.cancel': """
-            `s1, x=5
-            `s2, x=5
-            `s3, x=5
-            `fsf, x=5
-        """
         }
 
     def init(this):

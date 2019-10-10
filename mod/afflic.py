@@ -15,6 +15,7 @@ class Afflic(object):
     def __getitem__(this, atype):
         return _Afflic(this, atype)
         
+
 class _Afflic(object):
     def __init__(this, static, atype):
         this._static = static
@@ -23,7 +24,6 @@ class _Afflic(object):
     def __call__(this, name, *args, **kwargs):
         return this._static.dst.mod['Afflics'](this.atype, this._static.src,
                                                 name, *args, **kwargs)
-
 
 class Afflics(object):
     def __init__(this, host):

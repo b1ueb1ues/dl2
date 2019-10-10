@@ -83,6 +83,7 @@ if __name__ =='__main__':
 
     logset([])
     sample = 1000
+    time_total = 0
     for i in range(sample):
         Ctx()
         #tar = water()
@@ -95,7 +96,8 @@ if __name__ =='__main__':
 
         d = 120
         Timer.run(d)
+        time_total+=now()
     logcat()
-    print('dps',Skada.sum()['Addis']['dmg']/d/sample)
+    print('dps',Skada.sum()['Addis']['dmg']/time_total)
     print(Skada._skada)
 

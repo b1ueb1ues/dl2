@@ -42,9 +42,9 @@ class Natalie(Character):
 
         ,'s1.recovery'        : 1.83
         ,'s1.sp'              : 3247
-        ,'s1.hit'             : [(0,'h1')]
+        ,'s1.hit'             : [(0,'h1'),(1,'h1'),(1.2,'h1')]
         ,'s1.attr.h1.coef'    : 3.54
-        ,'s1.attr.h1.missile' : [0,0,0]
+        ,'s1.attr.h1.missile' : [0]
         ,'s1.on_hit' : this.s1_hit
 
         ,'s2.recovery' : 1
@@ -62,7 +62,7 @@ class Natalie(Character):
     def s1_hit(this, dmg):
         crisis = (100.0-this.hp)/100.0
         crisis = crisis * crisis * 1
-        tmp = copy.copy(dmg)
+        tmp = dmg.copy()
         tmp.dmg = int(dmg.dmg * crisis)
         tmp.name = 's1_crisis'
         this.target.dt(tmp)
@@ -98,6 +98,8 @@ if __name__ == '__main__':
     d = 120
     Timer.run(d)
     logcat()
-    print('dps',Skada.sum()['Natalie']['dmg']/d)
+    s = Skada.sum()
+    print('dps',s['Natalie']['dmg']/now())
+    print('odps',s['Natalie']['odmg']/tar.od_count)
     print(Skada._skada)
 

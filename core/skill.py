@@ -14,7 +14,6 @@ class Skill(object):
         this.t_silence_end = Timer(this.silence_end)
         this.e_silence_end = host.Event('silence_end')
         this.e_s = host.Event('acl')
-        this.e_s.host = this.host
         this.e_s.type = 'silence'
         this.log = Logger('s')
 
@@ -88,7 +87,7 @@ class Conf_skl(Config):
                     label['name'] = this.name + i
                 else:
                     label['name'] = this.name
-                #label['proc'] = [this.collid]
+                label['proc'] = this.collid
                 label['type'] = 's'
                 this.dmg[i] = this.host.Dmg(label)
         
@@ -115,15 +114,28 @@ class _Skill(object):
         this.src = host.name+', '
 
         Conf_skl(this, conf)()
+        this.conf['on_end'] = [this.skill_end]
         this.ac = host.Action(this.name, this.conf)
         this.conf = this.ac.conf
+
+        this.e_s = host.Event('acl')
+        this.e_s.type = 's'
+        this.e_cancel = host.Event('cancel')
+        this.e_cancel.type = 's'
+
 
     def charge(this, sp):
         if this.sp.max > 0:
             this.sp.cur += sp   
         #if this.charged > this.sp:  # should be 
-            #this.charged = this.sp
+        #    this.charged = this.sp
 
+    def full(this):
+        this.charge(this.sp.max)
+
+    def skill_end(this):
+        this.e_cancel()
+        this.e_s()
 
     def check(this):
         if this.sp.max <= 0:
@@ -211,8 +223,6 @@ class _Skill(object):
             return
 
         hitlabel = this.hit[this.hit_next][1]
-        if this.firsthit:
-            this.dmg[hitlabel].proc = this.collid
         this.dmg[hitlabel]()
 
         this.hit_prev = this.hit_next
@@ -263,9 +273,10 @@ class _Skill(object):
 
         this.sp.cur = 0
         static.s_prev = this.name
+        this._static.first_x_after_s = 1
         # Even if animation is shorter than 2s
         # you can't cast next skill before 2s, after which ui shows
-        #this._static.silence_start() {
+        #this._static.silence_start() { manual inline
         static.silence = 1
         static.t_silence_end(static.silence_duration)
         #this._static.silence_start() }
@@ -346,7 +357,7 @@ class Conf_cmb(Config):
                 this.hit_count = len(this.hit)
                 label = this.attr[i]
                 label['name'] = this.name
-                #label['proc'] = [this.collid]
+                label['proc'] = this.collid
                 label['type'] = 'x'
                 this.dmg[i] = this.host.Dmg(label)
         this.e_x.host = this.host
@@ -413,8 +424,6 @@ class _Combo(object):
             return
 
         hitlabel = this.hit[this.hit_next][1]
-        if this.firsthit:
-            this.dmg[hitlabel].proc = this.collid
         this.dmg[hitlabel]()
 
         this.hit_prev = this.hit_next
@@ -495,7 +504,7 @@ class Conf_fs(Config):
             for i in this.attr:
                 label = this.attr[i]
                 label['name'] = this.name
-                #label['proc'] = [this.collid]
+                label['proc'] = this.collid
                 label['type'] = 'fs'
                 this.dmg[i] = this.host.Dmg(label)
         this.e_fs.host = this.host
@@ -550,8 +559,6 @@ class _Fs(object):
             return
 
         hitlabel = this.hit[this.hit_next][1]
-        if this.firsthit:
-            this.dmg[hitlabel].proc = this.collid
         this.dmg[hitlabel]()
 
         this.hit_prev = this.hit_next

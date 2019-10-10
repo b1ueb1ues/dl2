@@ -11,6 +11,16 @@ class _Dmg(object):
         this.to_od = 1 # rate
         this.to_bk = 1 # rate
 
+    def copy(this):
+        d = _Dmg()
+        d.name = this.name
+        d.hostname = this.hostname
+        d.dmg = this.dmg
+        d.hit = this.hit
+        d.to_od = this.to_od
+        d.to_bk = this.to_bk
+        return d
+
 
 class Dmg_calc(object):
     def __init__(this, src, dst): # src character , dst target

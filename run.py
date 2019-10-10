@@ -3,7 +3,7 @@ from target.dummy import *
 from target.hms import *
 from character.mikoto import *
 from character.elisanne import *
-from character.faketeam import *
+#from character.faketeam import *
 from core import benchmark
 
 logset('all')
@@ -36,17 +36,17 @@ def foo():
     c2.tar(tar)
     c2.init()
 
-    c3 = Faketeam()
-    c3.tar(tar)
-    c3.init()
+    #c3 = Faketeam()
+    #c3.tar(tar)
+    #c3.init()
 
     d = 120
     r = Timer.run(d)
     logcat()
     skada = Skada.sum()
-    print('dps',skada['Mikoto']['dmg']/now())
-    print('dps',skada['Elisanne']['dmg']/now())
-    print('dps',skada['Faketeam']['dmg']/now())
+    print('Mikoto dps',skada['Mikoto']['dmg']/now())
+    print('Elisanne dps',skada['Elisanne']['dmg']/now())
+    #print('dps',skada['Faketeam']['dmg']/now())
     for i in Skada._skada:
         print(i, Skada._skada[i])
 

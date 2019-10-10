@@ -72,6 +72,7 @@ default_acl_cancel = """\
     #s1 = this.s1
     #s2 = this.s2
     #s3 = this.s3
+    #s = this.Skill.s_prev
     #fsc = 0
     #x = 0
     #fs = 0
@@ -91,6 +92,7 @@ default_acl_other = """\
     #s2 = this.s2
     #s3 = this.s3
     #doing = this.Action.doing.name
+    #s = this.Skill.s_prev
 """
 
 class Character(object):
@@ -132,6 +134,7 @@ class Character(object):
         this.logsp = Logger('sp')
         this.loghit = Logger('hit')
         this.logx = Logger('x')
+        this.logd = Logger('dbg')
 
         this.child_init = this.init
         this.init = this.character_init
@@ -184,6 +187,7 @@ class Character(object):
             this.fsf = this.Fs('fsf', this, wtconf['fsf'])
             wtconf['fsf'] = this.fsf.conf
 
+        #print(Conf(this.conf))
         conf_update = this.dconf()
         Conf(this.conf)(conf_update)
 
@@ -313,6 +317,8 @@ class Character(object):
                     this.s3.sp.cur, this.s3.sp.max)
                     )
         this.e_acl()
+        if this.Skill.s_prev:
+            this.Skill.s_prev = None
 
 
     def charge_p(this, name, sp):
