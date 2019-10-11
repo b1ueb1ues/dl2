@@ -88,13 +88,10 @@ class Mikoto(Character):
 
 
 if __name__ == '__main__':
-    #logset(['buff', 'dmg', 'od', 'bk'])
     logset(['buff', 'dmg', 'bk', 'sp'])
-    #logset('x')
     logset('fs')
-    #logset('act')
     logset('s')
-    #logset(['buff','debug','dmg', 'hit'])
+    logset(['rotation','dmg'])
 
     tar = dummy()
     tar.init()
@@ -106,5 +103,5 @@ if __name__ == '__main__':
     d = 120
     Timer.run(d)
     logcat()
-    print('dps',Skada.sum()['Mikoto']['dmg']/d)
+    print('dps',Skada.sum()['Mikoto']['dmg']/now())
     print(Skada._skada)

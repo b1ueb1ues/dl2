@@ -109,6 +109,8 @@ class _Afflic_dot():
 
         this.dot = static.dot_group[atype]
         this.log = Logger('afflic')
+        this.e_afflic = this.src.Event('afflic')
+        this.e_afflic.atype = atype
 
     def on(this):
         if this.resist[this.atype] >= 1:
@@ -122,6 +124,7 @@ class _Afflic_dot():
                                                 this.resist[this.atype]) )
             this.resist[this.atype] += 0.05
             this.dot(this.src, this.name, this.coef, this.duration)()
+            this.e_afflic()
         else:
             # resist
             if this.log:
@@ -158,6 +161,8 @@ class _Afflic_scc():
         else:
             print('only blind and bog in soft cc')
             raise
+        this.e_afflic = this.src.Event('afflic')
+        this.e_afflic.atype = atype
 
     def reset(this):
         this.ks.off()
@@ -188,6 +193,7 @@ class _Afflic_scc():
             this.ks(this.duration)
             if this.debuff:
                 this.debuff(this.duration)
+            this.e_afflic()
         else:
             # resist
             if this.log:
@@ -215,6 +221,8 @@ class _Afflic_cc():
         this.ks.on_end = this.cb_end
 
         this.log = Logger('afflic')
+        this.e_afflic = this.src.Event('afflic')
+        this.e_afflic.atype = atype
 
     def reset(this):
         this.ks.off()
@@ -250,6 +258,7 @@ class _Afflic_cc():
             this._static.cc = {this.atype: this}
             this.resist[this.atype] += 0.2
             this.ks(this.duration)
+            this.e_afflic()
         else:
             # resist
             if this.log:

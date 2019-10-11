@@ -281,6 +281,8 @@ class Character(object):
         this.atk += this.w.atk + this.a.atk
         this.atk = int(this.atk)
         log_('info','%s, base_atk'%(this.name),this.atk)
+        log_('info','%s, displayed_atk'%(this.name),
+                int(this.Dp.get('atk')*this.atk))
         
     def classinit(this):
         this.Dp = Dmg_param(this)

@@ -114,7 +114,7 @@ class _Skill(object):
         this.src = host.name+', '
 
         Conf_skl(this, conf)()
-        this.conf['on_end'] = [this.skill_end]
+        this.conf['on_end'].append( this.skill_end )
         this.ac = host.Action(this.name, this.conf)
         this.conf = this.ac.conf
 

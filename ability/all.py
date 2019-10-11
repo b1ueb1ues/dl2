@@ -16,7 +16,7 @@ class atk(Ability):
             this.condi = 'hit>=15'
             this.on = 0
             this.passive = this.host.Passive('%s_atk'%name, 0, 'atk')
-            Listener('hit')(this.l_hit)
+            this.host.Listener('hit')(this.l_hit)
         else:
             this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
 
@@ -73,7 +73,7 @@ class cc(Ability):
             this.condi = 'hit>=15'
             this.on = 0
             this.passive = this.host.Passive('%s_cc'%name, 0, 'cc')
-            Listener('hit')(this.l_hit)
+            this.host.Listener('hit')(this.l_hit)
         else:
             this.passive = this.host.Passive('%s_cc'%name, v, 'cc')
 
@@ -175,8 +175,6 @@ class k(Ability):
 killer = k
 
 
-
-
 class def_c_atk(Ability):
     def __init__(this, name, v):
         this.name = name
@@ -186,8 +184,6 @@ class def_c_atk(Ability):
         Listener('def')(c_atk)
     
     def c_atk(this, e):
-        if e.host != this.host:
-            return 
         this.host.Selfbuff('def_chain', this.v)(15)
 
 class def_c_energy(Ability):
@@ -200,6 +196,34 @@ class def_c_energy(Ability):
     
     def c_energy(this, e):
         pass
+
+class afflic_c_selfatk(Ability):
+    def __init__(this, name, v, atype):
+        this.name = name
+        this.v = v
+        this.atype = atype
+
+    def __call__(this):
+        this.host.Listener('afflic')(this.c_atk)
+    
+    def c_atk(this, e):
+        if e.atype != this.atype:
+            return
+        this.host.Selfbuff('afflic_c_%s'%this.atype, this.v)(15)
+
+class afflic_c_teamatk(Ability):
+    def __init__(this, name, v, atype):
+        this.name = name
+        this.v = v
+        this.atype = atype
+
+    def __call__(this):
+        this.host.Listener('afflic')(this.c_atk)
+    
+    def c_atk(this, e):
+        if e.atype != this.atype:
+            return
+        this.host.Teambuff('afflic_c_%s'%this.atype, this.v)(15)
 
 class skill_link(Ability):
     def __init__(this, name, v, btype):
@@ -257,11 +281,9 @@ class dc(Ability):
             buff = [0.06,0.15,0.30]
 
     def __call__(this):
-        Listener('dragon')(d_atk)
+        this.host.Listener('dragon')(d_atk)
     
     def d_atk(this, e):
-        if e.host != this.host:
-            return 
         if this.idx <= 2:
             this.host.Selfbuff('dragon_claw', this.buff[this.idx])(-1)
             this.idx+=1

@@ -17,7 +17,6 @@ class Yachiyo(Character):
         ,'acl.cancel' : '''
             `s1
             `s2, x=5
-            `s3, fsc
             `fs, x=5
         '''
         }
@@ -29,12 +28,12 @@ class Yachiyo(Character):
         ,'ele'             : 'light'
         ,'wt'              : 'blade'
         ,'atk'             : 501
-#        ,'a1'              : ('skill_link', 0.15, 'def')
+        ,'a1'              : ('afflic_c_selfatk', 0.15, 'paralysis')
         ,'a3'              : ('k', 0.20, 'paralysis')
 
         ,'s1.hit'          : [(0,'h1'),(1,'h1')]
         ,'s1.attr.h1.coef' : 4.32
-        ,'s1.recovery'     : 2.4
+        ,'s1.recovery'     : 2.0
         ,'s1.sp'           : 2567
 
         ,'s2.sp'           : 4139
@@ -85,7 +84,6 @@ if __name__ =='__main__':
 
     #logset([])
     Ctx()
-    #tar = water()
     tar = dummy()
     tar.init()
 

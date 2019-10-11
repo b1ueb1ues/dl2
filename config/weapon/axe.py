@@ -39,7 +39,7 @@ conf = {
 , 'fs.startup'      : -1
 , 'fs.recovery'     : -1
 
-, 'fsf.startup'    : 0
-, 'fsf.recovery'   : 41    / 60.0
+, 'fsf.startup'    : 0.76
+, 'fsf.recovery'   : 0
 
 }
