@@ -29,7 +29,7 @@ class Conf_chara(Config):
             ,'rotation'   : 0
             ,'acl'        : 0
 
-            ,'param_type' : ['atk', 'dmg', 'cc', 'cd',
+            ,'param_type' : ['', 'atk', 'dmg', 'cc', 'cd',
                              'sp', 'spd', 'buff', 
                              'killer','energy', # 'def', 'ks'
                              'x','fs','s']
@@ -168,24 +168,33 @@ class Character(object):
 
         import config.weapon
         wtconf = Conf()(config.weapon.wtconf[this.conf['wt']]).get
+        this.wtconf = wtconf
         this.x1 = this.Combo('x1', this, wtconf['x1'])
         this.x2 = this.Combo('x2', this, wtconf['x2'])
         this.x3 = this.Combo('x3', this, wtconf['x3'])
         this.x4 = this.Combo('x4', this, wtconf['x4'])
         this.x5 = this.Combo('x5', this, wtconf['x5'])
-        this.conf['x1'] = this.x1.conf
-        this.conf['x2'] = this.x2.conf
-        this.conf['x3'] = this.x3.conf
-        this.conf['x4'] = this.x4.conf
-        this.conf['x5'] = this.x5.conf
+        #this.conf['x1'] = this.x1.conf
+        #this.conf['x2'] = this.x2.conf
+        #this.conf['x3'] = this.x3.conf
+        #this.conf['x4'] = this.x4.conf
+        #this.conf['x5'] = this.x5.conf
+        wtconf['x1'] = this.x1.conf
+        wtconf['x2'] = this.x2.conf
+        wtconf['x3'] = this.x3.conf
+        wtconf['x4'] = this.x4.conf
+        wtconf['x5'] = this.x5.conf
 
         this.a_x = [this.x1, this.x2, this.x3, this.x4, this.x5, this.x1]
         this.a_s = [this.s1, this.s2, this.s3]
 
         this.fs = Fs_group(this, wtconf)
+        this.a_fs = [this.fs]
         if 'fsf' in wtconf:
             this.fsf = this.Fs('fsf', this, wtconf['fsf'])
             wtconf['fsf'] = this.fsf.conf
+
+        this.conf.update(wtconf)
 
         #print(Conf(this.conf))
         conf_update = this.dconf()

@@ -274,6 +274,8 @@ class _Buff(object):
         if this.log:
             this.__buff_stack()
         this.t_buffend.off()
+        for i in this.on_end:
+            i()
         return this
 
 

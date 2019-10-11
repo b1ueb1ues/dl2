@@ -25,7 +25,7 @@ class Skada(object):
             d = dmg(this._skada[i]['dmg'])
             od = dmg(this._skada[i]['odmg'])
             r[i] = {'dmg':d, 'odmg':od}
-            print(i,'dmg:', d )
+            print(i,' dmg:', d )
             print(i,'odmg:', od )
         return r
 
