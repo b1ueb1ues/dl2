@@ -582,7 +582,7 @@ class _Fs(object):
     def collid(this, dmg):
         if this.firsthit:
             this.firsthit = 0
-            this.charge('fs', this.sp)
+            this.charge_fs('fs', this.sp)
             for i in this.proc:
                 i()
 

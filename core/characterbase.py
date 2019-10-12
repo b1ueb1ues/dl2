@@ -30,7 +30,7 @@ class Conf_chara(Config):
             ,'acl'        : 0
 
             ,'param_type' : ['', 'atk', 'dmg', 'cc', 'cd',
-                             'sp', 'spd', 'buff', 
+                             'sp', 'fsp', 'spd', 'buff', 
                              'killer','energy', # 'def', 'ks'
                              'x','fs','s']
             ,'s1' : None
@@ -129,7 +129,7 @@ class Character(object):
 
         this.e_hit = this.Event('hit')
         this.e_acl = this.Event('acl')
-        this.e_acl.type = 'charge'
+        this.e_acl.type = 'sp'
 
         this.logsp = Logger('sp')
         this.loghit = Logger('hit')
@@ -315,6 +315,24 @@ class Character(object):
 
     def charge(this, name, sp):
         sp = int(sp) * floatsingle.tofloat(this.mod('sp'))
+        sp = floatsingle.tofloat(sp)
+        sp = floatsingle.ceiling(sp)
+        this.s1.charge(sp)
+        this.s2.charge(sp)
+        this.s3.charge(sp)
+        if this.logsp :
+            this.logsp('%s, %s'%(this.name, name), sp,
+                    '%d/%d, %d/%d, %d/%d'%( \
+                    this.s1.sp.cur, this.s1.sp.max,
+                    this.s2.sp.cur, this.s2.sp.max,
+                    this.s3.sp.cur, this.s3.sp.max)
+                    )
+        this.e_acl()
+        if this.Skill.s_prev:
+            this.Skill.s_prev = None
+
+    def charge_fs(this, name, sp):
+        sp = int(sp) * floatsingle.tofloat(this.mod('sp')+this.mod('fsp'))
         sp = floatsingle.tofloat(sp)
         sp = floatsingle.ceiling(sp)
         this.s1.charge(sp)
