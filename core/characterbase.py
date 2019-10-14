@@ -242,6 +242,19 @@ class Character(object):
         this.e_idle()
 
 
+  #  def get_sub(this):
+  #      this.subclasses = {}
+  #      for i in this.__class__.__subclasses__():
+  #          this.subclasses[i.__name__] = i
+  #      return this.subclasses
+
+    @classmethod
+    def get_sub(cls):
+        subclasses = {}
+        for i in cls.__subclasses__():
+            subclasses[i.__name__] = i
+        return subclasses
+
 
     def setup(this):
         this.Passive('base_crit_chance', this.base_crit, 'cc')()
