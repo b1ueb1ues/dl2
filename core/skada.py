@@ -13,7 +13,7 @@ class Skada(object):
     reset = init
 
     @classmethod
-    def sum(this):
+    def sum(this, q=0):
         def dmg(c):
             _sum = 0
             for i in c:
@@ -25,11 +25,21 @@ class Skada(object):
             d = dmg(this._skada[i]['dmg'])
             od = dmg(this._skada[i]['odmg'])
             r[i] = {'dmg':d, 'odmg':od}
-            print(i,' dmg:', d )
-            print(i,'odmg:', od )
+            if not q:
+                print(i,' dmg:', d )
+                print(i,'odmg:', od )
         return r
 
 
+    @classmethod
+    def div(this, d):
+        for i in this._skada:
+            for j in this._skada[i]['dmg']:
+                this._skada[i]['dmg'][j] = \
+                    int(this._skada[i]['dmg'][j] / d)
+            for j in this._skada[i]['odmg']:
+                this._skada[i]['odmg'][j] = \
+                    int(this._skada[i]['odmg'][j] / d)
 
 
 

@@ -10,6 +10,13 @@ dirname += '/_acl/'
 f = 0
 initialized = {}
 
+def acl_reset(host=None):
+    global initialized
+    if not host :
+        initialized = {}
+    else:
+        del(initialized[host])
+
 def acl_module_init(host):
     global f
     global initialized

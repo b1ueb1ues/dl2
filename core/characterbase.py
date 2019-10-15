@@ -141,7 +141,7 @@ class Character(object):
 
 
     # after settle down all config
-    def character_init(this):
+    def character_init(this, conf_param=None):
         this.classinit()
 
         if this.s1_proc:
@@ -199,6 +199,8 @@ class Character(object):
         #print(Conf(this.conf))
         conf_update = this.dconf()
         Conf(this.conf)(conf_update)
+        if conf_param:
+            Conf(this.conf)( Conf(conf_param) )
 
         this.setup()
         this.child_init()
@@ -242,12 +244,6 @@ class Character(object):
         this.e_idle()
 
 
-  #  def get_sub(this):
-  #      this.subclasses = {}
-  #      for i in this.__class__.__subclasses__():
-  #          this.subclasses[i.__name__] = i
-  #      return this.subclasses
-
     @classmethod
     def get_sub(cls):
         subclasses = {}
@@ -278,6 +274,9 @@ class Character(object):
             ex[i] = 1
         ex[this.wt] = 1
 
+        if len(ex) > 4:
+            print('ex-skill cannot more than 4')
+            raise
         for i in ex:
             if i == 'blade':
                 this.Passive('ex_blade',  0.10, 'atk', 'ex')()
@@ -287,6 +286,8 @@ class Character(object):
                 this.Passive('ex_dagger', 0.10, 'cc',  'p')()
             elif i == 'bow':
                 this.Passive('ex_bow',    0.15, 'sp',  'p')()
+            else:
+                pass
 
         from config import forte
         this.atk = this.base_atk * forte.c(this.ele, this.wt)

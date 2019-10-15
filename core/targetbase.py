@@ -76,6 +76,12 @@ class Target(object):
         this.logdmg = Logger('dmg')
         this.od_count = 0
 
+    @classmethod
+    def get_sub(cls):
+        subclasses = {}
+        for i in cls.__subclasses__():
+            subclasses[i.__name__] = i
+        return subclasses
 
 
     def classinit(this):

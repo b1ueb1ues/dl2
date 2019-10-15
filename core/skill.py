@@ -536,7 +536,7 @@ class _Fs(object):
 
         this.log = Logger('fs')
         this.src = host.name+', '
-        this.charge = host.charge
+        this.charge_fs = host.charge_fs
         this.t_startup = Timer(this._active)
 
 

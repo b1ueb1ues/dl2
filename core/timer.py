@@ -52,7 +52,7 @@ class Timeline(object):
             headt.callback()
         else:
             print('timeline time err')
-            exit()
+            raise
         return 0
     
 
@@ -166,11 +166,11 @@ class Timer(object):
 
 
     def __str__(this):
-        return '%d: Timer:%s'%(this.timing, this.process)
+        return '%.3f: Timer:%s'%(this.timing, this.process)
 
 
     def __repr__(this):
-        return '%d: Timer:%s'%(this.timing, this.process)
+        return '%.3f: Timer:%s'%(this.timing, this.process)
 
 
     def _process(this):

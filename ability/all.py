@@ -173,6 +173,7 @@ class k(Ability):
     def __call__(this):
         this.passive()
 killer = k
+k_burn = k
 
 
 class def_c_atk(Ability):

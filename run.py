@@ -1,10 +1,6 @@
 from core.ctx import *
-from target.dummy import *
-from target.hms import *
-from character.mikoto import *
-from character.elisanne import *
-#from character.faketeam import *
-from core import benchmark
+from core import env
+from core.skada import *
 
 logset('all')
 
@@ -18,37 +14,22 @@ logset('sp')
 #logset('act')
 #logset('x')
 
-import core.acl
+env.root = {
+ '1p.name'     : 'Mikoto'
+,'1p.slot.a1'  : 'EE'
+,'1p.slot.a2'  : 'RR'
+,'2p.name'     : 'Elisanne'
+,'3p.name'     : 'Natalie'
+,'4p.name'     : 'Rena'
+,'target.name' : 'dummy'
+,'ex'          : []
+,'duration'    : 120
+,'sample'      : 1
+}
+env.run()
+logcat()
+Skada.div(env.root['duration']*env.root['sample'])
+d = Skada.sum()
 
-def foo():
-    global c
-    global acl
-    Ctx()
-    tar = dummy()
-    tar.init()
 
-    c = Mikoto()
-    c.tar(tar)
-    #c.conf['slot']['w'] = 'v534_flame_zephyr'
-    c.init()
-
-    c2 = Elisanne()
-    c2.tar(tar)
-    c2.init()
-
-    #c3 = Faketeam()
-    #c3.tar(tar)
-    #c3.init()
-
-    d = 120
-    r = Timer.run(d)
-    logcat()
-    skada = Skada.sum()
-    print('Mikoto dps',skada['Mikoto']['dmg']/now())
-    print('Elisanne dps',skada['Elisanne']['dmg']/now())
-    #print('dps',skada['Faketeam']['dmg']/now())
-    for i in Skada._skada:
-        print(i, Skada._skada[i])
-
-foo()
 

@@ -1,7 +1,7 @@
 import __init__
 from core.characterbase import *
-from core.conf import *
-from character.mikoto import *
+from core.targetbase import *
+from core.ctx import *
 
 stage = {}
 stage['1p'] = None
@@ -12,21 +12,108 @@ stage['target'] = None
 
 
 root = {
- '1p.name'   : 'Mikoto'
-,'1p.slot.d' : 'Cerb'
-,'2p.name'   : 'Elisanne'
-,'target'    : 'dummy'
+ '1p.name'    : 'Elisanne'
+,'1p.slot.a1' : 'BB'
+,'1p.slot.a2' : 'JotS'
+,'2p.name'    : 'Addis'
+,'2p.slot.d'  : 'Vayu'
+,'target.name': 'dummy'
+,'ex' :['blade','wand']
+,'duration' : 120
+,'sample' : 1
 }
 
-def run(rootconf, time):
+def _run():
+    global root
+    rootconf = root
+    time = root['duration']
     c = Conf()
     c(rootconf)
     conf = c.get
-    if '1p' in conf:
-        name = conf['1p']['name']
-        __import__('character.'+name)
-        print(Character.get_sub())
+    p = {'1p':None, '2p':None, '3p':None, '4p':None}
+    for i in p:
+        if i in conf:
+            name = conf[i]['name']
+            p[i] = name
+            __import__('character.'+name.lower())
+    tname = conf['target']['name']
+    __import__('target.'+conf['target']['name'])
+    cclass = Character.get_sub()
+    target = Target.get_sub()[tname]()
+    target.init()
+    stage['target'] = target
+
+    cs = {'1p':None, '2p':None, '3p':None, '4p':None}
+    for i in cs:
+        cname = p[i]
+        if cname != None:
+            c = cclass[cname](conf)
+            cs[i] = c
+            c.tar(target)
+            if c.wt not in conf['ex']:
+                conf['ex'].append(c.wt)
+            stage[i] = c
+    for i in cs:
+        c = cs[i]
+        if c != None:
+            c.init( conf[i] )
+    Timer.run(time)
+    return conf
+
+dmax = {}
+dmin = {}
+def run():
+    import random
+    global root
+    global dmax
+    global dmin
+    if root['sample'] > 1:
+        logset([])
+        random.seed(0)
+
+    conf = Conf()(root).get
+    p = {'1p':None, '2p':None, '3p':None, '4p':None}
+    for i in p:
+        if i in conf:
+            name = conf[i]['name']
+            p[i] = name
+
+    results = {}
+    lastresult = {}
+    for i in p:
+        if p[i] != None:
+            #results[p[i]] = []
+            lastresult[p[i]] = 0
+            dmax[p[i]] = 0
+            dmin[p[i]] = -1
+    for i in range(root['sample']):
+        conf = Ctx()
+        _run()
+        r = Skada.sum(q=1)
+        for i in r:
+            d = r[i]['dmg']-lastresult[i]
+            #results[i].append(d)
+            lastresult[i] = r[i]['dmg']
+            if d > dmax[i]:
+                dmax[i] = d
+            if d < dmin[i] or dmin[i]==-1:
+                dmin[i] = d
+    return conf
+
+        
 
 
 if __name__ == '__main__':
-    run(root, 0)
+    logset(['rotation','buff'])
+    run()
+    logcat()
+    print('1-----------')
+    Skada.div(root['sample']*root['duration'])
+    print('2-----------')
+    print(dmax)
+    print(dmin)
+    d = Skada.sum(q=1)
+    for i in d:
+        print(i, d[i]['dmg'])
+    print('3-----------')
+    print(Skada._skada)
