@@ -173,7 +173,14 @@ class k(Ability):
     def __call__(this):
         this.passive()
 killer = k
-k_burn = k
+
+class k_burn(Ability):
+    def __init__(this, name, v):
+        this.v = v
+        this.passive = this.host.Passive('%s_burn_killer'%(name),
+                                            v, 'killer', 'burn')
+    def __call__(this):
+        this.passive()
 
 
 class def_c_atk(Ability):

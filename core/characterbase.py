@@ -10,6 +10,7 @@ from weapon import *
 from dragon import *
 from mod.energy import *
 from core import eventevent
+from core.condition import *
 
 
 
@@ -139,6 +140,8 @@ class Character(object):
         this.child_init = this.init
         this.init = this.character_init
 
+        this.condition = Condition()
+
 
     # after settle down all config
     def character_init(this, conf_param=None):
@@ -204,6 +207,18 @@ class Character(object):
 
         this.setup()
         this.child_init()
+
+        setup = '%s*,%s,%s,%s,[%s+%s],[%s],<%s>,'%(this.star, this.ele, this.wt,
+                    int(this.Dp.get('atk')*this.atk),
+                    this.conf['slot']['a1'],
+                    this.conf['slot']['a2'],
+                    this.conf['slot']['d'],
+                    str(this.condition)
+                )
+        if this.__doc__ :
+            setup += this.__doc__
+        setup += ','
+        log_('info','%s, '%(this.name),'setup', setup)
 
         import core.acl
         global default_acl_prepare
@@ -295,8 +310,7 @@ class Character(object):
         this.atk += this.w.atk + this.a.atk
         this.atk = int(this.atk)
         log_('info','%s, base_atk'%(this.name),this.atk)
-        log_('info','%s, displayed_atk'%(this.name),
-                int(this.Dp.get('atk')*this.atk))
+
         
     def classinit(this):
         this.Dp = Dmg_param(this)

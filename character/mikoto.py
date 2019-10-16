@@ -25,6 +25,7 @@ class Mikoto(Character):
         """
         }
 
+
     def conf(this):
         return {
          'name'    : 'Mikoto'
@@ -49,6 +50,7 @@ class Mikoto(Character):
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
         }
+
 
     def init(this):
 
@@ -85,23 +87,7 @@ class Mikoto(Character):
         this.ss.reset()
 
 
-
-
 if __name__ == '__main__':
-    logset(['buff', 'dmg', 'bk', 'sp'])
-    logset('fs')
-    logset('s')
-    logset(['rotation','dmg'])
-
-    tar = dummy()
-    tar.init()
-
-    c = Mikoto()
-    c.tar(tar)
-    c.init()
-
-    d = 120
-    Timer.run(d)
-    logcat()
-    print('dps',Skada.sum()['Mikoto']['dmg']/now())
-    print(Skada._skada)
+    import run
+    #logset('all')
+    run.this_character()

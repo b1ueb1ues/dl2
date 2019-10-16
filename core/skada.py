@@ -32,14 +32,17 @@ class Skada(object):
 
 
     @classmethod
-    def div(this, d):
+    def div(this, d, d2):
         for i in this._skada:
             for j in this._skada[i]['dmg']:
                 this._skada[i]['dmg'][j] = \
-                    int(this._skada[i]['dmg'][j] / d)
+                    int(this._skada[i]['dmg'][j] / d / d2)
             for j in this._skada[i]['odmg']:
                 this._skada[i]['odmg'][j] = \
-                    int(this._skada[i]['odmg'][j] / d)
+                    int(this._skada[i]['odmg'][j] / this._skada[i]['otime'] /d2)
+    @classmethod
+    def __str__(this):
+        return str(this._skada)
 
 
 

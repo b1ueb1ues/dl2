@@ -68,36 +68,5 @@ class Addis(Character):
 
 
 if __name__ =='__main__':
-    logset(['buff','dmg','bk'])
-    #logset(['buff','dmg','bk','sp'])
-    #logset('afflic')
-    #logset('act')
-    #logset('rotation')
-    #logset('x')
-    #logset('fs')
-    #logset('act')
-    #logset('s')
-    #logset(['buff','debug','dmg','hit'])
-    root = {}
-    #root = {'ex':['bow']}
-
-    logset([])
-    sample = 1000
-    time_total = 0
-    for i in range(sample):
-        Ctx()
-        #tar = water()
-        tar = dummy()
-        tar.init()
-
-        c = Addis(root)
-        c.tar(tar)
-        c.init()
-
-        d = 120
-        Timer.run(d)
-        time_total+=now()
-    logcat()
-    print('dps',Skada.sum()['Addis']['dmg']/time_total)
-    print(Skada._skada)
-
+    import run
+    run.this_character()

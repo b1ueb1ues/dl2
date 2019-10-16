@@ -113,7 +113,8 @@ class Target(object):
         if hostname not in this.skada:
             this.skada[hostname] = {
                     'dmg':{},
-                    'odmg':{}
+                    'odmg':{},
+                    'otime':0
                     }
         hostdmg = this.skada[hostname]['dmg']
         hostodmg = this.skada[hostname]['odmg']
@@ -127,6 +128,9 @@ class Target(object):
                 hostodmg[dmgname] += odmg
             else:
                 hostodmg[dmgname] = odmg
+            for i in this.skada:
+                this.skada[i]['otime'] += now() - this.od_start
+            this.od_start = now()
 
         if this.logdmg:
             this.logdmg('%s, %s'%(hostname, dmgname), dmg,
@@ -170,8 +174,9 @@ class Target(object):
             this.die()
         if this.odbk == 0 and this.od > this.base_od :
             this.overdrive()
-        elif this.odbk == 1 and this.bk < 0:
-            this.break_()
+        elif this.odbk == 1 :
+            if this.bk < 0:
+                this.break_()
 
 
     def die(this):
@@ -187,10 +192,9 @@ class Target(object):
         this.od_ks()
         if this.logod:
             this.logod('start')
+        if 'Afflics' in this.mod:
+            this.mod['Afflics'].reset()
         this.od_start = now()
-        ##
-        # TODO: clean afflic
-        #
 
     def clean_afflic(this):
         if 'Afflics' not in this.mod:
@@ -210,7 +214,6 @@ class Target(object):
             this.logod('end')
         if this.logbk:
             this.logbk('start')
-        this.od_count += now() - this.od_start
 
 
     def normal(this):

@@ -6,7 +6,7 @@ _g_cond = 0
 class Condition(object):
 
     def __init__(this):
-        this.if_condition = False
+        this.if_condition = True
         this.conditions = {}
         this.switch = -1
 
@@ -42,6 +42,7 @@ class Condition(object):
             errrrrrrrrrrr()
 
         return this.if_condition
+    on = __call__
 
 
 if __name__ == '__main__':
