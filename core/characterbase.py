@@ -208,10 +208,10 @@ class Character(object):
         this.setup()
         this.child_init()
 
-        setup = '%s*,%s,%s,%s,[%s+%s],[%s],<%s>,'%(this.star, this.ele, this.wt,
+        setup = '%s*,%s,%s,%s,[%s+%s],[%s],[%s],'%(this.star, this.ele, this.wt,
                     int(this.Dp.get('atk')*this.atk),
-                    this.conf['slot']['a1'],
-                    this.conf['slot']['a2'],
+                    this.a.a1.__class__.__name__ ,
+                    this.a.a2.__class__.__name__ ,
                     this.conf['slot']['d'],
                     str(this.condition)
                 )

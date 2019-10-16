@@ -7,16 +7,16 @@ class atk(Ability):
     def __init__(this, name, v, c=None):
         this.v = v
         if c == 'hp70':
-            this.condi = 'hp>70%'
-            this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
+            if this.host.condition('hp>70%'):
+                this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
         elif c == 'hp100':
-            this.condi = 'hp=100%'
-            this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
+            if this.host.condition('hp=100%'):
+                this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
         elif c == 'hit15':
-            this.condi = 'hit>=15'
-            this.on = 0
-            this.passive = this.host.Passive('%s_atk'%name, 0, 'atk')
-            this.host.Listener('hit')(this.l_hit)
+            if this.host.condition('flurry'):
+                this.on = 0
+                this.passive = this.host.Passive('%s_atk'%name, 0, 'atk')
+                this.host.Listener('hit')(this.l_hit)
         else:
             this.passive = this.host.Passive('%s_atk'%name, v, 'atk')
 

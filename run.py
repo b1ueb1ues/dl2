@@ -2,7 +2,9 @@ from core.ctx import *
 from core import env
 from core.skada import *
 
-def solo(name, duration=120, ex=['wand','blade']):
+default_ex = ['wand','blade']
+
+def solo(name, duration=120, ex=default_ex):
     env.root = {
      '1p.name'     : name
 #,'2p.name'     : 'Elisanne'
@@ -14,7 +16,7 @@ def solo(name, duration=120, ex=['wand','blade']):
     env.run()
     Skada.div(env.root['duration'], env.root['sample'])
 
-def solo_range(name, duration=120, ex=['wand','blade']):
+def solo_range(name, duration=120, ex=default_ex):
     env.root = {
      '1p.name'     : name
 #,'2p.name'     : 'Elisanne'
@@ -31,16 +33,16 @@ def team(conf):
     env.run()
     Skada.div(env.root['duration'],env.root['sample'])
 
-def this_character(time=120, ex=['wand', 'blade'], verbose=0, mass=0):
+def this_character(time=120, ex=default_ex, verbose=0, mass=0):
     import sys
     from core import characterbase as cb
     import statistic
 
     argv = sys.argv
     if len(argv) >= 2:
-        verbose = argv[1]
+        verbose = int(argv[1])
     if len(argv) >= 3:
-        time = argv[2]
+        duration = int(argv[2])
     if len(argv) >= 4:
         ex_lite = argv[3]
         ex = []
