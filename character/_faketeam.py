@@ -25,7 +25,7 @@ class Plain_a2(Amulet):
     atk = 0
     a = [('atk',0.13)]
 
-class Faketeam(Character):
+class _Faketeam(Character):
     def dconf(this):
         return {
          'slot.w'  : 'Plain_w'
@@ -43,7 +43,7 @@ class Faketeam(Character):
 
     def conf(this):
         return {
-         'name'    : 'Faketeam'
+         'name'    : '_Faketeam'
         ,'star'    : 5
         ,'ele'     : 'on'
         ,'wt'      : 'blade'

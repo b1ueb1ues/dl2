@@ -33,6 +33,7 @@ class Aeleen(Character):
         ,'s1.sp'           : 2579
 
         ,'s2.sp'           : 8534
+        ,'s2.buff'         : ('team', 0.15, 15, 'def')
         ,'s2.recovery'     : 1
         }
 

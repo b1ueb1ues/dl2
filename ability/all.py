@@ -189,10 +189,11 @@ class def_c_atk(Ability):
         this.v = v
 
     def __call__(this):
-        Listener('def')(c_atk)
+        this.host.Listener('buff')(this.c_atk)
     
     def c_atk(this, e):
-        this.host.Selfbuff('def_chain', this.v)(15)
+        if e.btype == 'def':
+            this.host.Selfbuff('def_chain', this.v)(15)
 
 class def_c_energy(Ability):
     def __init__(this, name, v):
@@ -200,10 +201,10 @@ class def_c_energy(Ability):
         this.v = v
 
     def __call__(this):
-        Listener('def')(c_energy)
+        this.host.Listener('def')(c_energy)
     
     def c_energy(this, e):
-        pass
+        this.host.Energy.self(1)
 
 class afflic_c_selfatk(Ability):
     def __init__(this, name, v, atype):
@@ -234,10 +235,49 @@ class afflic_c_teamatk(Ability):
         this.host.Teambuff('afflic_c_%s'%this.atype, this.v)(15)
 
 class skill_link(Ability):
-    def __init__(this, name, v, btype):
-        pass
+    def __init__(this, name, v, btype, duration=10):
+        from core import env
+        this.dst = env.stage['1p']
+        this.btype = btype
+        this.v = v
+        this.duration = duration
+        this.t = 0
+        this.cding = 0
+        this.t_cd = Timer(this.cd)
+        this.logcd = Logger('cd')
+
+    def cd(this, t):
+        this.cding = 0
+
     def __call__(this):
-        pass
+        this.dst.conf['x1']['proc'].append(this.check)
+        this.dst.conf['x2']['proc'].append(this.check)
+        this.dst.conf['x3']['proc'].append(this.check)
+        this.dst.conf['x4']['proc'].append(this.check)
+        this.dst.conf['x5']['proc'].append(this.check)
+        this.dst.conf['fs']['proc'].append(this.check)
+
+    def check(this):
+        if this.cding :
+            if this.logcd:
+                sp = this.dst.s1.sp
+                if sp.cur >= sp.max and this.t==0:
+                    this.logcd('skill_link cding')
+            return
+        sp = this.dst.s1.sp
+        if sp.cur >= sp.max and this.t==0:
+            this.t = 1
+            print('dst',this.dst)
+            this.dst.Selfbuff('skill_link_%s'%this.btype, this.v, this.btype)\
+                                (this.duration)
+            this.cding = 1
+            this.t_cd(15)
+        elif sp.cur < sp.max :
+            this.t = 0
+
+
+
+
 
 class lo(Ability):
     def __init__(this, name, v):

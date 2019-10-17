@@ -7,8 +7,6 @@ class Ability(object):
             errrrrrrrrrrr()
         this.host = host
 
-        this.host = host
-
     
     def __call__(this, name, classname, *args, **kwargs):
         import ability
@@ -16,6 +14,7 @@ class Ability(object):
         abilities[classname]._static = this
         abilities[classname].host = this.host
         this.a = abilities[classname](name, *args, **kwargs)
+        this.a.host = this.host
         return this.a
     
 

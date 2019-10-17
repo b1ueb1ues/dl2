@@ -91,13 +91,16 @@ def run():
         _run()
         r = Skada.sum(q=1)
         for i in r:
-            d = r[i]['dmg']-lastresult[i]
-            #results[i].append(d)
-            lastresult[i] = r[i]['dmg']
-            if d > dmax[i]:
-                dmax[i] = d
-            if d < dmin[i] or dmin[i]==-1:
-                dmin[i] = d
+            if i[0] != '_':
+                d = r[i]['dmg']-lastresult[i]
+                #results[i].append(d)
+                lastresult[i] = r[i]['dmg']
+                if d > dmax[i]:
+                    dmax[i] = d
+                if d < dmin[i] or dmin[i]==-1:
+                    dmin[i] = d
+    if root['sample'] > 1:
+        root['range'] = {'min':dmin, 'max':dmax}
     return conf
 
         

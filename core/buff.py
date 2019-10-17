@@ -120,7 +120,10 @@ class _Buff(object):
         this._active = 0
         this.t_buffend = Timer(this.__buff_end)
         this.Dp = this._static.Dp
-        this.dp = this.Dp(this.name, this.mod_type, this.mod_order, value)
+        if this.mod_type in this.Dp.type_mods:
+            this.dp = this.Dp(this.name, this.mod_type, this.mod_order, value)
+        else:
+            this.dp = this.Dp(this.name, '', this.mod_order, value)
         if group_id not in this._static.buff_group:
             this.group = []
             this._static.buff_group[group_id] = this.group
@@ -132,6 +135,9 @@ class _Buff(object):
 
         this.log = Logger('buff')
         this.log_dp = Logger('dp')
+
+        this.e_on = static.host.Event('buff')
+        this.e_on.btype = mtype
 
         this.on_end = []
 
@@ -199,8 +205,9 @@ class _Buff(object):
             if stacks > 1:
                 this.__buff_stack()
         if this.log_dp:
-            this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
-                    this._static.Dp.get(this.mod_type))
+            if this.mod_type in this._static.Dp.type_mods:
+                this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
+                        this._static.Dp.get(this.mod_type))
 
 
     def __buff_refresh(this, duration):
@@ -238,13 +245,15 @@ class _Buff(object):
         for i in this.on_end:
             i()
         if this.log_dp:
-            this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
-                this._static.Dp.get(this.mod_type))
+            if this.mod_type in this._static.Dp.type_mods:
+                this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
+                        this._static.Dp.get(this.mod_type))
 
     def on(this, duration):
         this.duration = duration
         if this._active == 0:
             this.__buff_start(duration)
+            this.e_on()
         else:
             this.__buff_refresh(duration)
 

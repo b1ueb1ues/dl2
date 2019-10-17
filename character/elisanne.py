@@ -47,21 +47,5 @@ class Elisanne(Character):
 
 
 if __name__ =='__main__':
-    #logset(['buff','dmg','od','bk'])
-    logset(['buff','dmg','bk','sp'])
-    #logset('x')
-    #logset('fs')
-    #logset('act')
-    #logset('s')
-    #logset(['buff','debug','dmg','hit'])
-    root = {'ex':['bow']}
-
-    tar = dummy()
-    tar.init()
-
-    c = Elisanne(root)
-    c.tar(tar)
-    c.init()
-
-    Timer.run(60)
-    logcat()
+    import run
+    run.this_character()

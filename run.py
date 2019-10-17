@@ -7,7 +7,7 @@ default_ex = ['wand','blade']
 def solo(name, duration=120, ex=default_ex):
     env.root = {
      '1p.name'     : name
-#,'2p.name'     : 'Elisanne'
+    ,'2p.name'     : '_Faketeam'
     ,'target.name' : 'dummy'
     ,'ex'          : ex
     ,'duration'    : duration
@@ -19,7 +19,7 @@ def solo(name, duration=120, ex=default_ex):
 def solo_range(name, duration=120, ex=default_ex):
     env.root = {
      '1p.name'     : name
-#,'2p.name'     : 'Elisanne'
+    ,'2p.name'     : '_Faketeam'
     ,'target.name' : 'dummy'
     ,'ex'          : ex
     ,'duration'    : duration
@@ -27,6 +27,9 @@ def solo_range(name, duration=120, ex=default_ex):
     }
     env.run()
     Skada.div(env.root['duration'], env.root['sample'])
+    env.root['range']['min'][name] /= env.root['duration']
+    env.root['range']['max'][name] /= env.root['duration']
+
 
 def team(conf):
     env.root = conf
@@ -63,28 +66,44 @@ def this_character(time=120, ex=default_ex, verbose=0, mass=0):
     cs = cb.Character.get_sub()
 
     statistic.loglevel(verbose)
-    if mass:
+    if mass and verbose<=0:
         for i in cs:
             solo_range(i, time, ex) 
     else:
         for i in cs:
             solo(i, time, ex) 
 
-    #statistic.show_rotation()
-    #statistic.show_detail()
-    statistic.show_csv()
+    if verbose == 0:
+        statistic.show_detail()
+    elif verbose == 1:
+        statistic.show_rotation()
+    elif verbose == 2:
+        statistic.show_log()
+    elif verbose == -2:
+        statistic.show_csv()
+    else:
+        statistic.show_detail()
 
 
 if __name__ == '__main__':
+    logset(['all'])
     root = {
      '1p.name'     : 'Mikoto'
-    ,'2p.name'     : 'Elisanne'
+    ,'1p.slot.a1'  : 'VC'
+    ,'1p.slot.a2'  : 'BN'
+    ,'2p.name'     : 'Aeleen'
+    ,'2p.acl'      : '''
+        `s1
+        `s2
+        `fsf, x=5
+    '''
     ,'target.name' : 'dummy'
     ,'ex'          : ['wand','blade']
     ,'duration'    : 120
     ,'sample'      : 1
     }
     team(root)
+    logcat()
 
 
 

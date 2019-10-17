@@ -11,7 +11,7 @@ class Rena(Character):
         return {
          'slot.w'          : 'c534_flame'
         ,'slot.d'          : 'Sakuya'
-        ,'slot.a1'         : 'RR'
+        ,'slot.a1'         : 'VC'
         ,'slot.a2'         : 'BN'
         ,'acl.cancel' : '''
             `s1
@@ -28,7 +28,7 @@ class Rena(Character):
         ,'ele'             : 'flame'
         ,'wt'              : 'blade'
         ,'atk'             : 471
-#        ,'a1'              : ('skill_link', 0.15, 'def')
+        ,'a1'              : ('skill_link', 0.15, 'def')
 #        ,'a3'              : ('def_c_hot')
 
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1'),(0,'h1'),(1,'h2')]
@@ -56,32 +56,5 @@ class Rena(Character):
 
 
 if __name__ =='__main__':
-    logset(['buff','dmg','bk','sp'])
-    logset('all')
-    #logset('afflic')
-    #logset('act')
-    #logset('rotation')
-    #logset('x')
-    #logset('fs')
-    #logset('act')
-    #logset('s')
-    #logset(['buff','debug','dmg','hit'])
-    root = {}
-    #root = {'ex':['bow']}
-
-    #logset([])
-    Ctx()
-    #tar = water()
-    tar = dummy()
-    tar.init()
-
-    c = Rena(root)
-    c.tar(tar)
-    c.init()
-
-    d = 120
-    Timer.run(d)
-    logcat()
-    print('dps',Skada.sum()['Rena']['dmg']/now())
-    print(Skada._skada)
-
+    import run
+    run.this_character(mass=1)

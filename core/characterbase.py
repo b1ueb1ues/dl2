@@ -208,7 +208,7 @@ class Character(object):
         this.setup()
         this.child_init()
 
-        setup = '%s*,%s,%s,%s,[%s+%s],[%s],[%s],'%(this.star, this.ele, this.wt,
+        setup = '%s*,%s,%s,%s,[%s+%s][%s],[%s],'%(this.star, this.ele, this.wt,
                     int(this.Dp.get('atk')*this.atk),
                     this.a.a1.__class__.__name__ ,
                     this.a.a2.__class__.__name__ ,
@@ -217,8 +217,7 @@ class Character(object):
                 )
         if this.__doc__ :
             setup += this.__doc__
-        setup += ','
-        log_('info','%s, '%(this.name),'setup', setup)
+        log_('info',this.name,'setup', setup)
 
         import core.acl
         global default_acl_prepare

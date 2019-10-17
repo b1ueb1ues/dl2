@@ -40,7 +40,7 @@ LC = Levins_Champion
 class Valiant_Crown(Amulet):
     atk = 65
     a = [('sd', 0.30),
-         ('bc', 0.10)]
+         ('def_c_atk', 0.10)]
 VC = Valiant_Crown
 
 
@@ -80,16 +80,16 @@ BT = Bellathorna
 class First_Rate_Hospitality(Amulet):
     atk = 55
     a = [('atk', 0.08,'hp70'),
-         ('bc', 0.10)]
+         ('def_c_atk', 0.10)]
 FRH = First_Rate_Hospitality
 
 
 class The_Bustling_Hut(Amulet):
     atk = 50
-    a = [('bc', 0.08)]
+    a = [('def_c_atk', 0.08)]
     def __init__(this, c):
         if c.ele == 'light':
-            a = [('bc', 0.08),
+            a = [('def_c_atk', 0.08),
                  ('sp', 0.07)]
 
 
