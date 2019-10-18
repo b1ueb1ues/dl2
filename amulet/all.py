@@ -332,19 +332,7 @@ IS = Indelible_Summer
 
 class Sisters_Day_Out(Amulet):
     atk = 64
-    a = [('fs', 0.40)]
-    def fs_proc(this, e):
-        this.o_fs_proc(e)
-        if this.charges > 0:
-            this.adv.charge_p('sisters_day_out','25%')
-            this.charges -= 1
-
-    def oninit(this, adv):
-        Amulet.oninit(this, adv)
-        this.charges = 3
-        this.adv = adv
-        this.o_fs_proc = adv.fs_proc
-        adv.fs_proc = this.fs_proc
+    a = [('fs', 0.40),('fc','25%')]
 SDO = Sisters_Day_Out
 
 

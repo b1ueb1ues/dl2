@@ -479,6 +479,7 @@ class Conf_fs(Config):
         ,'recovery'  : 2
        #,'on_start' : None
        #,'on_end'   : None
+        ,'on_hit'    :[]
         ,'proc'      : []
         ,'hit'       : []
         ,'attr'      : {}
@@ -492,6 +493,11 @@ class Conf_fs(Config):
         this.proc    = c['proc']
         this.startup = c['startup']
         
+        if type(c['on_hit']) == list:
+            this.on_hit = c['on_hit']
+        else:
+            this.on_hit = [c['on_hit']]
+
         if this.hit != c['hit']:
             this.hit = c['hit']
             dirty = 1
@@ -580,6 +586,8 @@ class _Fs(object):
 
 
     def collid(this, dmg):
+        for i in this.on_hit:
+            i(dmg)
         if this.firsthit:
             this.firsthit = 0
             this.charge_fs('fs', this.sp)

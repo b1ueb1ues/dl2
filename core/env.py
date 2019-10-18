@@ -50,8 +50,8 @@ def _run():
             c = cclass[cname](conf)
             cs[i] = c
             c.tar(target)
-            if c.wt not in conf['ex']:
-                conf['ex'].append(c.wt)
+            if c.ex not in conf['ex']:
+                conf['ex'].append(c.ex)
             stage[i] = c
     for i in cs:
         c = cs[i]
@@ -111,7 +111,7 @@ if __name__ == '__main__':
     run()
     logcat()
     print('1-----------')
-    Skada.div(root['sample']*root['duration'])
+    Skada.div(root['duration'], root['sample'])
     print('2-----------')
     print(dmax)
     print(dmin)

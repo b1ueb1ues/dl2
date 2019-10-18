@@ -155,13 +155,32 @@ class prep(Ability):
         this.name = name
         this.v = v
 
-
     def __call__(this):
         Timer(this.charge)(0)
 
-
     def charge(this, t):
         this.host.charge_p('%s prep'%(this.name), this.v)
+
+class fc(Ability): # force charge
+    def __init__(this, name, v='25%'):
+        this.name = name
+        this.v = v
+        this.stack = 3
+
+    def __call__(this):
+        this.host.conf['fs']['on_hit'].append(this.charge)
+        Conf(this.host.conf).commit()
+
+    def charge(this, t):
+        if this.stack > 0:
+            this.host.charge_p('%s prep'%(this.name), this.v)
+            this.stack -= 1
+            if this.stack <= 0:
+                i = this.host.conf['fs']['on_hit'].index(this.charge)
+                this.host.conf['fs']['on_hit'].pop(i)
+                Conf(this.host.conf).commit()
+
+
 
 
 class k(Ability):
@@ -267,7 +286,6 @@ class skill_link(Ability):
         sp = this.dst.s1.sp
         if sp.cur >= sp.max and this.t==0:
             this.t = 1
-            print('dst',this.dst)
             this.dst.Selfbuff('skill_link_%s'%this.btype, this.v, this.btype)\
                                 (this.duration)
             this.cding = 1

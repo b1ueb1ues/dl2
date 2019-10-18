@@ -2,7 +2,22 @@ from core.ctx import *
 from core import env
 from core.skada import *
 
-default_ex = ['wand','blade']
+default_ex = []
+#default_ex = ['wand','blade']
+
+
+def fake_team(duration, ex):
+    env.root = {
+     '1p.name'     : '_Faketeam'
+    ,'target.name' : 'dummy'
+    ,'ex'          : ex
+    ,'duration'    : duration
+    ,'sample'      : 1
+    }
+    env.run()
+    d = Skada.sum(q=1)
+    env.root['team_dps'] = d['_Faketeam']['dmg'] / duration
+    print(env.root['team_dps'])
 
 def solo(name, duration=120, ex=default_ex):
     env.root = {
@@ -40,6 +55,9 @@ def this_character(time=120, ex=default_ex, verbose=0, mass=0):
     import sys
     from core import characterbase as cb
     import statistic
+
+    fake_team(time, ex)
+    exit()
 
     argv = sys.argv
     if len(argv) >= 2:
@@ -98,7 +116,7 @@ if __name__ == '__main__':
         `fsf, x=5
     '''
     ,'target.name' : 'dummy'
-    ,'ex'          : ['wand','blade']
+    ,'ex'          : []
     ,'duration'    : 120
     ,'sample'      : 1
     }

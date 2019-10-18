@@ -25,8 +25,7 @@ class Conf_chara(Config):
             ,'a1'         : None
             ,'a3'         : None
 
-            ,'ex'         : ['blade', 'wand']
-            #,'ex'        : ['blade']
+            ,'ex'         : None
             ,'rotation'   : 0
             ,'acl'        : 0
 
@@ -58,7 +57,12 @@ class Conf_chara(Config):
         this.wt       = c['wt']
         this.ele      = c['ele']
         this.star     = c['star']
-        this.ex       = c['ex']
+        if c['ex'] :
+            this.ex = c['ex']
+        else:
+            this.ex = c['wt']
+            c['ex'] = c['wt']
+
         if c['wt'] in ['sword', 'blade', 'dagger', 'axe', 'lance']:
             this.base_def = 10
         else:
@@ -119,8 +123,7 @@ class Character(object):
             Conf_chara(this, this.conf())()
         if rootconf:
             rootconf[this.name] = this.conf
-            this.conf['ex'] = rootconf['ex']
-            this.ex = rootconf['ex']
+            this.team_ex = rootconf['ex']
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
 
@@ -284,9 +287,9 @@ class Character(object):
         this.a.init()
 
         ex = {}
-        for i in this.ex:
+        for i in this.team_ex:
             ex[i] = 1
-        ex[this.wt] = 1
+        ex[this.conf['ex']] = 1
 
         if len(ex) > 4:
             print('ex-skill cannot more than 4')
@@ -300,8 +303,12 @@ class Character(object):
                 this.Passive('ex_dagger', 0.10, 'cc',  'p')()
             elif i == 'bow':
                 this.Passive('ex_bow',    0.15, 'sp',  'p')()
-            else:
+            elif i == None:
                 pass
+            elif type(i) == str:
+                pass
+            else:
+                this.Passive(*i)()
 
         from config import forte
         this.atk = this.base_atk * forte.c(this.ele, this.wt)

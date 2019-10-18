@@ -11,7 +11,7 @@ class Rena(Character):
         return {
          'slot.w'          : 'c534_flame'
         ,'slot.d'          : 'Sakuya'
-        ,'slot.a1'         : 'VC'
+        ,'slot.a1'         : 'SDO'
         ,'slot.a2'         : 'BN'
         ,'acl.cancel' : '''
             `s1
@@ -41,6 +41,7 @@ class Rena(Character):
 
         ,'s2.sp'           : 6582
         ,'s2.recovery'     : 1
+
         }
 
     def init(this):
