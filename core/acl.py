@@ -160,8 +160,9 @@ def acl_infunction(acl):
 
     for i in aif_list:
         if len(i) == 1:
-            line += "    if this.%s():\n"%( i[0].strip() )
-            line += "        return '%s'\n"%( i[0].strip() )
+            line += "    if default:\n"
+            line += "        if this.%s():\n"%( i[0].strip() )
+            line += "            return '%s'\n"%( i[0].strip() )
             #line_list.append("%s()\n"%i[0])
         elif len(i) == 2:
             condi = i[1].strip().replace("=","==")

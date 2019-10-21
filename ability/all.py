@@ -294,9 +294,6 @@ class skill_link(Ability):
             this.t = 0
 
 
-
-
-
 class lo(Ability):
     def __init__(this, name, v):
         this.name = name

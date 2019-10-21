@@ -81,14 +81,18 @@ default_acl_cancel = """\
     #fsc = 0
     #x = 0
     #fs = 0
+    #default = 1
     #if e.type == 'x':
     #    if e.hit == e.last:
     #        x = e.idx
     #    else:
     #        x = e.idx*10+e.hit
+    #        default = 0
     #elif e.type == 'fs':
     #    if e.hit == e.last:
     #        fsc = 1
+    #    else:
+    #        default = 0
     #    fs = e.hit
 """
 
