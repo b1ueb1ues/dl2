@@ -27,8 +27,8 @@ class Skada(object):
             od = dmg(this._skada[i]['odmg'])
             r[i] = {'dmg':d, 'odmg':od}
             if not q:
-                print(i,' dmg:', d )
-                print(i,'odmg:', od )
+                print(i,' dps:', d )
+                print(i,'odps:', od )
         return r
 
 

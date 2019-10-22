@@ -23,7 +23,8 @@ def show_log():
 
 def show_detail():
     skada.sum()
-    print('fake_team_base: ',env.root['team_dps'])
+    if 'team_dps' in env.root:
+        print('fake_team_base: ',env.root['team_dps'])
     s = skada.get()
     for i in s:
         if i[0] != '_':
