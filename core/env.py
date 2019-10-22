@@ -87,21 +87,24 @@ def run():
             dmax[p[i]] = 0
             dmin[p[i]] = -1
     for i in range(root['sample']):
-        conf = Ctx()
+        ctx = Ctx()
         _run()
-        r = Skada.sum(q=1)
+        r = skada.sum(q=1)
         for i in r:
-            if i[0] != '_':
-                d = r[i]['dmg']-lastresult[i]
-                #results[i].append(d)
-                lastresult[i] = r[i]['dmg']
-                if d > dmax[i]:
-                    dmax[i] = d
-                if d < dmin[i] or dmin[i]==-1:
-                    dmin[i] = d
+            d = r[i]['dmg']-lastresult[i]
+            #results[i].append(d)
+            lastresult[i] = r[i]['dmg']
+            if d > dmax[i]:
+                dmax[i] = d
+            if d < dmin[i] or dmin[i]==-1:
+                dmin[i] = d
     if root['sample'] > 1:
         root['range'] = {'min':dmin, 'max':dmax}
-    return conf
+        root['dsum'] = r
+    else:
+        root['range'] = {}
+        root['dsum'] = r
+    return ctx
 
         
 
@@ -111,12 +114,12 @@ if __name__ == '__main__':
     run()
     logcat()
     print('1-----------')
-    Skada.div(root['duration'], root['sample'])
+    skada.div(root['duration'], root['sample'])
     print('2-----------')
     print(dmax)
     print(dmin)
-    d = Skada.sum(q=1)
+    d = skada.sum(q=1)
     for i in d:
         print(i, d[i]['dmg'])
     print('3-----------')
-    print(Skada._skada)
+    print(skada._skada)

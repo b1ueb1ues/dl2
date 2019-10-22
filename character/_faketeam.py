@@ -46,8 +46,8 @@ class _Faketeam(Character):
          'name'    : '_Faketeam'
         ,'star'    : 5
         ,'ele'     : 'on'
-        ,'wt'      : 'blade'
-        ,'atk'     : 2000 * 2.25
+        ,'wt'      : 'lance'
+        ,'atk'     : 2000
 
         ,'s1.recovery'     : 1.9
         ,'s1.sp'           : 2500

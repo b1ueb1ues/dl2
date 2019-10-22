@@ -7,6 +7,7 @@ default_ex = []
 
 
 def fake_team(duration, ex):
+    bak = env.root
     env.root = {
      '1p.name'     : '_Faketeam'
     ,'target.name' : 'dummy'
@@ -15,9 +16,12 @@ def fake_team(duration, ex):
     ,'sample'      : 1
     }
     env.run()
-    d = Skada.sum(q=1)
-    env.root['team_dps'] = d['_Faketeam']['dmg'] / duration
-    print(env.root['team_dps'])
+    skada.div(duration, 1)
+    d = skada.sum(q=1)
+    env.root = bak
+    env.root['team_dps'] = d['_Faketeam']['dmg']
+    return env.root['team_dps']
+
 
 def solo(name, duration=120, ex=default_ex):
     env.root = {
@@ -28,8 +32,18 @@ def solo(name, duration=120, ex=default_ex):
     ,'duration'    : duration
     ,'sample'      : 1
     }
-    env.run()
-    Skada.div(env.root['duration'], env.root['sample'])
+    ctx1 = env.run()
+    Ctx()
+    tmp = skada.get()
+    skada.reset()
+    ####
+    fake_team(duration, ex)
+    ####
+    ctx1()
+    skada.set(tmp)
+
+    skada.div(env.root['duration'], env.root['sample'])
+
 
 def solo_range(name, duration=120, ex=default_ex):
     env.root = {
@@ -40,24 +54,45 @@ def solo_range(name, duration=120, ex=default_ex):
     ,'duration'    : duration
     ,'sample'      : 256
     }
-    env.run()
-    Skada.div(env.root['duration'], env.root['sample'])
-    env.root['range']['min'][name] /= env.root['duration']
-    env.root['range']['max'][name] /= env.root['duration']
+    ctx1 = env.run()
+    skada.div(env.root['duration'], env.root['sample'])
+
+    dmin = env.root['range']['min'][name] / env.root['duration']
+    dmax = env.root['range']['max'][name] / env.root['duration']
+    tmin = env.root['range']['min']['_Faketeam'] / env.root['duration']
+    tmax = env.root['range']['max']['_Faketeam'] / env.root['duration']
+
+    Ctx()
+    tmp = skada.get()
+    skada.reset()
+    ####
+    a = fake_team(duration, ex)
+    ####
+    ctx1()
+    skada.set(tmp)
+
+    bmin = (tmin/env.root['team_dps']-1)*10000
+    bmax = (tmax/env.root['team_dps']-1)*10000
+
+    env.root['range'] = {}
+    env.root['range']['dmin'] = int(dmin)
+    env.root['range']['dmax'] = int(dmax)
+    env.root['range']['tmin'] = int(tmin)
+    env.root['range']['tmax'] = int(tmax)
+    env.root['range']['bmin'] = int(bmin)
+    env.root['range']['bmax'] = int(bmax)
 
 
 def team(conf):
     env.root = conf
     env.run()
-    Skada.div(env.root['duration'],env.root['sample'])
+    skada.div(env.root['duration'],env.root['sample'])
+
 
 def this_character(time=120, ex=default_ex, verbose=0, mass=0):
     import sys
     from core import characterbase as cb
     import statistic
-
-    fake_team(time, ex)
-    exit()
 
     argv = sys.argv
     if len(argv) >= 2:

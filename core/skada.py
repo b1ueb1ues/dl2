@@ -1,18 +1,19 @@
 
-
 class Skada(object):
-    _skada = {}
-    @classmethod
+    def __init__(this):
+        this._skada = {}
+
     def get(this):
         return this._skada
+    
+    def set(this, s):
+        this._skada = s
 
-    @classmethod
     def init(this):
         this._skada = {}
 
     reset = init
 
-    @classmethod
     def sum(this, q=0):
         def dmg(c):
             _sum = 0
@@ -31,7 +32,6 @@ class Skada(object):
         return r
 
 
-    @classmethod
     def div(this, d, d2):
         for i in this._skada:
             this._skada[i]['otime'] /= d2
@@ -41,9 +41,11 @@ class Skada(object):
             for j in this._skada[i]['odmg']:
                 this._skada[i]['odmg'][j] = \
                     int(this._skada[i]['odmg'][j]/this._skada[i]['otime']/d2)
-    @classmethod
+
     def __str__(this):
         return str(this._skada)
+
+skada = Skada()
 
 
 

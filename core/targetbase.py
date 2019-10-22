@@ -67,7 +67,7 @@ class Target(object):
 
         Conf_tar(this, this.conf)()
 
-        this.skada = Skada.get()
+        this.skada = skada.get()
         #Event('dmg')(this.l_dmg)
         #this.e_ks = Event('killer')
         this.logdbg = Logger('debug')

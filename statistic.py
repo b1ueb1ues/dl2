@@ -22,22 +22,32 @@ def show_log():
     logcat()
 
 def show_detail():
-    Skada.sum()
-    print(Skada._skada)
+    skada.sum()
+    print('fake_team_base: ',env.root['team_dps'])
+    s = skada.get()
+    for i in s:
+        if i[0] != '_':
+            print(i, s[i])
 
 def show_csv():
     line = ''
     t = 0
-    for i,v in Skada._skada.items():
+    total = 0
+    team_base = env.root['team_dps']
+
+    for i,v in skada._skada.items():
         if i[0] != '_':
             d = v['dmg']
-    for i, v in Skada.sum(q=1).items():
+
+    for i, v in env.root['dsum'].items():
         if i[0] != '_':
-            total = v['dmg']
+            total += int( env.root['dsum'][i]['dmg'] \
+                    / env.root['sample'] / env.root['duration'] )
             name = i
         else:
-            t = v['dmg'] - 10000
-            total += t
+            t = v['dmg'] / env.root['sample'] / env.root['duration']
+            t = int((t/team_base-1)*10000)
+            total += t 
     line += '%s,%s,'%(total, name)
 
     info = ''
@@ -46,9 +56,10 @@ def show_csv():
         if i[1]=='info' and i[3]=='setup' and i[2][0]!='_':
             info = i[4]
     if 'range' in env.root:
-        if env.root['range']['min'][name] > 0:
-            info += ';dpsrange:(%d~%d)'%(env.root['range']['min'][name],
-                        env.root['range']['max'][name] )
+        if env.root['range'] != {} :
+            info += ';dpsrange:(%d~%d)'%( \
+                        env.root['range']['dmin']+env.root['range']['bmin'],
+                        env.root['range']['dmax']+env.root['range']['bmax'] )
 
     line+=info+','
 

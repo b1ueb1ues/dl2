@@ -48,4 +48,4 @@ class Elisanne(Character):
 
 if __name__ =='__main__':
     import run
-    run.this_character()
+    run.this_character(mass=0)
