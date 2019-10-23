@@ -1,6 +1,7 @@
 import __init__
 from core.ctx import *
 from core.skada import *
+from core import eventevent
 
 
 class Conf_tar(Config):
@@ -94,6 +95,8 @@ class Target(object):
         #this.Zonebuff = Zonebuff(this.Buff)
         this.Debuff = Debuff(this.Buff)
         this.mod = {}
+        this.Event = eventevent.Event(this)
+        this.Listener = eventevent.Listener(this.Event)
         #this.Dot_group = None
         #this.Afflics = None
 

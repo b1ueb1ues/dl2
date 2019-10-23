@@ -58,9 +58,9 @@ class Conf_chara(Config):
         this.ele      = c['ele']
         this.star     = c['star']
         if c['ex'] :
-            this.ex = c['ex']
+            this.self_ex = c['ex']
         else:
-            this.ex = c['wt']
+            this.self_ex = c['wt']
             c['ex'] = c['wt']
 
         if c['wt'] in ['sword', 'blade', 'dagger', 'axe', 'lance']:
@@ -128,6 +128,7 @@ class Character(object):
         if rootconf:
             rootconf[this.name] = this.conf
             this.team_ex = rootconf['ex']
+            this.ex = this.team_ex
         this.hitcount = 0
         this.t_hitreset = Timer(this.hitreset)
 
@@ -282,8 +283,18 @@ class Character(object):
         if this.conf['a3']:
             this.a3 = this.Ability('chara_a3', *this.conf['a3'])()
 
+        import config.slot_common
+        slot_d = config.slot_common.get(this.ele, this.wt)
+        if 'slot' in this.conf:
+            slot_d.update(this.conf['slot'])
+        this.conf['slot'] = slot_d
+
         this.d = this.Dragon(this.conf['slot']['d'])
         this.w = this.Weapon(this.conf['wt'], this.conf['slot']['w'] )
+        if 'a' in this.conf['slot'] :
+            amulets = this.conf['slot']['a'].split('+')
+            this.conf['slot']['a1'] = amulets[0]
+            this.conf['slot']['a2'] = amulets[1]
         this.a = this.Amulet(this.conf['slot']['a1'], this.conf['slot']['a2'])
 
         this.d.init()

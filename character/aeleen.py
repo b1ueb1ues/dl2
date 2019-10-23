@@ -7,14 +7,10 @@ from target.dummy import *
 class Aeleen(Character):
     def dconf(this):
         conf = {
-         'slot.w'  : 'c534_wind'
-        ,'slot.d'  : 'Zephyr'
-        ,'slot.a1' : 'FB'
-        ,'slot.a2' : 'BN'
-        ,'acl.cancel' : """
+        'acl.cancel' : """
             `s1
             `fs, x=5
-        """
+        """,
         }
         return conf
 

@@ -7,7 +7,7 @@ class _Dmg(object):
         this.name = ''
         this.hostname = ''
         this.dmg = 0
-        this.hit = 1
+        this.hits = 1
         this.to_od = 1 # rate
         this.to_bk = 1 # rate
 
@@ -16,7 +16,7 @@ class _Dmg(object):
         d.name = this.name
         d.hostname = this.hostname
         d.dmg = this.dmg
-        d.hit = this.hit
+        d.hits = this.hits
         d.to_od = this.to_od
         d.to_bk = this.to_bk
         return d
@@ -90,7 +90,7 @@ class Conf_dc(Config):
     def default(this):
         return {
          'name'    : 'dmg'
-        ,'hit'     : 1
+        ,'hits'    : 1
         ,'to_od'   : 1
         ,'to_bk'   : 1
         ,'coef'    : 0
@@ -104,7 +104,7 @@ class Conf_dc(Config):
         this.dmg.name  = c['name']
         this.dmg.to_od = c['to_od']
         this.dmg.to_bk = c['to_bk']
-        this.dmg.hit   = c['hit']
+        this.dmg.hits  = c['hits']
         this.coef      = c['coef']
         this.type      = c['type']
         this.killer    = c['killer']
@@ -142,7 +142,7 @@ class _Dmg_calc(object):
         if this.missile :
             for i in this.missile:
                 if i == 0 :
-                    this.src.hit(this.dmg.hit)
+                    this.src.hit(this.dmg.hits)
                     this.dst.dt(this.dmg)
                     if this.proc:
                         this.proc(this.dmg)
@@ -150,7 +150,7 @@ class _Dmg_calc(object):
                 else:
                     Timer(this.cb_dmg_make)(i)
         else:
-            this.src.hit(this.dmg.hit)
+            this.src.hit(this.dmg.hits)
             this.dst.dt(this.dmg)
             if this.proc:
                 this.proc(this.dmg)
@@ -159,7 +159,7 @@ class _Dmg_calc(object):
 
     def cb_dmg_make(this, t):
         this.dmg.dmg = this.calc()
-        this.src.hit(this.dmg.hit)
+        this.src.hit(this.dmg.hits)
         this.dst.dt(this.dmg)
         if this.proc:
             this.proc(this.dmg)

@@ -105,12 +105,14 @@ class _Bleed_dot(object):
             if stacks >= 3:
                 if this.log:
                     this.log('bleed hit cap')
-                return
+                return -1
             this.dot(this.src, this.name, this.coef, this.duration)()
+            return stacks
         else:
             # resist
             if this.log:
                 this.log('normal miss')
+            return 0
 
     on = __call__
 

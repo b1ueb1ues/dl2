@@ -1,22 +1,14 @@
 import __init__
 from core.ctx import *
 from core.characterbase import *
-from target.dummy import *
 from mod.skillshift import *
 from mod.afflic import *
 
 
 class Mikoto(Character):
     def dconf(this):
-        return {
-         'slot.w'  : 'c534_flame'
-       #,'slot.w'  : 'v534_flame_zephyr'
-       #,'slot.d'  : 'Cerb'
-       #,'slot.d'  : 'Arctos'
-        ,'slot.d'  : 'Sakuya'
-        ,'slot.a1' : 'RR'
-        ,'slot.a2' : 'BN'
-
+        conf = {
+         'slot.d'  : 'Arctos'
         ,'acl.cancel': """
             `s1, x=5
             `s2, x=5
@@ -24,6 +16,9 @@ class Mikoto(Character):
             `fsf, x=5
         """
         }
+        #if 'wand' in this.ex:
+        #    conf['slot.d'] = 'Sakuya'
+        return conf
 
 
     def conf(this):

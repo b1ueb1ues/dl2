@@ -149,7 +149,7 @@ class _Afflic_scc():
         this.resist = host.resist
 
         this.ks = host.Buff('ks_%s'%atype, 1, 'ks', atype)
-        this.ks.on_end = this.cb_end
+        this.ks.on_end.append(this.cb_end)
 
         this.log = Logger('afflic')
         if atype == 'blind':
@@ -218,7 +218,7 @@ class _Afflic_cc():
         this.resist = host.resist
 
         this.ks = host.Buff('ks_%s'%atype, 1, 'ks', atype)
-        this.ks.on_end = this.cb_end
+        this.ks.on_end.append(this.cb_end)
 
         this.log = Logger('afflic')
         this.e_afflic = this.src.Event('afflic')

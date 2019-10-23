@@ -50,8 +50,8 @@ def _run():
             c = cclass[cname](conf)
             cs[i] = c
             c.tar(target)
-            if c.ex not in conf['ex']:
-                conf['ex'].append(c.ex)
+            if c.self_ex not in conf['ex']:
+                conf['ex'].append(c.self_ex)
             stage[i] = c
     for i in cs:
         c = cs[i]
