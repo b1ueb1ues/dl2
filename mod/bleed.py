@@ -94,7 +94,7 @@ class _Bleed_dot(object):
             this.duration = 30
 
         this.dot = static.bleed_group
-        this.log = Logger('afflic')
+        this.log = Logger('bleed')
 
     def __call__(this):
         if random.random() < this.rate:
@@ -107,7 +107,7 @@ class _Bleed_dot(object):
                     this.log('bleed hit cap')
                 return -1
             this.dot(this.src, this.name, this.coef, this.duration)()
-            return stacks
+            return stacks+1
         else:
             # resist
             if this.log:

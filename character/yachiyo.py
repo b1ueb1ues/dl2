@@ -23,8 +23,7 @@ class Yachiyo(Character):
 
     def conf(this):
         return {
-         'name'            : 'Yachiyo'
-        ,'star'            : 4
+         'star'            : 4
         ,'ele'             : 'light'
         ,'wt'              : 'blade'
         ,'atk'             : 501

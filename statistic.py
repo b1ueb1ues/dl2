@@ -7,8 +7,10 @@ def loglevel(level):
     if level == 0:
         logset([])
     elif level == 1:
-        logset(['buff', 'dmg', 'sp', 'rotation'])
+        logset(['rotation'])
     elif level == 2:
+        logset(['buff', 'dmg', 'sp', 'rotation'])
+    elif level == 3:
         logset(['all'])
     elif level == -1:
         logset(['rotation'])

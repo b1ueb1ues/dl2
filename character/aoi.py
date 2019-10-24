@@ -17,8 +17,7 @@ class Aoi(Character):
 
     def conf(this):
         return {
-         'name'    : 'Aoi'
-        ,'star'    : 3
+         'star'    : 3
         ,'ele'     : 'flame'
         ,'wt'      : 'blade'
         ,'atk'     : 494

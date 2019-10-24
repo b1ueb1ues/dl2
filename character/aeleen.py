@@ -16,8 +16,7 @@ class Aeleen(Character):
 
     def conf(this):
         return {
-         'name'            : 'Aeleen'
-        ,'star'            : 4
+         'star'            : 4
         ,'ele'             : 'wind'
         ,'wt'              : 'lance'
         ,'atk'             : 470

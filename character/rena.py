@@ -23,8 +23,7 @@ class Rena(Character):
 
     def conf(this):
         return {
-         'name'            : 'Rena'
-        ,'star'            : 5
+         'star'            : 5
         ,'ele'             : 'flame'
         ,'wt'              : 'blade'
         ,'atk'             : 471

@@ -23,8 +23,7 @@ class Mikoto(Character):
 
     def conf(this):
         return {
-         'name'    : 'Mikoto'
-        ,'star'    : 5
+         'star'    : 5
         ,'ele'     : 'flame'
         ,'wt'      : 'blade'
         ,'atk'     : 520

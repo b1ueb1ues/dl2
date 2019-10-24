@@ -32,8 +32,7 @@ class Natalie(Character):
 
     def conf(this):
         return {
-         'name'    : 'Natalie'
-        ,'star'    : 5
+         'star'    : 5
         ,'ele'     : 'shadow'
         ,'wt'      : 'blade'
         ,'atk'     : 521

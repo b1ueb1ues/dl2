@@ -30,6 +30,7 @@ class _Passive():
                 this.mod_type, this.mod_order, value)
 
         this.log = Logger('buff')
+        this.on_end = []
 
     def hostname(this):
         return this._static.hostname
@@ -60,6 +61,8 @@ class _Passive():
         if this.log:
             this.log('%s, %s'%(this.hostname(), this.name),
                 '%s: %.2f'%(this.mod_type, this._value),'off <passive>')
+        for i in this.on_end:
+            i()
 
 
     def get(this):
@@ -160,11 +163,15 @@ class _Buff(object):
 
 
     def set(this, v):
-        if this._active:
-            print('can not set buff when active')
-            raise
+        #if this._active:
+        #    print('can not set buff when active')
+        #    raise
         this._value = v
         this.dp.set(this._value)
+        if this.log_dp:
+            if this.mod_type in this._static.Dp.type_mods:
+                this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
+                        this._static.Dp.get(this.mod_type))
         return this
 
 

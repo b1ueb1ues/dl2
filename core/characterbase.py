@@ -17,7 +17,7 @@ from core.condition import *
 class Conf_chara(Config):
     def default(this):
         return {
-            'name'        : 'characterbase'
+            'name'        : None
             ,'star'       : 5
             ,'ele'        : 'flame'
             ,'wt'         : 'blade'
@@ -125,6 +125,11 @@ class Character(object):
             Conf_chara(this, this.conf)()
         else:
             Conf_chara(this, this.conf())()
+
+        if not this.conf['name']:
+            this.conf['name'] = this.__class__.__name__
+            this.name = this.__class__.__name__
+
         if rootconf:
             rootconf[this.name] = this.conf
             this.team_ex = rootconf['ex']

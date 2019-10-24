@@ -26,8 +26,7 @@ class Elisanne(Character):
 
     def conf(this):
         return {
-         'name'            : 'Elisanne'
-        ,'star'            : 4
+         'star'            : 4
         ,'ele'             : 'water'
         ,'wt'              : 'lance'
         ,'atk'             : 460

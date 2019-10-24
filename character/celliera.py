@@ -19,8 +19,7 @@ class Celliera(Character):
 
     def conf(this):
         return {
-         'name'            : 'Celliera'
-        ,'star'            : 4
+         'star'            : 4
         ,'ele'             : 'water'
         ,'wt'              : 'blade'
         ,'atk'             : 492

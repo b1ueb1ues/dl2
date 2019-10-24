@@ -25,8 +25,7 @@ class Addis(Character):
 
     def conf(this):
         return {
-         'name'            : 'Addis'
-        ,'star'            : 4
+         'star'            : 4
         ,'ele'             : 'wind'
         ,'wt'              : 'blade'
         ,'atk'             : 509

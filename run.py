@@ -132,6 +132,8 @@ def this_character(time=120, ex=default_ex, verbose=0, mass=0):
         statistic.show_rotation()
     elif verbose == 2:
         statistic.show_log()
+    elif verbose == 3:
+        statistic.show_log()
     elif verbose == -2:
         statistic.show_csv()
     else:
