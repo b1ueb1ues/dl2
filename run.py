@@ -89,7 +89,7 @@ def team(conf):
     skada.div(env.root['duration'],env.root['sample'])
 
 
-def this_character(time=120, ex=default_ex, verbose=0, mass=0):
+def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
     import sys
     from core import characterbase as cb
     import statistic
