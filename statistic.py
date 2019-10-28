@@ -23,6 +23,27 @@ def show_rotation():
 def show_log():
     logcat()
 
+def show_single_detail():
+    a = skada.sum(q=1)
+    teamdps = a['_Faketeam']['dmg']
+    teambase = 0
+    if 'team_dps' in env.root:
+        teambase = env.root['team_dps']
+        #print('fake_team_base: ',env.root['team_dps'])
+    for i in a:
+        if i[0] != '_':
+            single = a[i]['dmg']
+            teampercent = '%.2f'%((teamdps/teambase-1)*100)
+            teamboost = int((teamdps/teambase-1)*10000)
+            total = single + teamboost
+            print(
+                '%s: %s (%s+%s(%s%%))'%(i, total, single, teamboost, teampercent)
+                )
+    s = skada.get()
+    for i in s:
+        if i[0] != '_':
+            print(i, s[i])
+
 def show_detail():
     skada.sum()
     if 'team_dps' in env.root:

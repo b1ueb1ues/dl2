@@ -127,7 +127,8 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
             solo(i, time, ex) 
 
     if verbose == 0:
-        statistic.show_detail()
+        statistic.show_single_detail()
+        #statistic.show_detail()
     elif verbose == 1:
         statistic.show_rotation()
     elif verbose == 2:
@@ -137,7 +138,8 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
     elif verbose == -2:
         statistic.show_csv()
     else:
-        statistic.show_detail()
+        statistic.show_single_detail()
+        #statistic.show_detail()
 
 
 if __name__ == '__main__':
