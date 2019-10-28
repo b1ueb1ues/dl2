@@ -33,6 +33,12 @@ class Energy():
         else:
             return this.energy
 
+    def stacks(this):
+        if this.energized :
+            return 5
+        else:
+            return this.energy
+
     def e_s_end(this):
         if this.energized == -1 :
             this.energized = 0

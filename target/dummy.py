@@ -11,4 +11,5 @@ class dummy(Target):
         ,'bk': 100000
         ,'bk_def':1
         ,'bk_time':20
+        ,'resist.bog':100
     }

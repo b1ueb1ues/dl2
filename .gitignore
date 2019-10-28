@@ -1,3 +1,6 @@
+_acl/
+tags
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
@@ -8,7 +11,6 @@ __pycache__/
 
 # Distribution / packaging
 .Python
-_acl/
 build/
 develop-eggs/
 dist/
