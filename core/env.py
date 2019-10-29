@@ -89,7 +89,7 @@ def run():
     for i in range(root['sample']):
         ctx = Ctx()
         _run()
-        r = skada.sum(q=1)
+        r = skada.sum2(q=1)
         for i in r:
             d = r[i]['dmg']-lastresult[i]
             #results[i].append(d)

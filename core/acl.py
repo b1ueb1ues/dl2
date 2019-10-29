@@ -152,7 +152,7 @@ def acl_infunction(acl):
         aif_list.append( i.split(',', 1))
 
 
-    line = ""
+    line = "    default=1\n"
 
     for i in prepare_list:
         line += "    %s\n"%(i.rstrip().replace('\n','\n    '))

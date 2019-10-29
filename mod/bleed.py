@@ -95,23 +95,24 @@ class _Bleed_dot(object):
 
         this.dot = static.bleed_group
         this.log = Logger('bleed')
+        this.loghost = src.name
 
     def __call__(this):
         if random.random() < this.rate:
             # proc
             stacks = this._static.bleed_group.stacks
             if this.log:
-                this.log('proc', '%.2f'%(this.rate) )
+                this.log(this.loghost, 'proc', '%.2f'%(this.rate) )
             if stacks >= 3:
                 if this.log:
-                    this.log('bleed hit cap')
+                    this.log(this.loghost, 'bleed hit cap')
                 return -1
             this.dot(this.src, this.name, this.coef, this.duration)()
             return stacks+1
         else:
             # resist
             if this.log:
-                this.log('normal miss')
+                this.log(this.loghost, 'normal miss')
             return 0
 
     on = __call__

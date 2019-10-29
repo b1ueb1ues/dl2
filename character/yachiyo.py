@@ -10,15 +10,12 @@ from mod.fs_alt import *
 class Yachiyo(Character):
     def dconf(this):
         return {
-         'slot.w'          : 'c534_light'
-        ,'slot.d'          : 'Cupid'
-        ,'slot.a1'         : 'RR'
-        ,'slot.a2'         : 'SS'
-        ,'acl.cancel' : '''
+        'slot.a' : 'RR+SS',
+        'acl.cancel' : '''
             `s1
             `s2, x=5
             `fs, x=5
-        '''
+        ''',
         }
 
     def conf(this):
@@ -68,33 +65,5 @@ class Yachiyo(Character):
 
 
 if __name__ =='__main__':
-    logset(['buff','dmg','bk','sp'])
-    logset('all')
-    #logset('afflic')
-    #logset('act')
-    #logset('rotation')
-    #logset('x')
-    #logset('fs')
-    #logset('act')
-    #logset('s')
-    #logset(['buff','debug','dmg','hit'])
-    root = {}
-    #root = {'ex':['bow']}
-
-    #logset([])
-    Ctx()
-    tar = dummy()
-    tar.init()
-
-    c = Yachiyo(root)
-    c.tar(tar)
-    c.init()
-
-    d = 120
-    Timer.run(d)
-    logcat()
-    d = Skada.sum()
-    print(' dps',d['Yachiyo']['dmg']/now())
-    print('odps',d['Yachiyo']['odmg']/tar.od_count)
-    print(Skada._skada)
-
+    import run
+    run.this_character(mass=1)

@@ -45,7 +45,7 @@ class _Action(object):
         ## can't change name after this
         this._static = static
         this.name = name
-        this.src = this._static.host.name + ', '
+        this.src = this._static.host.name
         Conf_Action(this, conf)()
 
         this.speed_cache = static.speed_cache
@@ -65,7 +65,7 @@ class _Action(object):
             return 
 
         if this.log:
-            this.log(this.src+'end', this.name)
+            this.log(this.src, 'end', this.name)
         this.status = -1
         this._static.prev = this # turn this from doing to prev
 
@@ -80,14 +80,14 @@ class _Action(object):
 
         if doing.status == -1 :
             if this.log:
-                this.log(this.src+'start',this.name, 'idle:%d'%doing.status)
+                this.log(this.src, 'start',this.name, 'idle:%d'%doing.status)
         else:
             if this.log:
-                this.log(this.src+'start',this.name,
+                this.log(this.src, 'start',this.name,
                         'doing '+doing.name+':%d'%doing.status)
             if doing == this : # self is doing
                 if this.log:
-                    this.log(this.src+'failed',this.name, 'self is doing')
+                    this.log(this.src, 'failed',this.name, 'self is doing')
                 return 0
 
             # doing != this
@@ -98,12 +98,12 @@ class _Action(object):
                     for i in dconf['on_cancel']:
                         i()
                     if this.log:
-                        this.log(this.src+'cancel', doing.name,
+                        this.log(this.src, 'cancel', doing.name,
                                 'by '+this.name \
                                 +' after %.2fs'%(now()-doing.action_start))
                 else:
                     if this.log:
-                        this.log(this.src+'failed', this.name, 'cannot cancel')
+                        this.log(this.src, 'failed', this.name, 'cannot cancel')
                     return 0
             doing.status = 2
             this._static.prev = doing # turn this from doing to prev
@@ -112,10 +112,10 @@ class _Action(object):
         this._static.doing = this # setdoing
         if this.log_r:
             if this.name[0] == 'x':
-                this.log_r(this.src+this.name)
+                this.log_r(this.src, this.name)
             else:
-                #this.log_r(this.src+'---------', this.name)
-                this.log_r(this.src+this._static.prev.name+' -----', this.name)
+                #this.log_r(this.src, '---------', this.name)
+                this.log_r(this.src, this._static.prev.name+' -----', this.name)
 
         if this.speed_cache['spd']>=0 :
             recovery = this.conf['recovery'] / this.speed_cache['spd']

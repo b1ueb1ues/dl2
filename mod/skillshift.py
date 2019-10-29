@@ -26,6 +26,7 @@ class Skillshift(object):
         this.s_level2.sp = host.s1.sp
         this.s_level3.sp = host.s1.sp
         this.log = Logger('s')
+        this.loghost = host.name
 
 
     def on_hit(this):
@@ -40,17 +41,17 @@ class Skillshift(object):
             this.host.s1 = this.s_level2
             this.level = 1
             if this.log:
-                this.log('%s, skill_levelup'%this.host.name,2)
+                this.log(this.loghost, 'skill_levelup', 2)
         elif this.level == 1:
             this.host.s1 = this.s_level3
             this.level = 2
             if this.log:
-                this.log('%s, skill_levelup'%(this.host.name),3)
+                this.log(this.loghost, 'skill_levelup', 3)
         elif this.level == 2:
             this.host.s1 = this.host.a_s[0]
             this.level = 0
             if this.log:
-                this.log('%s, skill_leveldown'%(this.host.name),0)
+                this.log(this.loghost, 'skill_leveldown', 0)
 
     def reset(this):
         this.host.s1 = this.host.a_s[0]

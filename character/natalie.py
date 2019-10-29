@@ -10,12 +10,7 @@ import random
 class Natalie(Character):
     def dconf(this):
         conf = {
-         'slot.w'  : 'c534_shadow'
-        ,'slot.d'  : 'Shinobi'
-        ,'slot.a1' : 'HoH'
-        ,'slot.a2' : 'One_with_the_Shadows'
-
-        ,'acl.cancel': """
+        'acl.cancel': """
             `s2, x=5
             `s1
             `s3, fs
@@ -23,10 +18,10 @@ class Natalie(Character):
             `fs, x=5 and s1.sp.cur+212>=s1.sp.max and s1.sp.cur<=s1.sp.max
             `fs, x=5 and s1.sp.cur > 3000 and s3.sp.cur>=s3.sp.max
             `fsf, x=5
-        """
-        ,'acl.other':"""
+        """,
+        'acl.other':"""
             `s1
-        """
+        """,
         }
         return conf
 
@@ -78,27 +73,5 @@ class Natalie(Character):
 
 
 if __name__ == '__main__':
-    #logset(['buff', 'dmg', 'od', 'bk'])
-    logset(['buff', 'dmg', 'bk', 'sp'])
-    #logset('x')
-    #logset('fs')
-    #logset('act')
-    #logset('s')
-    #logset(['buff','debug','dmg', 'hit'])
-    #logset('rotation')
-
-    tar = dummy()
-    tar.init()
-
-    c = Natalie()
-    c.tar(tar)
-    c.init()
-
-    d = 120
-    Timer.run(d)
-    logcat()
-    s = Skada.sum()
-    print('dps',s['Natalie']['dmg']/now())
-    print('odps',s['Natalie']['odmg']/tar.od_count)
-    print(Skada._skada)
-
+    import run 
+    run.this_character(mass=1)

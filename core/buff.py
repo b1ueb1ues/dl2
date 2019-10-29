@@ -40,13 +40,13 @@ class _Passive():
         if this._active :
             this.dp()
             if this.log:
-                this.log('%s, %s'%(this.hostname(), this.name),
+                this.log(this.hostname(), this.name,
                     '%s: %.2f'%(this.mod_type, this._value),'refresh')
             return this
         this.dp()
         this._active = 1
         if this.log:
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                 '%s: %.2f'%(this.mod_type, this._value),'on <passive>')
         return this
 
@@ -59,7 +59,7 @@ class _Passive():
         this.dp.off()
         this._active = 0
         if this.log:
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                 '%s: %.2f'%(this.mod_type, this._value),'off <passive>')
         for i in this.on_end:
             i()
@@ -76,7 +76,7 @@ class _Passive():
         this._value = v
         this.dp.set(v)
         if this.log:
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                 '%s: %.2f'%(this.mod_type, this._value),'set')
         return this
 
@@ -150,7 +150,7 @@ class _Buff(object):
     def append(this, length):
         this.t_buffend.timing += length
         if this.log :
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                     '%s: %.2f'%(this.mod_type, this.get()),
                     '%s %s append +%ss'%(this.group_name,
                         this.bufftype, length))
@@ -170,7 +170,7 @@ class _Buff(object):
         this.dp.set(this._value)
         if this.log_dp:
             if this.mod_type in this._static.Dp.type_mods:
-                this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
+                this.log_dp(this.hostname(), this.mod_type,
                         this._static.Dp.get(this.mod_type))
         return this
 
@@ -186,7 +186,7 @@ class _Buff(object):
 
     def __buff_stack(this):
         v_total, stacks = this.get_group()
-        this.log('%s, %s'%(this.hostname(), this.name),
+        this.log(this.hostname(), this.name,
             '%s stack: %d'%(this.group_name, stacks),
             'total: %.2f'%(v_total))
 
@@ -199,13 +199,13 @@ class _Buff(object):
         stacks = len(this.group)
         if stacks >= 10:
             if this.log:
-                this.log('%s, %s'%(this.hostname(), this.name),
+                this.log(this.hostname(), this.name,
                     'failed', 'stack cap')
             return
         stacks += 1
         this.group.append(this)
         if this.log:
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                     '%s: %.2f'%(this.mod_type, this.get()),
                     '%s %s start <%ss>'%(this.group_name,
                         this.bufftype, duration))
@@ -213,7 +213,7 @@ class _Buff(object):
                 this.__buff_stack()
         if this.log_dp:
             if this.mod_type in this._static.Dp.type_mods:
-                this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
+                this.log_dp(this.hostname(), this.mod_type,
                         this._static.Dp.get(this.mod_type))
 
 
@@ -221,7 +221,7 @@ class _Buff(object):
         if duration > 0:
             this.t_buffend.on(duration)
         if this.log :
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                     '%s: %.2f'%(this.mod_type, this.get()),
                     '%s %s refresh <%ss>'%(this.group_name,
                         this.bufftype, duration))
@@ -243,7 +243,7 @@ class _Buff(object):
                 this.group.pop(idx)
                 break
         if this.log:
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                     '%s: %.2f'%(this.mod_type, this._value),
                     '%s end <timeout>'%this.bufftype)
             if stack > 1:
@@ -253,7 +253,7 @@ class _Buff(object):
             i()
         if this.log_dp:
             if this.mod_type in this._static.Dp.type_mods:
-                this.log_dp('%s, %s'%(this.hostname(), this.mod_type),
+                this.log_dp(this.hostname(), this.mod_type,
                         this._static.Dp.get(this.mod_type))
 
     def on(this, duration):
@@ -273,7 +273,7 @@ class _Buff(object):
         if this._active == 0:
             return
         if this.log:
-            this.log('%s, %s'%(this.hostname(), this.name),
+            this.log(this.hostname(), this.name,
                 '%s: %.2f'%(this.mod_type, this.get()),
                 '%s %s end <turn off>'%(this.name, this.duration))
         this._active = 0
@@ -438,79 +438,5 @@ class _Zonebuff():
         return this
 
 
-
-
 if __name__ == '__main__':
-    def test():
-        class C():
-            def __init__(this):
-                this.name = '1p'
-                this.conf_w = Conf()
-                this.conf = this.conf_w.get
-                this.conf['param_type'] = ['atk','def','dmg','cc','cd',
-                                'buff','sp','spd', 'killer','ks',
-                                'x','fs','s'] 
-                this.Dp = Dmg_param(this)
-                this.Buff = Buff(this.Dp)
-                this.Passive = Passive(this.Dp)
-                this.Selfbuff = Selfbuff(this.Buff)
-                this.Teambuff = Teambuff(this.Buff)
-
-        class C2():
-            def __init__(this):
-                this.name = '2p'
-                this.conf_w = Conf()
-                this.conf = this.conf_w.get
-                this.conf['param_type'] = ['atk','def','dmg','cc','cd',
-                                'buff','sp','spd', 'killer','ks',
-                                'x','fs','s'] 
-                this.Dp = Dmg_param(this)
-                this.Buff = Buff(this.Dp)
-                this.Passive = Passive(this.Dp)
-                this.Selfbuff = Selfbuff(this.Buff)
-                this.Teambuff = Teambuff(this.Buff)
-                this.Zonebuff = Zonebuff(this.Buff)
-                this.Debuff = Debuff(this.Buff)
-
-
-            def __call__(this):
-                log('cast', 'passivebt')
-                p = this.Passive('bt', 0.20,'buff')()
-                log('cast', 'passivebt')
-                p.off()
-                log('cast', 'passivebt')
-                p()
-                log('cast', 'teamspd')
-                this.Teambuff('spd', 0.20,'spd')(10)
-                log('cast', 'team1', 0.15)
-                b = this.Teambuff('team1', 0.15)(10)
-                log('cast', 'team1', 0.20)
-                b.set(0.20)
-                b(10)
-                log('cast', 'self2')
-                this.Selfbuff('self2', 0.20)(5)
-                log('cast', 'selfp')
-                this.Selfbuff('selfp', 0.20,'atk','p')(-1)
-                log('cast', 'zone')
-                this.Zonebuff('zone', 0.10, 'atk')(10)
-                log('cast', 'debuff')
-                d = this.Debuff('debuff', 0.10,'def')
-                d.set(0.15)
-                d(10)
-                print(d.get())
-
-
-        c = C()
-        c2 = C2()
-        c2()
-
-    logset(['buff','dp'])
-    #logset(['buff','cast'])
-    test()
-    Timer.run()
-    logcat()
-
-
-
-
-
+    pass

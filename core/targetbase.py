@@ -136,7 +136,7 @@ class Target(object):
             this.od_start = now()
 
         if this.logdmg:
-            this.logdmg('%s, %s'%(hostname, dmgname), dmg,
+            this.logdmg(hostname, dmgname, dmg,
                     'hp: %d-%d'%(this.hp, dmg) )
 
 
@@ -158,14 +158,14 @@ class Target(object):
             this.hp -= true_dmg
             this.od += true_dmg * dmg.to_od
             if this.logod:
-                this.logod('%s, od+'%dmg.hostname, true_dmg * dmg.to_od,
+                this.logod(dmg.hostname, 'od+', true_dmg * dmg.to_od,
                         'od: %d/%d'%(this.od, this.base_od) )
             this.recount(dmg.hostname, dmg.name, true_dmg, 0)
         elif this.odbk == 1:
             this.hp -= true_dmg
             this.bk -= true_dmg * dmg.to_bk
             if this.logbk:
-                this.logbk('%s, od-'%dmg.hostname, true_dmg * dmg.to_bk,
+                this.logbk(dmg.hostname, 'od-', true_dmg * dmg.to_bk,
                         'bk: %d/%d'%(this.bk, this.base_bk) )
             this.recount(dmg.hostname, dmg.name, true_dmg,
                     int(true_dmg * dmg.to_bk) )
@@ -194,7 +194,7 @@ class Target(object):
         this.def_ = this.base_def * this.od_def
         this.od_ks()
         if this.logod:
-            this.logod('start')
+            this.logod(this.name, 'start')
         if 'Afflics' in this.mod:
             this.mod['Afflics'].reset()
         this.od_start = now()
@@ -214,9 +214,9 @@ class Target(object):
         this.od_ks.off()
         this.bk_ks()
         if this.logod:
-            this.logod('end')
+            this.logod(this.name, 'end')
         if this.logbk:
-            this.logbk('start')
+            this.logbk(this.name, 'start')
 
 
     def normal(this):
@@ -225,7 +225,7 @@ class Target(object):
         this.def_ = this.base_def
         this.bk_ks.off()
         if this.logbk:
-            this.logbk('end')
+            this.logbk(this.name, 'end')
 
 
 if __name__ == '__main__':

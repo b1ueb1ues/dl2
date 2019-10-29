@@ -18,6 +18,7 @@ class Skillupgrade(object):
         this.s_upgraded = host.Skill('%s+'%skillname, host, conf22.get)
         this.s_upgraded.sp = host.s1.sp
         this.log = Logger('s')
+        this.loghost = host.name
 
         this.buff = ssbuff
         ssbuff.on_end.append(this.on_buff_end)
@@ -30,7 +31,7 @@ class Skillupgrade(object):
             this.host.s1 = this.host.a_s[0]
             this.level = 0
             if this.log:
-                this.log('%s, skill -'%(this.host.name))
+                this.log(this.loghost, 'skill -')
 
     def upgrade(this, duration):
         this.buff.on(duration)
@@ -38,7 +39,7 @@ class Skillupgrade(object):
             this.host.s1 = this.s_upgraded
             this.level = 1
             if this.log:
-                this.log('%s, skill +'%this.host.name)
+                this.log(this.loghost, 'skill +')
     __call__ = upgrade
 
     def reset(this):

@@ -19,7 +19,7 @@ def fake_team(duration, ex):
     skada.div(duration, 1)
     d = skada.sum(q=1)
     env.root = bak
-    env.root['team_dps'] = d['_Faketeam']['dmg']
+    env.root['team_dps'] = d['_Faketeam']['dps']
     return env.root['team_dps']
 
 
@@ -98,7 +98,7 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
     if len(argv) >= 2:
         verbose = int(argv[1])
     if len(argv) >= 3:
-        duration = int(argv[2])
+        time = int(argv[2])
     if len(argv) >= 4:
         ex_lite = argv[3]
         ex = []
@@ -139,7 +139,7 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
         statistic.show_csv()
     else:
         statistic.show_single_detail()
-        #statistic.show_detail()
+        statistic.show_detail()
 
 
 if __name__ == '__main__':

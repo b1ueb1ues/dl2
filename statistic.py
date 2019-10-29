@@ -5,7 +5,7 @@ from core import env
 
 def loglevel(level):
     if level == 0:
-        logset([])
+        logset(['rotation'])
     elif level == 1:
         logset(['rotation'])
     elif level == 2:
@@ -25,14 +25,14 @@ def show_log():
 
 def show_single_detail():
     a = skada.sum(q=1)
-    teamdps = a['_Faketeam']['dmg']
+    teamdps = a['_Faketeam']['dps']
     teambase = 0
     if 'team_dps' in env.root:
         teambase = env.root['team_dps']
         #print('fake_team_base: ',env.root['team_dps'])
     for i in a:
         if i[0] != '_':
-            single = a[i]['dmg']
+            single = a[i]['dps']
             teampercent = '%.2f'%((teamdps/teambase-1)*100)
             teamboost = int((teamdps/teambase-1)*10000)
             total = single + teamboost
@@ -44,14 +44,16 @@ def show_single_detail():
         if i[0] != '_':
             print(i, s[i])
 
+
 def show_detail():
     skada.sum()
     if 'team_dps' in env.root:
         print('fake_team_base: ',env.root['team_dps'])
     s = skada.get()
     for i in s:
-        if i[0] != '_':
-            print(i, s[i])
+        print(i, s[i])
+        #if i[0] != '_':
+        #    print(i, s[i])
 
 def show_csv():
     line = ''
@@ -61,15 +63,15 @@ def show_csv():
 
     for i,v in skada._skada.items():
         if i[0] != '_':
-            d = v['dmg']
+            d = v['dps']
 
     s = skada.sum(q=1)
     for i, v in s.items():
         if i[0] != '_':
-            total += v['dmg']
+            total += v['dps']
             name = i
         else:
-            t = v['dmg']
+            t = v['dps']
             t = int((t/team_base-1)*10000)
             total += t 
     line += '%s,%s,'%(total, name)

@@ -72,7 +72,8 @@ class _Dot():
                  'coef' : coef
                 ,'type' : 's'
                 }
-        this.label = '%s, %s'%(src.name, this._dmg.name)
+        this.srcname = src.name
+        this.dmgname = this._dmg.name
         this.Dc = this.src.Dmg(dmgconf)
         this.t_dot_end = Timer(this.dot_end_proc)
         this.log = Logger('dot')
@@ -83,7 +84,7 @@ class _Dot():
         this._static.all_stacks.pop(idx)
         this._static.stacks -= 1
         if this.log:
-            this.log('%s, %s'%(this._static.host.name, this.classname),
+            this.log(this._static.host.name, this.classname,
                     'stack_end', "dot stack <%d>"%this._static.stacks)
         if this._static.stacks < 0:
             print('err in dot_end_proc')
@@ -97,7 +98,7 @@ class _Dot():
         this._dmg.dmg = this.Dc.calc()
 
         if this.log:
-            this.log(this.label, 'apply',
+            this.log(this.srcname, this.dmgname, 'apply',
                     '%s, %d'%(this._static.host.name, this._dmg.dmg))
 
         this._static.all_stacks.append(this)
@@ -108,5 +109,5 @@ class _Dot():
         this._static.stacks += 1
         if this.log:
             if this._static.stacks > 1:
-                this.log('%s, %s'%(this._static.host.name, this.classname),
+                this.log(this._static.host.name, this.classname,
                         'stack_add', "dot stack <%d>"%this._static.stacks)

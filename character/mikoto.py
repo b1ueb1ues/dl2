@@ -30,7 +30,6 @@ class Mikoto(Character):
         ,'a1'      : ('cc', 0.10,'hp70')
         ,'a3'      : ('cc', 0.08)
 
-        ,'s1.on_end'       : [this.s1_end]
         ,'s1.recovery'     : 1.62  # 1.83 2.8
         ,'s1.sp'           : 4500
         ,'s1.hit'          : [(0.18,'h1'),
@@ -83,5 +82,4 @@ class Mikoto(Character):
 
 if __name__ == '__main__':
     import run
-    #logset('all')
     run.this_character()

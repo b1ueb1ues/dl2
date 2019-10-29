@@ -24,7 +24,7 @@ class Skill(object):
 
     def silence_end(this, t):
         if this.log:
-            this.log(this.host.name+', silence','end')
+            this.log(this.host.name, 'silence','end')
         this.silence = 0
         this.e_silence_end()
         this.e_s()
@@ -111,7 +111,7 @@ class _Skill(object):
         this.speed_get = host.Dp.get_
 
         this.log = Logger('s')
-        this.src = host.name+', '
+        this.loghost = host.name
 
         Conf_skl(this, conf)()
         this.conf['on_end'].append( this.skill_end )
@@ -140,15 +140,15 @@ class _Skill(object):
     def check(this):
         if this.sp.max <= 0:
             if this.log:
-                this.log(this.src+this.name, 'failed','no skill')
+                this.log(this.loghost, this.name, 'failed','no skill')
             return 0
         elif this._static.silence == 1:
             if this.log:
-                this.log(this.src+this.name, 'failed','silence')
+                this.log(this.loghost, this.name, 'failed','silence')
             return 0
         elif this.sp.cur < this.sp.max:
             if this.log:
-                this.log(this.src+this.name, 'failed','no sp')
+                this.log(this.loghost, this.name, 'failed','no sp')
             return 0
         else :
             return 1
@@ -156,26 +156,26 @@ class _Skill(object):
 
     def tap(this):
         #if this.log:
-        #    this.log(this.src+this.name, 'tap')
+        #    this.log(this.loghost, this.name, 'tap')
         #if not this.check():
         #    return 0
         # manual inline {
         if this.sp.cur < this.sp.max:
             #if this.log:
-            #    this.log(this.src+this.name, 'failed','no sp')
+            #    this.log(this.loghost, this.name, 'failed','no sp')
             return 0
         elif this.sp.max <= 0:
             if this.log:
-                this.log(this.src+this.name, 'failed','no skill')
+                this.log(this.loghost, this.name, 'failed','no skill')
             return 0
         elif this._static.silence == 1:
             if this.log:
-                this.log(this.src+this.name, 'failed','silence')
+                this.log(this.loghost, this.name, 'failed','silence')
             return 0
         # } manual inline
         else:
             if this.log:
-                this.log(this.src+this.name, 'cast')
+                this.log(this.loghost, this.name, 'cast')
             if this.ac():
                 # this.active() {
                 this.firsthit = 1
@@ -269,7 +269,7 @@ class _Skill(object):
             return
 
         if this.log:
-            this.log('%s, %s'%(this.host.name, this.name),'cutin')
+            this.log(this.host.name, this.name,'cutin')
 
         this.sp.cur = 0
         static.s_prev = this.name
@@ -388,14 +388,14 @@ class _Combo(object):
         this.conf = this.ac.conf
 
         this.log = Logger('x')
-        this.src = this.host.name+', '
+        this.loghost = this.host.name
         this.charge = host.charge
 
 
 
     def tap(this):
         if this.log:
-            this.log(this.src+this.name, 'tap')
+            this.log(this.loghost, this.name, 'tap')
 
         if this.ac():
             #this.active {
@@ -541,7 +541,7 @@ class _Fs(object):
         this.conf = this.ac.conf
 
         this.log = Logger('fs')
-        this.src = host.name+', '
+        this.loghost = host.name
         this.charge_fs = host.charge_fs
         this.t_startup = Timer(this._active)
 
@@ -552,7 +552,7 @@ class _Fs(object):
 
     def hold(this):
         if this.log:
-            this.log(this.src+this.name, 'hold')
+            this.log(this.loghost, this.name, 'hold')
         if this.ac():
             this.active()
             return 1
@@ -607,7 +607,7 @@ class _Fs(object):
             return
 
         if this.log:
-            this.log('%s, %s'%(this.host.name, this.name),'release')
+            this.log(this.host.name, this.name,'release')
 
         if this.hit_count :
             this.firsthit = 1
@@ -666,7 +666,7 @@ class _Dodge(object):
         this.conf = this.ac.conf
 
         this.log = Logger('dodge')
-        this.src = this.host.name+', '
+        this.loghost = this.host.name
 
 
     def __call__(this):
@@ -675,15 +675,15 @@ class _Dodge(object):
 
     def tap(this):
         if this.log:
-            this.log(this.src+this.name, 'tap')
+            this.log(this.loghost, this.name, 'tap')
 
         if this.ac():
             if this.log:
-                this.log('start')
+                this.log(this.loghost, 'start')
             return 1
         else:
             if this.log:
-                this.log('failed')
+                this.log(this.loghost, 'failed')
             return 0
 
 

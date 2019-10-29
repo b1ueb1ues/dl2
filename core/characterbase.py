@@ -81,7 +81,6 @@ default_acl_cancel = """\
     #fsc = 0
     #x = 0
     #fs = 0
-    #default = 1
     #if e.type == 'x':
     #    if e.hit == e.last:
     #        x = e.idx
@@ -221,8 +220,8 @@ class Character(object):
         this.setup()
         this.child_init()
 
-        setup = '%s*,%s,%s,%s,[%s+%s][%s],[%s],'%(this.star, this.ele, this.wt,
-                    int(this.Dp.get('atk')*this.atk),
+        setup = '%s*,%s,%s,%s|%s,[%s+%s][%s],[%s],'%(this.star, this.ele, this.wt,
+                    this.atk, int(this.Dp.get('atk')*this.atk),
                     this.a.a1.__class__.__name__ ,
                     this.a.a2.__class__.__name__ ,
                     this.conf['slot']['d'],
@@ -375,7 +374,7 @@ class Character(object):
         this.s2.charge(sp)
         this.s3.charge(sp)
         if this.logsp :
-            this.logsp('%s, %s'%(this.name, name), sp,
+            this.logsp(this.name, name, sp,
                     '%d/%d, %d/%d, %d/%d'%( \
                     this.s1.sp.cur, this.s1.sp.max,
                     this.s2.sp.cur, this.s2.sp.max,
@@ -393,7 +392,7 @@ class Character(object):
         this.s2.charge(sp)
         this.s3.charge(sp)
         if this.logsp :
-            this.logsp('%s, %s'%(this.name, name), sp,
+            this.logsp(this.name, name, sp,
                     '%d/%d, %d/%d, %d/%d'%( \
                     this.s1.sp.cur, this.s1.sp.max,
                     this.s2.sp.cur, this.s2.sp.max,
@@ -418,7 +417,7 @@ class Character(object):
         this.s2.charge( floatsingle.ceiling(this.conf['s2']['sp'] * charge) )
         this.s3.charge( floatsingle.ceiling(this.conf['s3']['sp'] * charge) )
         if this.logsp:
-            this.logsp('%s, %s'%(this.name, name), '%d%%'%(charge*100),
+            this.logsp(this.name, name, '%d%%'%(charge*100),
                     '%d/%d, %d/%d, %d/%d'%( \
                     this.s1.sp.cur, this.s1.sp.max,
                     this.s2.sp.cur, this.s2.sp.max,
@@ -435,7 +434,7 @@ class Character(object):
             this.a_x[0]()
         else:
             if this.logx:
-                this.logx('%s, tap'%this.name, 'plain start')
+                this.logx(this.name, 'tap', 'plain start')
             Timer(this.start_x)(0.15)
 
 
@@ -445,7 +444,7 @@ class Character(object):
 
     def hit(this, count):
         if this.loghit:
-            this.loghit('add', '%d+%d'%(this.hitcount, count) )
+            this.loghit(this.name, 'add', '%d+%d'%(this.hitcount, count) )
         if count :
             this.hitcount += count
             this.t_hitreset(2)
@@ -456,7 +455,7 @@ class Character(object):
     def hitreset(this, t):
         this.hitcount = 0
         if this.loghit:
-            this.loghit('reset', 0)
+            this.loghit(this.name, 'reset', 0)
         this.e_hit.hit = 0
         this.e_hit()
 

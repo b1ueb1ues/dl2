@@ -9,9 +9,9 @@ _g_verbose = []
 def Logger(t):
     global _g_verbose
     if t in _g_verbose or 'all' in _g_verbose:
-        def log(name, amount=None, misc=''):
+        def log(host, name, amount=None, misc=''):
             global _g_log
-            _g_log.append([now(), t, name, amount, misc])
+            _g_log.append([now(), t, host, name, amount, misc])
         return log
     else:
         return None
@@ -36,15 +36,15 @@ def verbose(t):
         return False
 
 
-def log(t, name, amount=None, misc=''):
+def log(t, host, name, amount=None, misc=''):
     global _g_verbose
-    if t in _g_verbose:
-        _g_log.append([now(), t, name, amount, misc])
+    if t in _g_verbose or 'all' in _g_verbose:
+        _g_log.append([now(), t, host, name, amount, misc])
 
 
-def log_(t, name, amount=None, misc=''):
+def log_(t, host, name, amount=None, misc=''):
     global _g_verbose
-    _g_log.append([now(), t, name, amount, misc])
+    _g_log.append([now(), t, host, name, amount, misc])
 
 
 def logset(v):
@@ -56,35 +56,35 @@ def logset(v):
 
 
 def __catline(i):
-    if i[3] == None:
-        print("%-7.3f: %-8s, %-16s,                 , %s"%(i[0],i[1],i[2],i[4]))
-    elif type(i[3]) == float:
-        n = "%s"%(int(i[3]))
-        f = i[3] - int(i[3])
+    if i[4] == None:
+        print("%-7.3f: %-8s,%s, %-16s,                 , %s"%(i[0],i[1],i[2],i[3],i[5]))
+    elif type(i[4]) == float:
+        n = "%s"%(int(i[4]))
+        f = i[4] - int(i[4])
         if f >= 1:
             f = 0
         n += ("%-.3f"%(f))[1:]
-        print("%-7.3f: %-8s, %-16s, %-16s, %s"%(i[0],i[1],i[2],n,i[4]))
+        print("%-7.3f: %-8s, %s, %-16s, %-16s, %s"%(i[0],i[1],i[2],i[3],n,i[5]))
     elif type(i[3]) == int:
-        print("%-7.3f: %-8s, %-16s, %-16d, %s"%(i[0],i[1],i[2],i[3],i[4]))
+        print("%-7.3f: %-8s, %s, %-16s, %-16d, %s"%(i[0],i[1],i[2],i[3],i[4],i[5]))
     else:
-        print("%-7.3f: %-8s, %-16s, %-16s, %s"%(i[0],i[1],i[2],i[3],i[4]))
+        print("%-7.3f: %-8s, %s, %-16s, %-16s, %s"%(i[0],i[1],i[2],i[3],i[4],i[5]))
 
 
 def __saveline(fw, i):
-    if i[3] == None:
-        fw.write("%-7.3f, %-8s, %-16s,                 , %s\n"%(i[0],i[1],i[2],i[4]))
-    elif type(i[3]) == float:
-        n = "%s"%(int(i[3]))
-        f = i[3] - int(i[3])
+    if i[4] == None:
+        fw.write("%-7.3f, %-8s, %s, %-16s,                 , %s\n"%(i[0],i[1],i[2],i[3],i[5]))
+    elif type(i[4]) == float:
+        n = "%s"%(int(i[4]))
+        f = i[4] - int(i[4])
         if f >= 1:
             f = 0
         n += ("%-.3f"%(f))[1:]
-        fw.write("%-7.3f, %-8s, %-16s, %-16s, %s\n"%(i[0],i[1],i[2],n,i[4]))
+        fw.write("%-7.3f, %-8s, %s, %-16s, %-16s, %s\n"%(i[0],i[1],i[2],i[3],n,i[5]))
     elif type(i[3]) == int:
-        fw.write("%-7.3f, %-8s, %-16s, %-16d, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
+        fw.write("%-7.3f, %-8s, %s, %-16s, %-16d, %s\n"%(i[0],i[1],i[2],i[3],i[4],i[5]))
     else:
-        fw.write("%-7.3f, %-8s, %-16s, %-16s, %s\n"%(i[0],i[1],i[2],i[3],i[4]))
+        fw.write("%-7.3f, %-8s, %s, %-16s, %-16s, %s\n"%(i[0],i[1],i[2],i[3],i[4],i[5]))
 
 
 def logsave(logname):

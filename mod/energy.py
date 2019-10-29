@@ -56,8 +56,9 @@ class Energy():
         if not this.energized :
             this.energy += count
             if this.energy > 0:
-                this.energy_buff.off()
-                this.energy_buff.set(this.energy).on(-1)
+                #this.energy_buff.off()
+                this.energy_buff.set(this.energy)
+                #this.energy_buff.on(-1)
             if this.energy >= 5 :
                 this.energy = 0
                 this.energized = 1

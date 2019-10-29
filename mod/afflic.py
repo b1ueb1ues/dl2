@@ -74,7 +74,7 @@ class Afflics(object):
 
     def reset(this):
         if this.log:
-            this.log('clean')
+            this.log(this.host.name, 'clean')
         for i in this.dot_group:
             if this.dot_group[i]:
                 this.dot_group[i].reset()
@@ -115,12 +115,12 @@ class _Afflic_dot():
     def on(this):
         if this.resist[this.atype] >= 1:
             if this.log:
-                this.log('perfect resist')
+                this.log(this.host.name, 'perfect resist')
             return 
         if random.random() < this.rate-this.resist[this.atype] :
             # proc
             if this.log:
-                this.log('proc', '%.2f - %.2f'%(this.rate,
+                this.log(this.host.name, 'proc', '%.2f - %.2f'%(this.rate,
                                                 this.resist[this.atype]) )
             this.resist[this.atype] += 0.05
             this.dot(this.src, this.name, this.coef, this.duration)()
@@ -128,7 +128,7 @@ class _Afflic_dot():
         else:
             # resist
             if this.log:
-                this.log('normal resist')
+                this.log(this.host.name, 'normal resist')
 
     __call__ = on
 
@@ -176,17 +176,17 @@ class _Afflic_scc():
     def on(this):
         if this.resist[this.atype] >= 1:
             if this.log:
-                this.log('perfect resist')
+                this.log(this.host.name, 'perfect resist')
             return 
         if random.random() < this.rate-this.resist[this.atype] :
             # proc
             if this._static.scc[this.atype]:
                 if this.log:
-                    this.log('faild','active already')
+                    this.log(this.host.name, 'faild','active already')
                 return
 
             if this.log:
-                this.log('proc', '%.2f - %.2f'%(this.rate, this.resist[this.atype]) )
+                this.log(this.host.name, 'proc', '%.2f - %.2f'%(this.rate, this.resist[this.atype]) )
 
             this._static.scc[this.atype] = this
             this.resist[this.atype] += this.tolerance
@@ -197,7 +197,7 @@ class _Afflic_scc():
         else:
             # resist
             if this.log:
-                this.log('normal resist')
+                this.log(this.host.name, 'normal resist')
 
     __call__ = on
 
@@ -233,7 +233,7 @@ class _Afflic_cc():
     def on(this):
         if this.resist[this.atype] >= 1:
             if this.log:
-                this.log('perfect resist')
+                this.log(this.host.name, 'perfect resist')
             return 
         if random.random() < this.rate-this.resist[this.atype] :
             # proc
@@ -242,17 +242,17 @@ class _Afflic_cc():
                     break
                 elif this.atype in this._static.cc:
                     if this.log:
-                        this.log('faild','active already')
+                        this.log(this.host.name, 'faild','active already')
                     return
                 else:
                     for i in this._static.cc:
                         this._static.cc[i].reset()
                         if this.log:
-                            this.log('cover %s'%i , 'by %s'%this.atype )
+                            this.log(this.host.name, 'cover %s'%i , 'by %s'%this.atype )
                     break
 
             if this.log:
-                this.log('proc', '%.2f - %.2f'%(this.rate,
+                this.log(this.host.name, 'proc', '%.2f - %.2f'%(this.rate,
                                                 this.resist[this.atype]) )
 
             this._static.cc = {this.atype: this}
@@ -262,7 +262,7 @@ class _Afflic_cc():
         else:
             # resist
             if this.log:
-                this.log('normal resist')
+                this.log(this.host.name, 'normal resist')
 
     __call__ = on
 

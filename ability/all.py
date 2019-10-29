@@ -281,7 +281,7 @@ class skill_link(Ability):
             if this.logcd:
                 sp = this.dst.s1.sp
                 if sp.cur >= sp.max and this.t==0:
-                    this.logcd('skill_link cding')
+                    this.logcd(this.dst.name, 'skill_link cding')
             return
         sp = this.dst.s1.sp
         if sp.cur >= sp.max and this.t==0:

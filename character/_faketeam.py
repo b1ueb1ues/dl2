@@ -30,9 +30,7 @@ class _Faketeam(Character):
         return {
          'slot.w'  : 'Plain_w'
         ,'slot.d'  : 'Plain_d'
-        ,'slot.a1' : 'Plain_a1'
-        ,'slot.a2' : 'Plain_a2'
-
+        ,'slot.a'  : 'Plain_a1+Plain_a2'
         ,'acl.cancel': """
             `s1, x=5
             `s2, x=5
@@ -62,23 +60,5 @@ class _Faketeam(Character):
         
 
 if __name__ == '__main__':
-    #logset(['buff', 'dmg', 'od', 'bk'])
-    logset(['buff', 'dmg', 'bk', 'sp'])
-    #logset('x')
-    logset('fs')
-    #logset('act')
-    logset('s')
-    #logset(['buff','debug','dmg', 'hit'])
-
-    tar = dummy()
-    tar.init()
-
-    c = Faketeam()
-    c.tar(tar)
-    c.init()
-
-    d = 120
-    Timer.run(d)
-    logcat()
-    print('dps',Skada.sum()['Faketeam']['dmg']/now())
-    print(Skada._skada)
+    import run
+    run.this_character()
