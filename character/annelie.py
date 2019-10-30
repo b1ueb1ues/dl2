@@ -10,12 +10,12 @@ class Annelie(Character):
     def dconf(this):
         conf = {
             'acl.cancel': """
-            #e = this.Energy.stacks()
-            `s1, s2.sp.cur<=10000
-            `s1, s=2
-            `s2
-            `s3
-            `fs, x=5 
+                #e = this.Energy.stacks()
+                `s1, s2.sp.cur<=10000
+                `s1, s=2
+                `s2
+                `s3
+                `fs, x=5 
             """,
         }
         return conf
@@ -35,12 +35,14 @@ class Annelie(Character):
         ,'s1.hit'             : [
             (1,'h1'),(1,'h2')]
 
+        ,'s12.recovery'        : 2.1
         ,'s12.attr.h1.coef'    : 0.1
         ,'s12.attr.h2.coef'   : 4.07
         ,'s12.hit'            : [
             (1,'h1'),(1,'h2'),
             (1,'h1'),(1,'h2')]
 
+        ,'s13.recovery'        : 2.1
         ,'s13.attr.h1.coef'    : 0.1
         ,'s13.attr.h2.coef'   : 3.54
         ,'s13.hit'            : [
@@ -59,9 +61,9 @@ class Annelie(Character):
 
     def init(this):
         this.stance = 0
-        
+        this.ss = Skillshift(this, 1, this.conf['s12'], this.conf['s13'])
+
     def s1_end(this):
-        pass
         if this.stance == 0:
             this.Energy.self(1)
             this.stance = 1

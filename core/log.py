@@ -57,7 +57,7 @@ def logset(v):
 
 def __catline(i):
     if i[4] == None:
-        print("%-7.3f: %-8s,%s, %-16s,                 , %s"%(i[0],i[1],i[2],i[3],i[5]))
+        print("%-7.3f: %-8s, %s, %-16s,                 , %s"%(i[0],i[1],i[2],i[3],i[5]))
     elif type(i[4]) == float:
         n = "%s"%(int(i[4]))
         f = i[4] - int(i[4])
@@ -103,8 +103,20 @@ def logcat(filter=None):
             __catline(i)
     else :
         for i in log:
-            for j in filter :
-                if i[1] == j:
+            if i[1] in filter:
+                __catline(i)
+
+def logcat_(filter=None):
+    log = _g_log
+        
+    if filter == None :
+        for i in log:
+            if i[2][0] != '_':
+                __catline(i)
+    else :
+        for i in log:
+            if i[1] in filter:
+                if i[2][0] != '_':
                     __catline(i)
 
 

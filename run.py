@@ -95,6 +95,7 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
     import statistic
 
     argv = sys.argv
+    ex_lite = ''
     if len(argv) >= 2:
         verbose = int(argv[1])
     if len(argv) >= 3:
@@ -137,6 +138,17 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
         statistic.show_log()
     elif verbose == -2:
         statistic.show_csv()
+    elif verbose == -5:
+        if ex_lite == '':
+            print('-,%s,_'%(time) )
+        else:
+            print('-,%s,%s'%(time, ex_lite))
+        a = statistic.show_csv()
+        print('-,%s,k%s'%(time, ex_lite))
+        if 'blade' in ex:
+            statistic.show_csv0(a)
+        else:
+            statistic.show_csv10(a)
     else:
         statistic.show_single_detail()
         statistic.show_detail()

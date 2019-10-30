@@ -268,7 +268,10 @@ class Character(object):
 
         this.e_idle = this.Event('idle')
         this.e_idle()
+        this.debug()
 
+    def debug(this):
+        pass
 
     @classmethod
     def get_sub(cls):
@@ -385,7 +388,7 @@ class Character(object):
             this.Skill.s_prev = None
 
     def charge_fs(this, name, sp):
-        sp = int(sp) * floatsingle.tofloat(this.mod('sp')+this.mod('fsp'))
+        sp = int(sp) * floatsingle.tofloat(this.mod('sp')+this.mod('fsp')-1)
         sp = floatsingle.tofloat(sp)
         sp = floatsingle.ceiling(sp)
         this.s1.charge(sp)

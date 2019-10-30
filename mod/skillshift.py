@@ -33,7 +33,7 @@ class Skillshift(object):
         this.hit = 1
 
     def shift(this):
-        if this.hit:
+        if not this.hit:
             return
         else:
             this.hit = 0

@@ -168,6 +168,11 @@ class _Buff(object):
         #    raise
         this._value = v
         this.dp.set(this._value)
+        if this.log :
+            this.log(this.hostname(), this.name,
+                    '%s: %.2f'%(this.mod_type, this.get()),
+                    '%s %s set'%(this.group_name,
+                        this.bufftype))
         if this.log_dp:
             if this.mod_type in this._static.Dp.type_mods:
                 this.log_dp(this.hostname(), this.mod_type,
