@@ -153,6 +153,8 @@ class Character(object):
         this.init = this.character_init
 
         this.condition = Condition()
+        if not rootconf['condi'] :
+            this.condition.unset()
 
 
     # after settle down all config
@@ -181,8 +183,8 @@ class Character(object):
 
         this.Energy = Energy(this)
 
-        import config.weapon
-        wtconf = Conf()(config.weapon.wtconf[this.conf['wt']]).get
+        import basecombo
+        wtconf = Conf()(basecombo.wtconf[this.conf['wt']]).get
         this.wtconf = wtconf
         this.x1 = this.Combo('x1', this, wtconf['x1'])
         this.x2 = this.Combo('x2', this, wtconf['x2'])

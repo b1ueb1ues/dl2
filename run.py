@@ -14,6 +14,7 @@ def fake_team(duration, ex):
     ,'ex'          : ex
     ,'duration'    : duration
     ,'sample'      : 1
+    ,'condi'       : True
     }
     env.run()
     skada.div(duration, 1)
@@ -23,7 +24,7 @@ def fake_team(duration, ex):
     return env.root['team_dps']
 
 
-def solo(name, duration=120, ex=default_ex):
+def solo(name, duration=120, ex=default_ex, condi=True):
     env.root = {
      '1p.name'     : name
     ,'2p.name'     : '_Faketeam'
@@ -31,6 +32,7 @@ def solo(name, duration=120, ex=default_ex):
     ,'ex'          : ex
     ,'duration'    : duration
     ,'sample'      : 1
+    ,'condi'       : condi
     }
     ctx1 = env.run()
     Ctx()
@@ -45,7 +47,7 @@ def solo(name, duration=120, ex=default_ex):
     skada.div(env.root['duration'], env.root['sample'])
 
 
-def solo_range(name, duration=120, ex=default_ex):
+def solo_range(name, duration=120, ex=default_ex, condi=True):
     env.root = {
      '1p.name'     : name
     ,'2p.name'     : '_Faketeam'
@@ -53,6 +55,7 @@ def solo_range(name, duration=120, ex=default_ex):
     ,'ex'          : ex
     ,'duration'    : duration
     ,'sample'      : 256
+    ,'condi'       : condi
     }
     ctx1 = env.run()
     skada.div(env.root['duration'], env.root['sample'])
@@ -90,6 +93,12 @@ def team(conf):
 
 
 def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
+    _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True)
+    skada.reset()
+    _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=False)
+
+
+def _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True):
     import sys
     from core import characterbase as cb
     import statistic
@@ -121,11 +130,13 @@ def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
 
     statistic.loglevel(verbose)
     if mass and verbose<=0:
-        for i in cs:
-            solo_range(i, time, ex) 
+        for i in cs :
+            if i[0] != '_':
+                solo_range(i, time, ex, condi) 
     else:
-        for i in cs:
-            solo(i, time, ex) 
+        for i in cs :
+            if i[0] != '_':
+                solo(i, time, ex, condi) 
 
     if verbose == 0:
         statistic.show_single_detail()

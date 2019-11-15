@@ -15,7 +15,7 @@ class Condition(object):
         this.if_condition = c
 
 
-    def unset():
+    def unset(this):
         this.if_condition = False
 
 

@@ -86,7 +86,8 @@ def run():
             lastresult[p[i]] = 0
             dmax[p[i]] = 0
             dmin[p[i]] = -1
-    for i in range(root['sample']):
+
+    for s in range(root['sample']):
         ctx = Ctx()
         _run()
         r = skada.sum2(q=1)

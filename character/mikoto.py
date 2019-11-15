@@ -66,14 +66,15 @@ class Mikoto(Character):
             this.stancebuff.on_end.append(this.clean_stance)
             this.stance = 1
         elif this.stance == 1:
+            this.stancebuff.on_end = []
             this.stancebuff.off()
             this.stancebuff = this.Selfbuff('s1', 0.15)(15)
             this.stancebuff.on_end.append(this.clean_stance)
             this.stance = 2
         else:
             this.stance = 0
+            this.stancebuff.on_end = []
             this.stancebuff.off()
-
 
     def clean_stance(this):
         this.stance = 0

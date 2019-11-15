@@ -37,6 +37,12 @@ class Fjorm(Character):
         ,'s2.sp'           : 4548
         }
 
+    def init(this):
+        Timer(this.lb)(3)
+    def lb(this, t):
+        this.Teambuff('last bravery',0.3).on(15)
+
+
 if __name__ == '__main__':
     import run
     run.this_character()

@@ -1,6 +1,7 @@
 import __init__
 
 class Ability(object):
+    passive = 0
     def __init__(this, host):
         if not host:
             print('ability need a character as host')
