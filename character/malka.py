@@ -2,34 +2,36 @@ import __init__
 from core.ctx import *
 from core.characterbase import *
 
-class Jakob(Character):
-    'no bog'
+class Malka(Character):
     def dconf(this):
         conf = {
-            'slot.d':'DJ',
             'acl.cancel': """
                 `s1
+                `s2
+                `s3
                 `fs, x=5 
             """,
         }
+        if 'bow' in this.ex:
+            conf['slot.a'] = 'RR+JotS'
         return conf
 
     def conf(this):
         return {
          'star'    : 3
-        ,'ele'     : 'water'
+        ,'ele'     : 'light'
         ,'wt'      : 'lance'
-        ,'atk'     : 437
+        ,'atk'     : 459
         ,'a3'      : ('prep', '50%')
 
-        ,'s1.recovery'     : 1.65
-        ,'s1.sp'           : 2738
-        ,'s1.hit'          : [(1,'h1'),(1,'h1')]
-        ,'s1.attr.h1.coef' : 4.11
+        ,'s1.recovery'     : 1.4
+        ,'s1.sp'           : 2556
+        ,'s1.hit'          : [(0,'h1')] * 2
+        ,'s1.attr.h1.coef' : 3.81
 
         ,'s2.recovery'     : 1
-        ,'s2.buff'         : ('team', 0.15, 15, 'def')
         ,'s2.sp'           : 6610
+        ,'s2.buff'         : ('team', 0.10, 15, 'atk')
         }
 
 

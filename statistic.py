@@ -97,7 +97,10 @@ def show_csv(q=0):
             t = v['dps']
             t = int((t/team_base-1)*10000)
             total += t 
-    line += '%s,%s,'%(total, name)
+    if env.root['condi']:
+        line += '%s,%s,'%(total, name)
+    else:
+        line += '%s,_c_%s,'%(total, name)
     info = ''
     l = logget()
     for i in l:
