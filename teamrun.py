@@ -21,6 +21,7 @@ root = {
 ,'ex'          : []
 ,'duration'    : 120
 ,'sample'      : 1
+,'condi'       : True
 }
 
 team(root)

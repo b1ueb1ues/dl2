@@ -222,7 +222,7 @@ class Character(object):
         this.setup()
         this.child_init()
 
-        setup = '%s*,%s,%s,%s|%s,[%s+%s][%s],[%s],'%(this.star, this.ele, this.wt,
+        setup = '%s*,%s,%s,str:%s|%s,[%s+%s][%s],[%s],'%(this.star, this.ele, this.wt,
                     this.atk, int(this.Dp.get('atk')*this.atk),
                     this.a.a1.__class__.__name__ ,
                     this.a.a2.__class__.__name__ ,

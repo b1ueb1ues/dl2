@@ -21,6 +21,7 @@ root = {
 ,'ex' :['blade','wand']
 ,'duration' : 120
 ,'sample' : 1
+,'condi' : False
 }
 
 def _run():

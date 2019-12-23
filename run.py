@@ -94,13 +94,13 @@ def team(conf):
 
 def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
     if verbose == -2:
-        _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True)
+        _this_character(time, ex, verbose, mass, condi=True)
         skada.reset()
-        _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=False)
+        _this_character(time, ex, verbose, mass, condi=False)
     elif verbose == -5:
         pass
     else:
-        _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True)
+        _this_character(time, ex, verbose, mass, condi=True)
 
 
 def _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True):
