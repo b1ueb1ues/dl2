@@ -29,11 +29,11 @@ class S_Ranzal(Character):
 
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1'),(0,'h1')]
         ,'s1.attr.h1.coef' : 2.16
-        ,'s1.recovery'     : 1.55
+        ,'s1.recovery'     : 3.100
         ,'s1.sp'           : 2489
 
         ,'s2.sp'           : 7383
-        ,'s2.recovery'     : 1
+        ,'s2.recovery'     : 2.400
 
         }
 

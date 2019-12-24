@@ -32,8 +32,8 @@ class Conf_Action(Config):
     def default(this):
         return {
              'type'      : ''
-            ,'startup'   : 0
-            ,'recovery'  : 2
+            ,'marker'    : 0
+            ,'stop'      : 2
             ,'cancel_by' : []
             ,'on_cancel' : []
             ,'on_end'    : []
@@ -54,7 +54,7 @@ class _Action(object):
         this.action_start = 0
         this.status = 0 # -1: idle/end 0:wait 1:doing 2cancel
 
-        this.t_recovery = Timer(this._cb_act_end)
+        this.t_stop = Timer(this._cb_act_end)
         this.e_idle = static.host.Event('idle')
         this.log = Logger('act')
         this.log_r = Logger('rotation')
@@ -94,7 +94,7 @@ class _Action(object):
             if doing.status == 1: # try to cancel an action
                 dconf = doing.conf
                 if this.conf['type'] in dconf['cancel_by'] : # can cancel action
-                    doing.t_recovery.off()
+                    doing.t_stop.off()
                     for i in dconf['on_cancel']:
                         i()
                     if this.log:
@@ -118,10 +118,10 @@ class _Action(object):
                 this.log_r(this.src, this._static.prev.name+' -----', this.name)
 
         if this.speed_cache['spd']>=0 :
-            recovery = this.conf['recovery'] / this.speed_cache['spd']
+            stop = this.conf['stop'] / this.speed_cache['spd']
         else:
-            recovery = this.conf['recovery'] / this.speed_get('spd')
-        this.t_recovery(this.conf['startup'] + recovery)
+            stop = this.conf['stop'] / this.speed_get('spd')
+        this.t_stop(this.conf['marker'] + stop)
         return 1
 
     __call__ = start

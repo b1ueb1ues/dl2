@@ -23,15 +23,15 @@ class H_Edward(Character):
         ,'atk'     : 491
         ,'a1'      : ('atk', 0.10, 'hp100')
 
-        ,'s1.recovery'     : 2.8
-        ,'s1.sp'           : 2392
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1')]
         ,'s1.attr.h1.coef' : 2.93
+        ,'s1.sp'           : 2392
+        ,'s1.stop'         : 2.733
 
-        ,'s2.recovery'     : 1.90
-        ,'s2.sp'           : 5346
         ,'s2.hit'          : [(0,'h1')]
         ,'s2.attr.h1.coef' : 7.47
+        ,'s2.sp'           : 5346
+        ,'s2.stop'         : 1.833
         }
 
 

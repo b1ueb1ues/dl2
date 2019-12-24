@@ -34,14 +34,14 @@ class Natalie(Character):
         ,'a1'      : ('extra_energy', 0.80)
         #,'a3'      : this.a3
 
-        ,'s1.recovery'        : 1.83
-        ,'s1.sp'              : 3247
         ,'s1.hit'             : [(0,'h1'),(1,'h1'),(1.2,'h1')]
         ,'s1.attr.h1.coef'    : 3.54
         ,'s1.attr.h1.missile' : [0]
-        ,'s1.on_hit' : this.s1_hit
+        ,'s1.on_hit'          : this.s1_hit
+        ,'s1.sp'              : 3247
+        ,'s1.stop'            : 1.778
 
-        ,'s2.recovery' : 1
+        ,'s2.stop'     : 1
         ,'s2.sp'       : 6000
         }
 

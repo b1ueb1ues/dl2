@@ -30,8 +30,8 @@ class Ieyasu(Character):
 
         ,'s1.hit'          : [(0,'h1')]
         ,'s1.attr.h1.coef' : 9.52
-        ,'s1.recovery'     : 4.1
         ,'s1.sp'           : 2467
+        ,'s1.recovery'     : 3.967
 
         ,'s2.sp'           : 7913
         ,'s2.recovery'     : 1

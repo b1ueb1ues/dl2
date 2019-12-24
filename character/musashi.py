@@ -25,12 +25,12 @@ class Musashi(Character):
 
         ,'s1.hit'          : [(0,'h1'),(0,'h1')]
         ,'s1.attr.h1.coef' : 4.32
-        ,'s1.recovery'     : 2.0
+        ,'s1.stop'         : 1.9
         ,'s1.sp'           : 2567
 
         ,'s2.sp'           : 4430
         ,'s2.buff'         : ('self', 0.30, 5)
-        ,'s2.recovery'     : 1
+        ,'s2.stop'         : 1
         }
 
 

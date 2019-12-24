@@ -24,14 +24,14 @@ class Melody(Character):
         ,'atk'             : 470
         ,'a1'              : ('cc', 0.08, 'hp100')
 
-        ,'s1.recovery'     : 1
-        ,'s1.sp'           : 2987
         ,'s1.buff'         : ('team', 0.15, 15)
+        ,'s1.sp'           : 2987
+        ,'s1.stop'         : 1
 
-        ,'s2.sp'           : 4784
-        ,'s2.recovery'     : 2.75
         ,'s2.hit'          : [(0,'h1'),(0,'h1'),(0,'h1')]
         ,'s2.attr.h1.coef' : 2.64
+        ,'s2.sp'           : 4784
+        ,'s2.stop'         : 2.733
         }
 
 

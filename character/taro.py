@@ -22,15 +22,15 @@ class Jurota(Character):
         ,'wt'      : 'blade'
         ,'atk'     : 495
 
-        ,'s1.recovery'     : 2.80
-        ,'s1.sp'           : 2392
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1')]
         ,'s1.attr.h1.coef' : 2.93
+        ,'s1.sp'           : 2392
+        ,'s1.stop'         : 2.733
 
-        ,'s2.recovery'     : 1.95
-        ,'s2.sp'           : 5259
         ,'s2.hit'          : [(0,'h1')]
         ,'s2.attr.h1.coef' : 7.9
+        ,'s2.sp'           : 5259
+        ,'s2.stop'         : 1.833
         }
 
 

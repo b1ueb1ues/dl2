@@ -29,13 +29,13 @@ class Victor(Character):
 
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1'),(0,'h1'),(0,'h1')]
         ,'s1.attr.h1.coef' : 1.9
-        ,'s1.recovery'     : 2.35
         ,'s1.sp'           : 2838
+        ,'s1.stop'         : 2.267
 
         ,'s2.hit'          : [(0,'h1')]
         ,'s2.attr.h1.coef' : 9.57
         ,'s2.sp'           : 7500
-        ,'s2.recovery'     : 2.7
+        ,'s2.stop'         : 2.567
         }
 
     def init(this):

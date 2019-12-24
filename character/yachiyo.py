@@ -29,11 +29,11 @@ class Yachiyo(Character):
 
         ,'s1.hit'          : [(0,'h1'),(1,'h1')]
         ,'s1.attr.h1.coef' : 4.32
-        ,'s1.recovery'     : 2.0
         ,'s1.sp'           : 2567
+        ,'s1.stop'         : 1.9
 
         ,'s2.sp'           : 4139
-        ,'s2.recovery'     : 1
+        ,'s2.stop'         : 1
         }
 
     def init(this):
@@ -46,11 +46,11 @@ class Yachiyo(Character):
             , 'fs.attr.h1.coef' : 7.82
             , 'fs.attr.h1.to_bk': 1.5
             , 'fs.sp'           : 200
-            , 'fs.startup'      : 0.37
-            , 'fs.recovery'     : 0.85
+            , 'fs.marker'       : 0.37
+            , 'fs.stop'         : 0.85
             , 'fs.proc'  : [this.fsa_proc]
 
-            , 'x1fs.startup'    : 0.68
+            , 'x1fs.marker'    : 0.68
             })
         this.fsa = Fs_alt(this, fsaconf.get, this.ss)
 

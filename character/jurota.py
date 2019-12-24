@@ -24,12 +24,12 @@ class Jurota(Character):
 
         ,'s1.hit'          : [(0,'h1')]
         ,'s1.attr.h1.coef' : 8.78
-        ,'s1.recovery'     : 1.9
         ,'s1.sp'           : 2640
+        ,'s1.stop'         : 1.733
 
-        ,'s2.sp'           : 4101
         ,'s2.buff'         : ('self', 0.25, 5)
-        ,'s2.recovery'     : 1
+        ,'s2.sp'           : 4101
+        ,'s2.stop'         : 1
         }
 
 

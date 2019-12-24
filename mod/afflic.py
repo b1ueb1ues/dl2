@@ -92,11 +92,12 @@ class _Afflic_dot():
     def __init__(this, static, atype, src, name, rate, coef, duration=None):
         this._static = static
         this.rate = rate
-        this.resist = static.host.resist
         this.src = src
         this.name =name
         this.coef = coef
         host = static.host
+        this.host = host
+        this.resist = host.resist
         if not static.dot_group[atype] :
             static.dot_group[atype] = host.mod['Dot_group'](atype,
                                         static.iv_default[atype])

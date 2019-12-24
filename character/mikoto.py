@@ -30,7 +30,7 @@ class Mikoto(Character):
         ,'a1'      : ('cc', 0.10,'hp70')
         ,'a3'      : ('cc', 0.08)
 
-        ,'s1.recovery'     : 1.62  # 1.83 2.8
+        ,'s1.stop'         : 1.4  # 1.633 2.8
         ,'s1.sp'           : 4500
         ,'s1.hit'          : [(0.18,'h1'),
                               (0.43,'h1')]
@@ -39,7 +39,7 @@ class Mikoto(Character):
         ,'s1.attr.h3.coef' : 2.13
         ,'s1.attr.h4.coef' : 4.25
 
-        ,'s2.recovery'     : 1
+        ,'s2.stop'         : 1
         ,'s2.sp'           : 4500
         ,'s2.buff'         : ('self', 0.2, 10,'spd')
         }
@@ -49,9 +49,9 @@ class Mikoto(Character):
 
         this.stance = 0
         conf = {
-                 's12.recovery' : 1.83
+                 's12.stop'     : 1.633
                 ,'s12.hit'      : [(0.23,'h2'), (0.42,'h2'), (0.65,'h2')]
-                ,'s13.recovery' : 2.8
+                ,'s13.stop'     : 2.8
                 ,'s13.hit'      : [(0.22,'h3'), (0.42,'h3'),
                                      (0.65,'h3'), (1.15,'h4')]
                 }
