@@ -24,12 +24,12 @@ class Aeleen(Character):
 
         ,'s1.hit'          : [(0,'h1')]
         ,'s1.attr.h1.coef' : 8.38
-        ,'s1.recovery'     : 1.8
+        ,'s1.stop'         : 1.8
         ,'s1.sp'           : 2579
 
         ,'s2.sp'           : 8534
         ,'s2.buff'         : ('team', 0.20, 15, 'def')
-        ,'s2.recovery'     : 1
+        ,'s2.stop'         : 1
         }
 
 

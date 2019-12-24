@@ -24,7 +24,7 @@ class H_Elisanne(Character):
         ,'atk'     : 483
         ,'a1'      : ('sd', 0.30)
 
-        ,'s1.recovery'        : 2.8
+        ,'s1.stop'            : 2.8
         ,'s1.sp'              : 2450
         ,'s1.attr.h1.coef'    : 1.15
         ,'s1.hit'             : [ (0,'h1'),
@@ -39,7 +39,7 @@ class H_Elisanne(Character):
             (0,'h1'),(0,'h1'),(0,'h1'),(0,'h1'),(0,'h1')
             ]
         ,'s2.attr.h1.coef' : 0.83
-        ,'s2.recovery' : 3.55
+        ,'s2.stop'     : 3.55
         ,'s2.sp'       : 5252
         }
 

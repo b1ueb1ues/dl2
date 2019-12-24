@@ -27,12 +27,12 @@ class Celliera(Character):
 
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1'),(1,'h1')]
         ,'s1.attr.h1.coef' : 2.42
-        ,'s1.recovery'     : 2.5
         ,'s1.sp'           : 2537
+        ,'s1.stop'         : 2.4
         ,'s12.proc'        : [this.s12_proc]
 
         ,'s2.sp'           : 4877
-        ,'s2.recovery'     : 1
+        ,'s2.stop'         : 1
         }
 
     def init(this):

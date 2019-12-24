@@ -23,12 +23,12 @@ class Pia(Character):
         ,'wt'      : 'lance'
         ,'atk'     : 446
 
-        ,'s1.recovery'        : 1.85
+        ,'s1.stop'            : 1.85
         ,'s1.sp'              : 2579
         ,'s1.attr.h1.coef'    : 8.38
         ,'s1.hit'             : [(0,'h1')]
 
-        ,'s2.recovery' : 1
+        ,'s2.stop'     : 1
         ,'s2.sp'       : 3636
         }
 

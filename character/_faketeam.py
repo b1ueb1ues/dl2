@@ -47,12 +47,12 @@ class _Faketeam(Character):
         ,'wt'      : 'lance'
         ,'atk'     : 2000
 
-        ,'s1.recovery'     : 1.9
+        ,'s1.stop'         : 1.9
         ,'s1.sp'           : 2500
         ,'s1.hit'          : [(0,'h1')]
         ,'s1.attr.h1.coef' : 10
 
-        ,'s2.recovery'     : 1.9
+        ,'s2.stop'         : 1.9
         ,'s2.sp'           : 5000
         ,'s2.hit'          : [(0,'h1')]
         ,'s2.attr.h1.coef' : 10

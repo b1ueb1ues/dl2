@@ -38,10 +38,10 @@ class B_Zardin(Character):
         ,'s1.hit'          : [(0,'h1'),(0,'h1'),(0,'h1')]
         ,'s1.attr.h1.coef' : 3.16
         ,'s1.sp'           : 3080
-        ,'s1.recovery'     : 2.178
+        ,'s1.stop'         : 2.178
 
         ,'s2.sp'           : 5000
-        ,'s2.recovery'     : 1.633
+        ,'s2.stop'         : 1.633
         }
 
     def s1_end(this):
