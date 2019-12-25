@@ -1,21 +1,22 @@
-from slot import *
+import __init__
+from weapon import *
 
-
-class bow5b1(WeaponBase):
+class c534_flame(Weapon):
     ele = ['flame','water','wind']
     wt = 'bow'
-    att = 518
+    atk = 518
     s3 = {
-        "buff"     : ['self',0.25, 10, 'crit','chance'] ,
-        "sp"       : 7316          ,
-        "startup"  : 0.10+0.15     ,
-        "recovery" : 1.05-0.15     ,
+        "buff"  : ('self',0.25, 10, 'cc'),
+        "sp"    : 7316  ,
+        "stop"  : 1
         }
+c534_water = c534_flame
+c534_wind = c534_flame
 
-class bow5b2(WeaponBase):
+class c534_light(Weapon):
     ele = ['light']
     wt = 'bow'
-    att = 534
+    atk = 534
     s3 = {
         "dmg"      : 9.49     ,
         "sp"       : 8075     ,
@@ -24,9 +25,9 @@ class bow5b2(WeaponBase):
         }
 
 
-class bow5b3(WeaponBase):
+class c534_shadow(Weapon):
     ele = ['shadow']
-    att = 534
+    atk = 534
     wt = 'bow'
     s3 = {
         "dmg"      : 3*3.16   ,
@@ -34,11 +35,3 @@ class bow5b3(WeaponBase):
         "startup"  : 0.1      ,
         "recovery" : 2.75     ,
         }
-
-flame  = bow5b1
-water  = bow5b1
-wind   = bow5b1
-
-light  = bow5b2
-
-shadow = bow5b3

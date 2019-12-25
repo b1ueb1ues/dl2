@@ -9,7 +9,7 @@ class c534_flame(Weapon):
          "hit"          : [(0.28,'h1'), (0.65,'h1'), (1.1,'h1')]
         ,"attr.h1.coef" : 3.54
         ,"sp"           : 8030
-        ,"recovery"     : 2.57
+        ,"stop"         : 2.57
     }
 
 c534_wind = c534_flame
@@ -31,7 +31,7 @@ class c534_shadow(Weapon):
         "hit"           : [(0,'h1'), (0,'h1'), (0,'h1'), (0,'h1'), (0,'h1')]
         ,"attr.h1.coef" : 2.13
         ,"sp"           : 7695
-        ,"recovery"     : 2.65
+        ,"stop"         : 2.65
     }
 
 class c434_light(Weapon):
@@ -42,7 +42,7 @@ class c434_light(Weapon):
         "hit"           : [(0,'h1')]
         ,"attr.h1.coef" : 9.66
         ,"sp"           : 8178
-        ,"recovery"     : 1.95
+        ,"stop"         : 1.95
     }
 
 c434_water = c434_light

@@ -31,11 +31,22 @@ class atk(Ability):
                 this.on = 1
                 this.passive.set(this.v)
 
-
     def __call__(this):
         if this.passive:
             this.passive()
 
+class atkspd(Ability):
+    def __init__(this, name, v, c=None):
+        this.v = v
+        if c == 'hp30':
+            if this.host.condition('hp<30%'):
+                this.passive = this.host.Passive('%s_atk'%name, v[0], 'atk')
+                this.passive2 = this.host.Passive('%s_spd'%name, v[1], 'spd')
+
+    def __call__(this):
+        if this.passive:
+            this.passive()
+            this.passive2()
 
 class fs(Ability):
     def __init__(this, name, v, c=None):

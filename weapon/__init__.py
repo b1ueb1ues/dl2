@@ -7,7 +7,7 @@ from weapon.weaponbase import *
 
 #from weapon import axe
 from weapon import blade
-#from weapon import bow
+from weapon import bow
 #from weapon import dagger
 from weapon import lance
 #from weapon import staff
@@ -18,7 +18,7 @@ type_ = {
         0:0
 #    , 'axe'    : axe
     ,'blade'  : blade
-#    ,'bow'    : bow
+    ,'bow'    : bow
 #    ,'dagger' : dagger
     ,'lance'  : lance
 #    ,'staff'  : staff

@@ -12,8 +12,7 @@ class Rena(Character):
         return {
          'slot.w'     : 'c534_flame'
         ,'slot.d'     : 'Sakuya'
-        ,'slot.a1'    : 'SDO'
-        ,'slot.a2'    : 'BN'
+        ,'slot.a'     : 'RR+EE'
         ,'acl.cancel' : '''
             `s1
             `s2, s='s1'
