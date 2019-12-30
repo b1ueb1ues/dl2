@@ -93,12 +93,21 @@ def team(conf):
 
 
 def this_character(time=120, ex=default_ex, verbose=-2, mass=0):
+    import sys
+    if len(sys.argv) >= 2:
+        verbose = int(sys.argv[1])
     if verbose == -2:
         _this_character(time, ex, verbose, mass, condi=True)
         skada.reset()
         _this_character(time, ex, verbose, mass, condi=False)
     elif verbose == -5:
-        pass
+        _this_character(time, ex, -5, mass, condi=True)
+        skada.reset()
+        _this_character(time, ex, -5, mass, condi=False)
+        skada.reset()
+        _this_character(time, ex, -55, mass, condi=True)
+        skada.reset()
+        _this_character(time, ex, -55, mass, condi=False)
     else:
         _this_character(time, ex, verbose, mass, condi=True)
 
@@ -110,8 +119,6 @@ def _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True):
 
     argv = sys.argv
     ex_lite = ''
-    if len(argv) >= 2:
-        verbose = int(argv[1])
     if len(argv) >= 3:
         time = int(argv[2])
     if len(argv) >= 4:
@@ -148,19 +155,31 @@ def _this_character(time=120, ex=default_ex, verbose=-2, mass=0, condi=True):
         #statistic.show_detail()
     elif verbose == 1:
         statistic.show_rotation()
+        statistic.show_single_detail()
     elif verbose == 2:
         statistic.show_log()
+        statistic.show_single_detail()
     elif verbose == 3:
         statistic.show_log()
+        statistic.show_single_detail()
     elif verbose == -2:
         statistic.show_csv()
     elif verbose == -5:
-        if ex_lite == '':
-            print('-,%s,_'%(time) )
-        else:
-            print('-,%s,%s'%(time, ex_lite))
+        if condi :
+            if ex_lite == '':
+                print('-,%s,_'%(time) )
+            else:
+                print('-,%s,%s'%(time, ex_lite))
         a = statistic.show_csv()
-        print('-,%s,k%s'%(time, ex_lite))
+        #print('-,%s,k%s'%(time, ex_lite))
+        #if 'blade' in ex:
+        #    statistic.show_csv0(a)
+        #else:
+        #    statistic.show_csv10(a)
+    elif verbose == -55: # add katana ex
+        if condi:
+            print('-,%s,k%s'%(time, ex_lite))
+        a = statistic.show_csv(q=1)
         if 'blade' in ex:
             statistic.show_csv0(a)
         else:

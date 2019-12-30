@@ -12,17 +12,20 @@ class Chelsea(Character):
                 `s3
                 `fs, x=4 
             """,
-            'slot.a' : 'HoH+FoG',
+            'acl.other': """
+                `s1
+            """,
+            'slot.a' : 'FB+DD',
         }
         return conf
 
     def conf(this):
         return {
-         'star'    : 5
-        ,'ele'     : 'flame'
-        ,'wt'      : 'bow'
-        ,'atk'     : 496
-        ,'a1'      : ('atkspd', (0.20, 0.10), 'hp30')
+         'star' : 5
+        ,'ele'  : 'flame'
+        ,'wt'   : 'bow'
+        ,'atk'  : 496
+        ,'a1'   : ('atkspd', (0.20, 0.10), 'hp30')
 
         ,'s1.hit' : [(0.400,'h1'),
                      (0.933,'h2'),
@@ -37,25 +40,33 @@ class Chelsea(Character):
         ,'s1.sp'              : 2960
         ,'s1.stop'            : 1.633
 
-        ,'s2.buff'     : ('self', 0.3, 60)
-        ,'s2.sp'       : 7000
-        ,'s2.stop'     : 1
+        ,'s2.sp'   : 7000
+        ,'s2.stop' : 1
         }
 
     def init(this):
-        this.stance = 0
+        this.s2_stack = 0
         this.a3 = this.Selfbuff('a3', 0, 'atk')
         this.a3(-1)
+        ro_iv = env.root['duration'] / 3
+        this.e_ro = this.Event('hp<30')
+        Timer(this.ro)(ro_iv)
+        
+    def ro(this, t):
+        this.e_ro()
+        t.repeat()
+
 
     def s2_proc(this):
         this.a3.set(0.3)
+        this.s2_stack += 1
         this.s2_buff = this.Selfbuff('s2', 0.3)(60)
         this.s2_buff.on_end.append(this.a3_stop)
 
     def a3_stop(this):
-        this.a3.set(0)
-
-
+        this.s2_stack -= 1
+        if not this.s2_stack:
+            this.a3.set(0)
 
 
 if __name__ == '__main__':

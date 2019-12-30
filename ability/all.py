@@ -322,6 +322,21 @@ class lo(Ability):
         this.host.Selfbuff('lastoffense', this.v)(15)
 
 
+class ro(Ability):
+    def __init__(this, name, v):
+        this.name = name
+        this.v = v
+        this.idx = 0
+
+    def __call__(this):
+        this.host.Listener('hp<30')(this.ro_atk)
+    
+    def ro_atk(this, e):
+        if this.idx <= 2:
+            this.host.Selfbuff('resilient offense', this.v)(-1)
+            this.idx+=1
+
+
 class sts(Ability):
     def __init__(this, name, v):
         this.name = name
@@ -351,7 +366,7 @@ class dc(Ability):
     def __init__(this, name, v):
         this.name = name
         this.v = v
-        idx = 0
+        this.idx = 0
         if v == 1:
             buff = [0.04,0.10,0.20]
         elif v == 2:
@@ -360,7 +375,7 @@ class dc(Ability):
             buff = [0.06,0.15,0.30]
 
     def __call__(this):
-        this.host.Listener('dragon')(d_atk)
+        this.host.Listener('dragon')(this.d_atk)
     
     def d_atk(this, e):
         if this.idx <= 2:

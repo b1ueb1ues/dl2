@@ -39,6 +39,7 @@ conf = {
 
 , 'fs.hit'             : [(0.267, 'h1')]
 , 'fs.attr.h1.coef'    : 0.9
+, 'fs.attr.h1.to_bk'   : 4
 , 'fs.attr.h1.missile' : [0, 0]
 , 'fs.sp'              : 400
 , 'fs.marker'          : 0.475

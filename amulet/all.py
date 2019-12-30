@@ -226,6 +226,14 @@ class Forest_Bonds(Amulet):
             this.a += [('sd', 0.40)]
 FB = Forest_Bonds
 
+class Dear_Diary(Amulet):
+    atk = 65
+    a = [('ro', 0.10)]
+    def __init__(this, c):
+        if c.wt == 'bow':
+            this.a = [('ro', 0.10),('cc',0.14)]
+DD = Dear_Diary
+
 
 class Dragon_and_Tamer(Amulet):  
     atk = 57

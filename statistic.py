@@ -147,6 +147,8 @@ def show_csv(q=0):
     return [total, name, info, combo, fs, s1, s2, s3, tb, d]
 
 def show_csv0(a):
+    if not env.root['condi']:
+        a[1] = '_c_%s'%(a[1])
     d = a[9]
     line = '%s,%s,%s,'%(a[0],a[1],a[2])
     line += 'attack:%s,force_strike:%s,skill_1:%s,skill_2:%s,skill_3:%s,team_buff:%s'%(a[3],a[4],a[5],a[6],a[7],a[8])
@@ -155,6 +157,8 @@ def show_csv0(a):
     print(line)
     
 def show_csv10(a):
+    if not env.root['condi']:
+        a[1] = '_c_%s'%(a[1])
     d = a[9]
     a[0] = int(a[0]*1.1)
     for i in range(3, 9):

@@ -46,10 +46,10 @@ class Conf_skl(Config):
         return {
          'type'     : 's'
         ,'sp'       : -1
-        ,'startup'  : 0.1 # ui lag  # only for action
-        ,'recovery' : 2             # both for action
+        ,'delay'    : 0.1 # ui lag  # both for action, skill
+        ,'stop'     : 2             # only for action
         ,'on_start' : [] 
-        ,'on_end'   : []          # only for action
+        ,'on_end'   : []            # only for action
         ,'on_hit'   : []
         ,'proc'     : []
         ,'hit'      : []
@@ -60,7 +60,7 @@ class Conf_skl(Config):
 
     def sync(this, c):
         this.sp.max    = c['sp']
-        this.startup   = c['startup']
+        this.delay     = c['delay']
         this.on_start  = c['on_start']
         if type(c['proc']) == list:
             this.proc = c['proc']
@@ -181,7 +181,7 @@ class _Skill(object):
                 this.firsthit = 1
                 this.hit_prev = -1
                 this.hit_next = 0
-                Timer(this._active)(this.startup)
+                Timer(this._active)(this.delay)
                 # } this.active()
                 return 1
             else:
@@ -260,7 +260,7 @@ class _Skill(object):
 #        this.firsthit = 1
 #        this.hit_prev = -1
 #        this.hit_next = 0
-#        Timer(this._active)(this.startup)
+#        Timer(this._active)(this.delay)
 
 
     def _active(this, t):
@@ -326,8 +326,8 @@ class Conf_cmb(Config):
          'type'     : 'x'
         ,'idx'      : 1 # 1~5
         ,'sp'       : 0
-        ,'startup'  : 0
-        ,'recovery' : 2
+        ,'delay'    : 0
+        ,'stop'     : 2
        #,'on_start' : None
        #,'on_end'   : None
         ,'proc'     : []
@@ -475,8 +475,8 @@ class Conf_fs(Config):
         return {
          'type'      : 'fs'
         ,'sp'        : 0
-        ,'startup'   : 0 # charge time, which didn't affect by speed
-        ,'recovery'  : 2
+        ,'marker'    : 0 # charge time, which didn't affect by speed
+        ,'stop'      : 2
        #,'on_start' : None
        #,'on_end'   : None
         ,'on_hit'    :[]
@@ -491,7 +491,8 @@ class Conf_fs(Config):
         this.sp      = c['sp']
         this.attr    = c['attr']
         this.proc    = c['proc']
-        this.startup = c['startup']
+        this.delay   = c['marker']
+        c['delay']   = c['marker']
         
         if type(c['on_hit']) == list:
             this.on_hit = c['on_hit']
@@ -543,7 +544,7 @@ class _Fs(object):
         this.log = Logger('fs')
         this.loghost = host.name
         this.charge_fs = host.charge_fs
-        this.t_startup = Timer(this._active)
+        this.t_delay = Timer(this._active)
 
 
     def __call__(this):
@@ -596,8 +597,8 @@ class _Fs(object):
 
 
     def active(this):
-        if this.startup:
-            this.t_startup(this.startup)
+        if this.delay:
+            this.t_delay(this.delay)
         else:
             this._active(0)
 
@@ -638,8 +639,8 @@ class Conf_dodge(Config):
     def default(this):
         return {
          'type'      : 'dodge'
-        ,'startup'   : 0
-        ,'recovery'  : 0.7
+        ,'delay'     : 0
+        ,'stop'      : 0.633
        #,'on_start'  : None
        #,'on_end'    : None
         ,'cancel_by' : ['s']
@@ -648,7 +649,7 @@ class Conf_dodge(Config):
 
     def sync(this, c):
         this.type    = c['type']
-        this.startup = c['startup']
+        this.delay = c['delay']
         
         this.e_x.type = this.type
         this.e_x.idx = 0

@@ -24,7 +24,7 @@ class Skillupgrade(object):
         ssbuff.on_end.append(this.on_buff_end)
 
     def pause(this):
-        this.buff.append(this.host.s1.conf['recovery'])
+        this.buff.append(this.host.s1.conf['stop'])
 
     def on_buff_end(this):
         if this.level == 1:

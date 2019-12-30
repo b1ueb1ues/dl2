@@ -13,7 +13,7 @@ class _Event(object):
         this.__name = name
         this._trigger = this.get_event_trigger(name)
 
-    def __call__(this):
+    def __call__(this, _=None):
         for i in this._trigger:
             i(this)
 

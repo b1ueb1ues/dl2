@@ -35,6 +35,7 @@ conf = {
 , 'fs.marker'       : 0.450
 , 'fs.hit'          : [(0.467, 'h1')]
 , 'fs.attr.h1.coef' : 1.92
+, 'fs.attr.h1.to_bk': 3.08
 , 'fs.sp'           : 300
 , 'fs.stop'         : 1.026
 

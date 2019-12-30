@@ -32,7 +32,7 @@ class Conf_Action(Config):
     def default(this):
         return {
              'type'      : ''
-            ,'marker'    : 0
+            ,'delay'     : 0
             ,'stop'      : 2
             ,'cancel_by' : []
             ,'on_cancel' : []
@@ -121,7 +121,7 @@ class _Action(object):
             stop = this.conf['stop'] / this.speed_cache['spd']
         else:
             stop = this.conf['stop'] / this.speed_get('spd')
-        this.t_stop(this.conf['marker'] + stop)
+        this.t_stop(this.conf['delay'] + stop)
         return 1
 
     __call__ = start

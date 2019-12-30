@@ -1,13 +1,7 @@
 import __init__
-
 from core.timer      import *
 from core.event      import *
-from core.conf       import *
 from core.log        import *
-from core.condition  import *
-from core.dmg        import *
-from core.buff       import *
-
 
 ctx = 0
 class Ctx(object):
@@ -27,3 +21,11 @@ class Ctx(object):
 Ctx()
 
 dprint = print
+
+
+from core.conf       import *
+from core.condition  import *
+from core.dmg        import *
+from core.buff       import *
+
+from core import env

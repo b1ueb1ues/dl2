@@ -31,6 +31,7 @@ conf = {
 , 'x5.idx'             : 5
 , 'x5.hit'             : [(0.972, 'h1')]
 , 'x5.attr.h1.coef'    : 0.35
+, 'x5.attr.h1.to_bk'   : 3
 , 'x5.attr.h1.missile' : [0, 0, 0, 0, 0]
 , 'x5.sp'              : 529
 , 'x5.stop'            : 1.389
