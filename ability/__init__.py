@@ -5,3 +5,4 @@ if __package__ is None or __package__ == '':
 from ability.abilitybase import *
 
 from ability.all import *
+from ability.basic import *

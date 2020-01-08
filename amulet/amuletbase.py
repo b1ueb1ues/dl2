@@ -15,14 +15,16 @@ def _amulet_max():
           , 'od'           : 0.15   # od killer
 
           , 'lo'           : 0.60   # lastoffence
+          , 'ro'           : 0.10   # reoffense
           , 'def_c_atk'    : 0.15   # buffchain
-          , 'def_c_energy' : 0.15   # buffchain
+          , 'def_c_energy' : 1      # buffchain
           , 'sts'          : 0.06   # striker strength
           , 'sls'          : 0.06   # slayer stength
           , 'dc'           : 3      # dragon claw
           , 'prep'         : 1      # skill prep
 
           , 'k_burn'       : 0.30   # burn killer
+          , 'k_para'       : 0.25   # para killer
             }
 
 class Amulet(object):

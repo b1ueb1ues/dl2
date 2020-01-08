@@ -106,13 +106,13 @@ class _Buff(object):
     def __init__(this, static, name, value, mtype='atk', morder=None, group=None):
         this._static = static
         if morder == None:
-            if mtype in ['atk','s','hp']:
+            if mtype in ['atk','hp','sd']:
                 morder = 'b'
             else:
                 morder = 'p'
         this.name = name
         this._value = value
-        this.mod_type = mtype   # atk def_ cc cd buff sp x fs s dmg
+        this.mod_type = mtype   # atk def_ cc cd bt sp x fs sd dmg
         this.mod_order = morder # p: passive, b: buff, k: killer, ex: co-ab
         if group == None:
             this.group_name = mtype
@@ -313,13 +313,13 @@ class Selfbuff(object):
 class _Selfbuff(_Buff):
     bufftype = 'selfbuff'
     def on(this, duration):
-        # duration *= this.Dp.get('buff') {
-        if this.bt_cache['buff'] >= 0:
-            bt = this.bt_cache['buff']
+        # duration *= this.Dp.get('bt') {
+        if this.bt_cache['bt'] >= 0:
+            bt = this.bt_cache['bt']
         else:
-            bt = this.bt_get('buff')
+            bt = this.bt_get('bt')
         duration *= bt
-        # } duration *= this.Dp.get('buff')
+        # } duration *= this.Dp.get('bt')
         super().on(duration)
         return this
 
@@ -383,13 +383,13 @@ class _Teambuff():
 
 
     def on(this, duration):
-        # this.e.duration = duration * this.Dp.get('buff') {
-        if this.bt_cache['buff'] >= 0:
-            bt = this.bt_cache['buff']
+        # this.e.duration = duration * this.Dp.get('bt') {
+        if this.bt_cache['bt'] >= 0:
+            bt = this.bt_cache['bt']
         else:
-            bt = this.bt_get('buff')
+            bt = this.bt_get('bt')
         this.e.duration = duration * bt
-        # this.e.duration = duration * this.Dp.get('buff') }
+        # this.e.duration = duration * this.Dp.get('bt') }
         this.e()
         return this
 
@@ -441,6 +441,23 @@ class _Zonebuff():
     def set(this, v):
         this.e.value = v
         return this
+
+
+class Selfzone(object):
+    def __init__(this, Buff):
+        this.Buff = Buff
+
+    def __call__(this, *args, **kwargs):
+        return _Selfbuff(this.Buff, *args, **kwargs)
+
+class _Selfzone(_Buff):
+    bufftype = 'selfzone'
+    def on(this, duration):
+        super().on(duration)
+        return this
+
+    __call__ = on
+
 
 
 if __name__ == '__main__':
