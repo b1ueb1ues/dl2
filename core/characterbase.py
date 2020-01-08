@@ -30,9 +30,9 @@ class Conf_chara(Config):
             ,'acl'        : 0
 
             ,'param_type' : ['', 'atk', 'dmg', 'cc', 'cd',
-                             'sp', 'fsp', 'spd', 'buff', 
+                             'sp', 'fsp', 'spd', 'bt', 
                              'killer','energy', # 'def', 'ks'
-                             'x','fs','s']
+                             'x','fs','sd']
             ,'s1' : None
             ,'s2' : None
             ,'s3' : None
