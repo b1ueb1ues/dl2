@@ -21,9 +21,9 @@ class Energy():
 #            log('dmg','o_%s_energized'%name, amount*boost, 'energy boost')
 #
 #    def get_energy_boost(this):
-#        sd = this.a.Dp.get('s')
+#        sd = this.a.Dp.get('sd')
 #        this.energy_mod.on()
-#        sd2 = this.a.Dp.get('s')
+#        sd2 = this.a.Dp.get('sd')
 #        this.energy_mod.off()
 #        return sd2/sd-1
 
@@ -73,7 +73,7 @@ class Energy():
     def __init__(this, a):
         this.a = a
 
-        this.energy_mod = a.Passive('energized', 0.5, 's')
+        this.energy_mod = a.Passive('energized', 0.5, 'sd')
 
         this.energy = 0
         this.energized = 0

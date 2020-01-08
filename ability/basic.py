@@ -63,12 +63,12 @@ class sd(Ability):
         this.v = v
         if c == 'hp70':
             if this.host.condition('hp>70%'):
-                this.passive = this.host.Passive('%s_s'%name, v, 's')
+                this.passive = this.host.Passive('%s_s'%name, v, 'sd')
         elif c == 'hp100':
             if this.host.condition('fullhp'):
-                this.passive = this.host.Passive('%s_s'%name, v, 's')
+                this.passive = this.host.Passive('%s_s'%name, v, 'sd')
         else:
-            this.passive = this.host.Passive('%s_s'%name, v, 's')
+            this.passive = this.host.Passive('%s_s'%name, v, 'sd')
 
 
     def __call__(this):

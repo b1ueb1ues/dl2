@@ -88,7 +88,7 @@ class Conf_skl(Config):
                 else:
                     label['name'] = this.name
                 label['proc'] = this.collid
-                label['type'] = 's'
+                label['type'] = 'sd'
                 this.dmg[i] = this.host.Dmg(label)
         
 
