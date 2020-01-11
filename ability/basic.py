@@ -139,7 +139,7 @@ class sp(Ability):
 class bt(Ability):
     def __init__(this, name, v):
         this.v = v
-        this.passive = this.host.Passive('%s_bt'%name, v, 'buff')
+        this.passive = this.host.Passive('%s_bt'%name, v, 'bt')
 
 
     def __call__(this):
